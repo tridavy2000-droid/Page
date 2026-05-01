@@ -3,568 +3,768 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>КЭП — AI-система автозаписи</title>
+<title>КЭП Барбершоп — Демо AI-системы</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  :root{
-    --bg:#000810;
-    --bg2:#000f1e;
-    --cyan:#00d4ff;
-    --cyan2:#00a8cc;
-    --green:#00ff88;
-    --border:rgba(0,212,255,0.25);
-    --glow:0 0 30px rgba(0,212,255,0.15);
-    --text:#e0f4ff;
-    --muted:rgba(224,244,255,0.5);
-  }
-  html{scroll-behavior:smooth}
-  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;overflow-x:hidden}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000810;--bg2:#000f1e;--bg3:#001428;
+  --cyan:#00d4ff;--cyan2:#0099bb;
+  --green:#00ff88;--yellow:#ffd700;
+  --border:rgba(0,212,255,0.2);
+  --border2:rgba(0,212,255,0.35);
+  --glow:0 0 30px rgba(0,212,255,0.12);
+  --glow2:0 0 50px rgba(0,212,255,0.25);
+  --text:#e0f4ff;--muted:rgba(224,244,255,0.45)
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:var(--cyan2)}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);
+  background-size:60px 60px
+}
 
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar{width:4px}
-  ::-webkit-scrollbar-track{background:var(--bg)}
-  ::-webkit-scrollbar-thumb{background:var(--cyan2);border-radius:2px}
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:14px 48px;display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,8,16,0.9);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border)
+}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--cyan);letter-spacing:4px}
+.nav-tag{font-size:13px;color:var(--muted);letter-spacing:1px}
+.nav-cta{
+  background:rgba(0,212,255,0.1);border:1px solid var(--border2);
+  color:var(--cyan);padding:8px 20px;border-radius:3px;font-size:13px;
+  font-weight:600;text-decoration:none;transition:.2s;letter-spacing:1px
+}
+.nav-cta:hover{background:rgba(0,212,255,0.2)}
 
-  /* ── GRID BG ── */
-  body::before{
-    content:'';position:fixed;inset:0;
-    background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
-    background-size:50px 50px;pointer-events:none;z-index:0
-  }
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:110px 48px 70px;position:relative;z-index:1
+}
+.hero-inner{max-width:1200px;width:100%;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.hero-left{}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,0.06);border:1px solid var(--border);
+  padding:6px 16px;border-radius:20px;font-size:12px;color:var(--cyan);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:28px
+}
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)}
+h1{
+  font-family:'Orbitron',sans-serif;font-size:clamp(32px,4vw,54px);
+  font-weight:900;line-height:1.1;margin-bottom:20px;
+  background:linear-gradient(150deg,#fff 20%,var(--cyan) 60%,#fff 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+}
+.hero-sub{color:var(--muted);font-size:17px;line-height:1.7;margin-bottom:40px;max-width:440px}
+.hero-sub b{color:var(--text)}
+.hero-pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px}
+.pill{
+  background:rgba(0,212,255,0.06);border:1px solid var(--border);
+  padding:6px 14px;border-radius:20px;font-size:13px;color:var(--muted)
+}
+.pill b{color:var(--cyan)}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--cyan);color:#000;font-family:'Orbitron',sans-serif;font-size:13px;
+  font-weight:700;letter-spacing:1px;padding:16px 36px;border-radius:3px;
+  text-decoration:none;transition:.3s;box-shadow:0 0 40px rgba(0,212,255,0.35)
+}
+.btn-primary:hover{background:#fff;box-shadow:0 0 60px rgba(0,212,255,0.5);transform:translateY(-2px)}
+.btn-outline{
+  border:1px solid var(--border2);color:var(--cyan);
+  font-size:14px;font-weight:600;padding:15px 28px;border-radius:3px;
+  text-decoration:none;transition:.2s
+}
+.btn-outline:hover{background:rgba(0,212,255,0.08)}
 
-  /* ── NAV ── */
-  nav{
-    position:fixed;top:0;left:0;right:0;z-index:100;
-    padding:16px 40px;display:flex;align-items:center;justify-content:space-between;
-    background:rgba(0,8,16,0.85);backdrop-filter:blur(12px);
-    border-bottom:1px solid var(--border)
-  }
-  .nav-logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan);letter-spacing:3px}
-  .nav-badge{
-    background:rgba(0,212,255,0.1);border:1px solid var(--border);
-    padding:6px 16px;border-radius:20px;font-size:13px;color:var(--muted)
-  }
-  .nav-badge span{color:var(--cyan)}
+/* STATS ROW */
+.stats-row{display:flex;gap:32px;margin-top:56px;flex-wrap:wrap}
+.stat{border-left:2px solid var(--cyan);padding-left:14px}
+.stat-n{font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--cyan)}
+.stat-l{font-size:12px;color:var(--muted);margin-top:3px;letter-spacing:1px;text-transform:uppercase}
 
-  /* ── SECTIONS ── */
-  section{position:relative;z-index:1}
+/* ── HERO CHAT WIDGET ── */
+.widget-wrap{position:relative}
+.widget{
+  background:#0d1f35;border:1px solid var(--border2);border-radius:20px;
+  overflow:hidden;box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,0.5);
+  max-width:360px;margin:0 auto
+}
+.widget-bar{
+  background:#0a1828;padding:14px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border)
+}
+.w-ava{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),#0066aa);
+  display:flex;align-items:center;justify-content:center;font-size:18px
+}
+.w-name{font-weight:700;font-size:14px}
+.w-status{font-size:11px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:2px}
+.w-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green)}
+.w-dots{display:flex;gap:5px;margin-left:auto}
+.w-dot-ui{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15)}
+.w-dot-ui:nth-child(1){background:#ff5f57}
+.w-dot-ui:nth-child(2){background:#febc2e}
+.w-dot-ui:nth-child(3){background:#28c840}
 
-  /* ── HERO ── */
-  .hero{
-    min-height:100vh;display:flex;align-items:center;justify-content:center;
-    padding:100px 40px 60px;text-align:center
-  }
-  .hero-inner{max-width:800px}
-  .hero-tag{
-    display:inline-block;background:rgba(0,212,255,0.08);border:1px solid var(--border);
-    padding:8px 20px;border-radius:20px;font-size:13px;color:var(--cyan);
-    letter-spacing:2px;text-transform:uppercase;margin-bottom:32px
-  }
-  .hero h1{
-    font-family:'Orbitron',sans-serif;font-size:clamp(36px,6vw,72px);
-    font-weight:900;line-height:1.1;margin-bottom:24px;
-    background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,#fff 100%);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
-  }
-  .hero-sub{font-size:clamp(16px,2.5vw,22px);color:var(--muted);max-width:560px;margin:0 auto 48px;line-height:1.6}
-  .hero-sub strong{color:var(--text)}
+.w-msgs{padding:16px;display:flex;flex-direction:column;gap:8px;min-height:360px;max-height:420px;overflow-y:auto;scroll-behavior:smooth}
+.w-msgs::-webkit-scrollbar{width:2px}
+.w-msgs::-webkit-scrollbar-thumb{background:var(--border2)}
 
-  .btn-main{
-    display:inline-flex;align-items:center;gap:10px;
-    background:var(--cyan);color:#000;
-    font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;
-    letter-spacing:1px;padding:18px 40px;border-radius:4px;
-    text-decoration:none;transition:.3s;
-    box-shadow:0 0 40px rgba(0,212,255,0.4)
-  }
-  .btn-main:hover{background:#fff;box-shadow:0 0 60px rgba(0,212,255,0.6);transform:translateY(-2px)}
-  .btn-ghost{
-    display:inline-flex;align-items:center;gap:10px;
-    border:1px solid var(--border);color:var(--cyan);
-    font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;
-    padding:16px 32px;border-radius:4px;text-decoration:none;transition:.3s;margin-left:16px
-  }
-  .btn-ghost:hover{background:rgba(0,212,255,0.08);border-color:var(--cyan)}
-  .hero-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.wm{max-width:88%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.55;
+    opacity:0;transform:translateY(6px) scale(.98);transition:opacity .35s,transform .35s}
+.wm.show{opacity:1;transform:translateY(0) scale(1)}
+.wm.bot{background:rgba(13,40,70,.9);border:1px solid rgba(0,212,255,.18);align-self:flex-start;border-bottom-left-radius:4px}
+.wm.user{background:linear-gradient(135deg,rgba(0,212,255,.22),rgba(0,150,200,.22));align-self:flex-end;border-bottom-right-radius:4px;text-align:right}
+.wm.bot b,.wm.bot strong{color:var(--cyan)}
+.wm-time{font-size:10px;color:var(--muted);margin-top:4px;text-align:right}
 
-  .hero-stats{
-    display:flex;gap:40px;justify-content:center;margin-top:64px;flex-wrap:wrap
-  }
-  .stat{text-align:center}
-  .stat-num{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:var(--cyan)}
-  .stat-lbl{font-size:13px;color:var(--muted);margin-top:4px}
+.wm-btns{display:flex;flex-direction:column;gap:5px;margin-top:8px}
+.wm-btn{
+  background:rgba(0,212,255,.08);border:1px solid rgba(0,212,255,.25);
+  color:var(--text);font-size:12px;padding:8px 12px;border-radius:8px;
+  cursor:pointer;transition:.2s;text-align:left;
+  font-family:'Rajdhani',sans-serif;font-weight:500
+}
+.wm-btn:hover{background:rgba(0,212,255,.18);border-color:var(--cyan);color:var(--cyan)}
+.wm-btn.picked{background:rgba(0,212,255,.25);border-color:var(--cyan);color:var(--cyan);pointer-events:none}
+.wm-btn.disabled{opacity:.4;pointer-events:none}
 
-  /* ── DEMO CHAT ── */
-  .demo{padding:80px 40px;background:var(--bg2)}
-  .demo-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
-  .demo-text h2{font-family:'Orbitron',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:700;margin-bottom:20px;color:var(--cyan)}
-  .demo-text p{color:var(--muted);line-height:1.7;margin-bottom:28px;font-size:16px}
-  .feature-list{list-style:none;display:flex;flex-direction:column;gap:14px}
-  .feature-list li{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500}
-  .feature-list li::before{
-    content:'';display:block;width:8px;height:8px;border-radius:50%;
-    background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex-shrink:0
-  }
+.typing-ind{
+  display:flex;gap:4px;align-items:center;padding:10px 14px;
+  background:rgba(13,40,70,.9);border:1px solid rgba(0,212,255,.15);
+  border-radius:14px;border-bottom-left-radius:4px;align-self:flex-start;
+  opacity:0;transition:.3s
+}
+.typing-ind.show{opacity:1}
+.td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:tdance 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}
+.td:nth-child(3){animation-delay:.4s}
+@keyframes tdance{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
 
-  /* ── PHONE MOCKUP ── */
-  .phone{
-    width:300px;margin:0 auto;
-    background:#0a1628;border:2px solid var(--border);border-radius:32px;
-    padding:20px 16px;box-shadow:var(--glow),0 40px 80px rgba(0,0,0,0.6);
-    position:relative;overflow:hidden
-  }
-  .phone::before{
-    content:'';display:block;width:80px;height:6px;background:var(--border);
-    border-radius:3px;margin:0 auto 20px
-  }
-  .phone-header{
-    display:flex;align-items:center;gap:10px;padding-bottom:16px;
-    border-bottom:1px solid var(--border);margin-bottom:16px
-  }
-  .phone-ava{
-    width:36px;height:36px;border-radius:50%;
-    background:linear-gradient(135deg,var(--cyan),var(--cyan2));
-    display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0
-  }
-  .phone-name{font-weight:700;font-size:14px}
-  .phone-status{font-size:11px;color:var(--green);margin-top:2px}
-  .chat-messages{display:flex;flex-direction:column;gap:10px;min-height:320px}
-  .msg{max-width:85%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;opacity:0;transition:opacity .4s,transform .4s;transform:translateY(8px)}
-  .msg.show{opacity:1;transform:translateY(0)}
-  .msg.bot{background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.2);align-self:flex-start;border-bottom-left-radius:4px}
-  .msg.user{background:rgba(0,212,255,0.25);align-self:flex-end;border-bottom-right-radius:4px}
-  .msg.bot strong{color:var(--cyan)}
-  .msg-btns{display:flex;flex-direction:column;gap:6px;margin-top:4px}
-  .msg-btn{
-    background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);
-    color:var(--cyan);font-size:12px;padding:6px 10px;border-radius:8px;cursor:pointer;
-    transition:.2s;text-align:center
-  }
-  .msg-btn:hover,.msg-btn.active{background:rgba(0,212,255,0.25)}
-  .typing{display:flex;gap:4px;align-items:center;padding:10px 14px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);border-radius:16px;border-bottom-left-radius:4px;align-self:flex-start;opacity:0;transition:.3s}
-  .typing.show{opacity:1}
-  .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:bounce 1.2s infinite}
-  .dot:nth-child(2){animation-delay:.2s}
-  .dot:nth-child(3){animation-delay:.4s}
-  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.w-input-bar{
+  padding:10px 14px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;background:#0a1828
+}
+.w-input{
+  flex:1;background:rgba(0,212,255,.06);border:1px solid var(--border);
+  color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:13px;
+  padding:8px 12px;border-radius:20px;outline:none
+}
+.w-send{
+  width:32px;height:32px;border-radius:50%;background:var(--cyan);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:.2s
+}
+.w-send:hover{background:#fff}
+.w-send svg{width:14px;height:14px;fill:#000}
 
-  /* ── FEATURES ── */
-  .features{padding:80px 40px}
-  .features-inner{max-width:1100px;margin:0 auto}
-  .section-title{font-family:'Orbitron',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:700;text-align:center;margin-bottom:12px}
-  .section-sub{text-align:center;color:var(--muted);margin-bottom:56px;font-size:16px}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
-  .card{
-    background:var(--bg2);border:1px solid var(--border);border-radius:8px;
-    padding:28px 24px;transition:.3s;position:relative;overflow:hidden
-  }
-  .card::before{
-    content:'';position:absolute;top:0;left:0;right:0;height:2px;
-    background:linear-gradient(90deg,transparent,var(--cyan),transparent);
-    opacity:0;transition:.3s
-  }
-  .card:hover{border-color:rgba(0,212,255,0.5);box-shadow:var(--glow);transform:translateY(-4px)}
-  .card:hover::before{opacity:1}
-  .card-icon{font-size:32px;margin-bottom:16px}
-  .card h3{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;color:var(--cyan);letter-spacing:1px}
-  .card p{color:var(--muted);font-size:14px;line-height:1.6}
-  .card-result{margin-top:16px;font-size:13px;font-weight:600;color:var(--green)}
+/* OWNER NOTIF POPUP */
+.owner-popup{
+  position:absolute;top:-60px;right:-20px;
+  background:var(--bg3);border:1px solid rgba(0,255,136,.3);border-radius:12px;
+  padding:14px 18px;width:240px;
+  box-shadow:0 0 30px rgba(0,255,136,.15);
+  opacity:0;transform:translateY(10px) scale(.95);
+  transition:opacity .5s,transform .5s;pointer-events:none
+}
+.owner-popup.show{opacity:1;transform:translateY(0) scale(1)}
+.op-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.op-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.op-title{font-size:12px;font-weight:700;color:var(--green)}
+.op-time{font-size:10px;color:var(--muted);margin-left:auto}
+.op-body{font-size:12px;line-height:1.7;color:var(--text)}
+.op-body b{color:var(--cyan)}
+.op-label{
+  display:inline-block;margin-top:8px;
+  background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.25);
+  color:var(--green);font-size:10px;padding:3px 8px;border-radius:10px;letter-spacing:1px
+}
+.widget-hint{text-align:center;margin-top:16px;font-size:12px;color:var(--muted)}
+.widget-hint b{color:var(--cyan)}
 
-  /* ── OWNER BLOCK ── */
-  .owner{padding:80px 40px;background:var(--bg2)}
-  .owner-inner{max-width:900px;margin:0 auto;text-align:center}
-  .notif-card{
-    background:var(--bg);border:1px solid var(--border);border-radius:12px;
-    padding:24px 28px;margin:40px auto;max-width:420px;text-align:left;
-    box-shadow:var(--glow);animation:pulse-glow 3s ease-in-out infinite
-  }
-  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(0,212,255,0.1)}50%{box-shadow:0 0 40px rgba(0,212,255,0.25)}}
-  .notif-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-  .notif-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-  .notif-title{font-weight:700;font-size:15px}
-  .notif-time{font-size:12px;color:var(--muted);margin-left:auto}
-  .notif-body{font-size:14px;line-height:1.8;color:var(--text)}
-  .notif-body strong{color:var(--cyan)}
-  .notif-footer{margin-top:12px;font-size:12px;color:var(--muted);font-style:italic}
+/* SECTION COMMONS */
+section{position:relative;z-index:1}
+.sec-pad{padding:90px 48px}
+.sec-title{font-family:'Orbitron',sans-serif;font-size:clamp(20px,2.5vw,30px);font-weight:700;text-align:center;margin-bottom:10px}
+.sec-sub{text-align:center;color:var(--muted);margin-bottom:56px;font-size:16px;max-width:500px;margin-left:auto;margin-right:auto}
 
-  /* ── ROI CALCULATOR ── */
-  .roi{padding:80px 40px}
-  .roi-inner{max-width:700px;margin:0 auto}
-  .roi-card{
-    background:var(--bg2);border:1px solid var(--border);border-radius:12px;
-    padding:40px;box-shadow:var(--glow)
-  }
-  .roi-row{margin-bottom:28px}
-  .roi-label{display:flex;justify-content:space-between;margin-bottom:10px;font-size:15px;font-weight:600}
-  .roi-val{color:var(--cyan);font-family:'Orbitron',sans-serif}
-  input[type=range]{
-    width:100%;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;
-    background:linear-gradient(90deg,var(--cyan) var(--val,50%),rgba(0,212,255,0.15) var(--val,50%));
-    cursor:pointer
-  }
-  input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
-    background:var(--cyan);box-shadow:0 0 8px var(--cyan);cursor:pointer
-  }
-  .roi-divider{height:1px;background:var(--border);margin:28px 0}
-  .roi-result{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .roi-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
-  .roi-box-num{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:var(--green)}
-  .roi-box-lbl{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
-  .roi-disclaimer{text-align:center;margin-top:20px;font-size:12px;color:var(--muted)}
+/* FEATURES */
+.features-bg{background:var(--bg2)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1100px;margin:0 auto}
+.card{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:26px 22px;transition:.3s;position:relative;overflow:hidden
+}
+.card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0;transition:.3s
+}
+.card:hover{border-color:var(--border2);box-shadow:var(--glow);transform:translateY(-3px)}
+.card:hover::after{opacity:1}
+.c-icon{font-size:30px;margin-bottom:14px}
+.c-title{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--cyan);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+.c-text{color:var(--muted);font-size:13px;line-height:1.6}
+.c-result{margin-top:14px;font-size:13px;font-weight:700;color:var(--green)}
 
-  /* ── CTA ── */
-  .cta{padding:100px 40px;text-align:center}
-  .cta-inner{max-width:640px;margin:0 auto}
-  .cta h2{font-family:'Orbitron',sans-serif;font-size:clamp(24px,4vw,42px);font-weight:900;margin-bottom:20px}
-  .cta h2 span{color:var(--cyan)}
-  .cta p{color:var(--muted);font-size:18px;margin-bottom:48px;line-height:1.6}
-  .cta-btns{display:flex;flex-direction:column;gap:16px;align-items:center}
-  .btn-tg{
-    display:inline-flex;align-items:center;gap:12px;
-    background:linear-gradient(135deg,var(--cyan),var(--cyan2));
-    color:#000;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;
-    letter-spacing:1px;padding:20px 48px;border-radius:4px;text-decoration:none;
-    transition:.3s;box-shadow:0 0 50px rgba(0,212,255,0.5);width:100%;max-width:400px;justify-content:center
-  }
-  .btn-tg:hover{transform:translateY(-3px);box-shadow:0 0 70px rgba(0,212,255,0.7)}
-  .cta-contact{font-size:14px;color:var(--muted)}
-  .cta-contact a{color:var(--cyan);text-decoration:none}
+/* SERVICES */
+.services-wrap{max-width:900px;margin:0 auto}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:40px}
+.svc-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+  padding:20px;text-align:center;transition:.2s
+}
+.svc-card:hover{border-color:var(--border2);box-shadow:var(--glow)}
+.svc-emoji{font-size:28px;margin-bottom:10px}
+.svc-name{font-weight:700;font-size:14px;margin-bottom:6px}
+.svc-price{color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700}
+.svc-time{font-size:11px;color:var(--muted);margin-top:4px}
 
-  /* ── FOOTER ── */
-  footer{
-    padding:32px 40px;border-top:1px solid var(--border);
-    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px
-  }
-  footer .logo{font-family:'Orbitron',sans-serif;font-size:14px;color:var(--cyan);letter-spacing:2px}
-  footer p{font-size:13px;color:var(--muted)}
+/* ROI */
+.roi-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  padding:40px;max-width:700px;margin:0 auto;box-shadow:var(--glow)
+}
+.roi-row{margin-bottom:26px}
+.roi-lbl{display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px;font-weight:600}
+.roi-lbl span:last-child{color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:13px}
+input[type=range]{
+  width:100%;-webkit-appearance:none;height:3px;outline:none;cursor:pointer;border-radius:2px
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;border-radius:50%;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan)
+}
+.roi-div{height:1px;background:var(--border);margin:28px 0}
+.roi-res{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.roi-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:18px;text-align:center}
+.roi-n{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--green)}
+.roi-l{font-size:11px;color:var(--muted);margin-top:5px;text-transform:uppercase;letter-spacing:1px}
+.roi-note{text-align:center;margin-top:16px;font-size:12px;color:var(--muted)}
 
-  @media(max-width:768px){
-    nav{padding:14px 20px}
-    .hero{padding:90px 20px 50px}
-    .demo-inner{grid-template-columns:1fr}
-    .phone{width:260px}
-    .features{padding:60px 20px}
-    .roi{padding:60px 20px}
-    .cta{padding:70px 20px}
-    footer{padding:24px 20px;flex-direction:column;text-align:center}
-    .btn-ghost{margin-left:0}
-  }
+/* CTA */
+.cta-wrap{text-align:center;padding:100px 48px}
+.cta-h{font-family:'Orbitron',sans-serif;font-size:clamp(24px,3.5vw,42px);font-weight:900;margin-bottom:16px}
+.cta-h span{color:var(--cyan)}
+.cta-sub{color:var(--muted);font-size:17px;margin-bottom:48px;line-height:1.6}
+.btn-tg{
+  display:inline-flex;align-items:center;gap:12px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#000;
+  font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;
+  padding:20px 48px;border-radius:4px;text-decoration:none;transition:.3s;
+  box-shadow:0 0 50px rgba(0,212,255,.4);margin-bottom:24px
+}
+.btn-tg:hover{transform:translateY(-3px);box-shadow:0 0 70px rgba(0,212,255,.6)}
+.contact-line{font-size:14px;color:var(--muted)}
+.contact-line a{color:var(--cyan);text-decoration:none}
+
+footer{padding:28px 48px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer .fl{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--cyan);letter-spacing:2px}
+footer p{font-size:12px;color:var(--muted)}
+
+@media(max-width:900px){
+  .hero-inner{grid-template-columns:1fr;gap:50px}
+  .widget-wrap{order:-1}
+  .owner-popup{right:0;top:auto;bottom:-120px;width:100%;position:relative;margin-top:16px}
+  nav{padding:12px 20px}
+  .sec-pad{padding:60px 20px}
+  .cta-wrap{padding:60px 20px}
+  footer{flex-direction:column;text-align:center;padding:20px}
+}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="nav-logo">КЭП</div>
-  <div class="nav-badge">Персональное демо · <span>AI-система</span></div>
+  <div class="nav-tag">✂️ Арбат · AI-автоматизация</div>
+  <a href="https://t.me/tridavy2000" target="_blank" class="nav-cta">Связаться →</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="hero-inner">
-    <div class="hero-tag">✂️ Барбершоп КЭП · Арбат</div>
-    <h1>Ваши клиенты<br>записываются<br>пока вы спите</h1>
-    <p class="hero-sub">
-      AI-бот принимает запись <strong>24/7</strong>, напоминает клиентам,<br>
-      возвращает тех кто давно не приходил — <strong>без участия администратора</strong>
-    </p>
-    <div class="hero-btns">
-      <a href="https://t.me/zeldetaildemobot" target="_blank" class="btn-main">
-        <span>▶</span> Попробовать живой бот
-      </a>
-      <a href="#roi" class="btn-ghost">Посчитать выгоду →</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><div class="stat-num">24/7</div><div class="stat-lbl">Запись без телефона</div></div>
-      <div class="stat"><div class="stat-num">+12</div><div class="stat-lbl">Возвратов в месяц</div></div>
-      <div class="stat"><div class="stat-num">87%</div><div class="stat-lbl">Клиентов приходят с напоминанием</div></div>
-      <div class="stat"><div class="stat-num">5 дней</div><div class="stat-lbl">До запуска</div></div>
-    </div>
-  </div>
-</section>
+  <div class="hero-inner" style="max-width:1100px;margin:0 auto;width:100%">
 
-<!-- DEMO CHAT -->
-<section class="demo">
-  <div class="demo-inner">
-    <div class="demo-text">
-      <h2>Вот как это<br>работает для КЭП</h2>
-      <p>Клиент пишет в Telegram в любое время — бот отвечает мгновенно, принимает запись, записывает в CRM и сразу уведомляет вас.</p>
-      <ul class="feature-list">
-        <li>Запись к конкретному мастеру с выбором времени</li>
-        <li>Автоматическое напоминание за 24 часа</li>
-        <li>Реактивация клиентов через 3–4 недели</li>
-        <li>Мгновенное уведомление владельцу</li>
-        <li>Программа лояльности и сбор отзывов</li>
-      </ul>
-    </div>
-    <div>
-      <div class="phone" id="phone">
-        <div class="phone-header">
-          <div class="phone-ava">✂️</div>
-          <div>
-            <div class="phone-name">КЭП Барбершоп</div>
-            <div class="phone-status">● онлайн</div>
-          </div>
-        </div>
-        <div class="chat-messages" id="chat"></div>
+    <div class="hero-left">
+      <div class="hero-eyebrow">Персональное демо для КЭП</div>
+      <h1>Ваши клиенты<br>записываются<br>пока вы спите</h1>
+      <p class="hero-sub">
+        AI-система принимает запись <b>24/7</b>, напоминает клиентам автоматически и возвращает тех кто давно не приходил — <b>без участия администратора</b>.
+      </p>
+      <div class="hero-pills">
+        <div class="pill">✂️ Стрижки</div>
+        <div class="pill">🪒 Борода</div>
+        <div class="pill">👑 Бритьё</div>
+        <div class="pill">📍 Арбат</div>
+      </div>
+      <div class="hero-btns">
+        <a href="https://t.me/zeldetaildemobot" target="_blank" class="btn-primary">▶ Живой бот в Telegram</a>
+        <a href="#roi" class="btn-outline">Посчитать выгоду</a>
+      </div>
+      <div class="stats-row">
+        <div class="stat"><div class="stat-n">24/7</div><div class="stat-l">Запись без звонка</div></div>
+        <div class="stat"><div class="stat-n">+12</div><div class="stat-l">Возвратов в мес</div></div>
+        <div class="stat"><div class="stat-n">87%</div><div class="stat-l">Приходят с напомин.</div></div>
       </div>
     </div>
+
+    <!-- INTERACTIVE CHAT WIDGET -->
+    <div class="widget-wrap">
+      <div class="widget">
+        <div class="widget-bar">
+          <div class="w-dots"><div class="w-dot-ui"></div><div class="w-dot-ui"></div><div class="w-dot-ui"></div></div>
+          <div class="w-ava">✂️</div>
+          <div>
+            <div class="w-name">КЭП Барбершоп</div>
+            <div class="w-status"><div class="w-dot"></div> онлайн — отвечает мгновенно</div>
+          </div>
+        </div>
+        <div class="w-msgs" id="wmsgs"></div>
+        <div class="w-input-bar">
+          <input class="w-input" placeholder="Напишите сообщение..." id="winput" readonly>
+          <button class="w-send"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+        </div>
+      </div>
+      <div class="widget-hint">👆 <b>Кликайте на кнопки</b> — это реальный интерфейс</div>
+
+      <!-- OWNER POPUP -->
+      <div class="owner-popup" id="ownerPopup">
+        <div class="op-hdr">
+          <div class="op-dot"></div>
+          <div class="op-title">🔔 НОВАЯ ЗАПИСЬ</div>
+          <div class="op-time" id="opTime">03:47</div>
+        </div>
+        <div class="op-body" id="opBody">
+          ✂️ <b>Алексей М.</b><br>
+          Услуга: <b>Стрижка классика</b><br>
+          Мастер: <b>Иван</b><br>
+          Время: <b>завтра 14:00</b><br>
+          <span style="color:var(--muted)">+7 916 ••• ••-12</span>
+        </div>
+        <div class="op-label">ПРИШЛО ПОКА ВЫ СПАЛИ</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
 <!-- FEATURES -->
-<section class="features">
-  <div class="features-inner">
-    <h2 class="section-title">Что получает КЭП</h2>
-    <p class="section-sub">Полная система автоматизации — настраивается за 5–7 дней</p>
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">📅</div>
-        <h3>Запись 24/7</h3>
-        <p>Клиент пишет в Telegram в любое время — бот мгновенно принимает запись с выбором мастера и времени.</p>
-        <div class="card-result">▲ +8–12 новых записей/мес</div>
-      </div>
-      <div class="card">
-        <div class="card-icon">⏰</div>
-        <h3>Напоминания</h3>
-        <p>Автоматическое сообщение клиенту за 24 часа до визита. 87% приходят когда получают напоминание.</p>
-        <div class="card-result">▼ −30% отмен и неявок</div>
-      </div>
-      <div class="card">
-        <div class="card-icon">💬</div>
-        <h3>Реактивация базы</h3>
-        <p>Раз в месяц бот пишет тем кто давно не приходил — с персональным предложением или просто напоминанием.</p>
-        <div class="card-result">▲ +10–15 возвратов/мес</div>
-      </div>
-      <div class="card">
-        <div class="card-icon">⭐</div>
-        <h3>Отзывы на Яндекс</h3>
-        <p>Через 3 часа после визита бот просит оставить отзыв — с прямой ссылкой. Без напоминания клиенты пишут редко.</p>
-        <div class="card-result">▲ +8–12 отзывов/мес</div>
-      </div>
+<section class="features-bg sec-pad">
+  <h2 class="sec-title">Что получает КЭП</h2>
+  <p class="sec-sub">Полная система за 5–7 дней — всё работает само</p>
+  <div class="cards">
+    <div class="card">
+      <div class="c-icon">📅</div>
+      <div class="c-title">Запись 24/7</div>
+      <p class="c-text">Клиент пишет в Telegram в любое время — бот мгновенно принимает запись, предлагает мастера и свободный слот.</p>
+      <div class="c-result">▲ +8–12 записей/мес</div>
+    </div>
+    <div class="card">
+      <div class="c-icon">⏰</div>
+      <div class="c-title">Напоминания</div>
+      <p class="c-text">Автоматическое сообщение клиенту за 24 часа до визита. 87% с напоминанием — приходят, без — 61%.</p>
+      <div class="c-result">▼ −30% отмен</div>
+    </div>
+    <div class="card">
+      <div class="c-icon">💬</div>
+      <div class="c-title">Реактивация</div>
+      <p class="c-text">Через 3–4 недели бот сам пишет клиенту: «Привет, давно тебя не было — записать?» Работает по всей базе автоматически.</p>
+      <div class="c-result">▲ +10–15 возвратов/мес</div>
+    </div>
+    <div class="card">
+      <div class="c-icon">⭐</div>
+      <div class="c-title">Отзывы на Яндекс</div>
+      <p class="c-text">Через 3 часа после визита бот просит отзыв с прямой ссылкой. Без напоминания клиенты пишут редко.</p>
+      <div class="c-result">▲ +8–10 отзывов/мес</div>
     </div>
   </div>
 </section>
 
-<!-- OWNER NOTIFICATION -->
-<section class="owner">
-  <div class="owner-inner">
-    <h2 class="section-title">Что видите вы</h2>
-    <p class="section-sub">Каждая новая запись — мгновенное уведомление. Вы не пропустите ничего.</p>
-    <div class="notif-card">
-      <div class="notif-header">
-        <div class="notif-dot"></div>
-        <div class="notif-title">Новая запись — КЭП</div>
-        <div class="notif-time">03:47</div>
+<!-- SERVICES -->
+<section class="sec-pad">
+  <div class="services-wrap">
+    <h2 class="sec-title">Услуги КЭП в системе</h2>
+    <p class="sec-sub">Бот знает все ваши цены и автоматически предлагает нужное</p>
+    <div class="svc-grid">
+      <div class="svc-card">
+        <div class="svc-emoji">✂️</div>
+        <div class="svc-name">Стрижка классика</div>
+        <div class="svc-price">от 1 500 ₽</div>
+        <div class="svc-time">45–60 мин</div>
       </div>
-      <div class="notif-body">
-        ✂️ <strong>Алексей М.</strong><br>
-        Услуга: Стрижка + борода<br>
-        Мастер: <strong>Иван</strong><br>
-        Дата: завтра, <strong>14:00</strong><br>
-        Телефон: +7 916 ••• ••-12
+      <div class="svc-card">
+        <div class="svc-emoji">✂️</div>
+        <div class="svc-name">Стрижка + укладка</div>
+        <div class="svc-price">от 2 000 ₽</div>
+        <div class="svc-time">60–75 мин</div>
       </div>
-      <div class="notif-footer">Записался сам в 03:47 — пока вы спали. Бот всё сделал.</div>
+      <div class="svc-card">
+        <div class="svc-emoji">🪒</div>
+        <div class="svc-name">Борода</div>
+        <div class="svc-price">от 800 ₽</div>
+        <div class="svc-time">30–45 мин</div>
+      </div>
+      <div class="svc-card">
+        <div class="svc-emoji">👑</div>
+        <div class="svc-name">Комплекс</div>
+        <div class="svc-price">от 2 200 ₽</div>
+        <div class="svc-time">90 мин</div>
+      </div>
+      <div class="svc-card">
+        <div class="svc-emoji">🔪</div>
+        <div class="svc-name">Бритьё опасной бритвой</div>
+        <div class="svc-price">от 1 200 ₽</div>
+        <div class="svc-time">45 мин</div>
+      </div>
+      <div class="svc-card">
+        <div class="svc-emoji">🧴</div>
+        <div class="svc-name">Детская стрижка</div>
+        <div class="svc-price">от 1 000 ₽</div>
+        <div class="svc-time">30–40 мин</div>
+      </div>
     </div>
-    <p style="color:var(--muted);font-size:15px;max-width:500px;margin:0 auto">
-      За ночь так записываются 2–4 клиента которые раньше просто не доходили до звонка.
-    </p>
+    <p style="text-align:center;color:var(--muted);font-size:14px">Бот настраивается под ваш реальный прайс — любые услуги, мастера, акции</p>
   </div>
 </section>
 
-<!-- ROI CALCULATOR -->
-<section class="roi" id="roi">
-  <div class="roi-inner">
-    <h2 class="section-title">Посчитайте выгоду для КЭП</h2>
-    <p class="section-sub">Сколько дополнительно принесёт система автоматизации</p>
-    <div class="roi-card">
-      <div class="roi-row">
-        <div class="roi-label">
-          <span>Клиентов в базе</span>
-          <span class="roi-val" id="v-clients">200</span>
-        </div>
-        <input type="range" min="50" max="1000" value="200" step="10" oninput="calc()" id="r-clients">
-      </div>
-      <div class="roi-row">
-        <div class="roi-label">
-          <span>Средний чек, ₽</span>
-          <span class="roi-val" id="v-check">1500</span>
-        </div>
-        <input type="range" min="500" max="5000" value="1500" step="100" oninput="calc()" id="r-check">
-      </div>
-      <div class="roi-row">
-        <div class="roi-label">
-          <span>% спящих клиентов</span>
-          <span class="roi-val" id="v-sleep">30%</span>
-        </div>
-        <input type="range" min="10" max="70" value="30" step="5" oninput="calc()" id="r-sleep">
-      </div>
-      <div class="roi-divider"></div>
-      <div class="roi-result">
-        <div class="roi-box">
-          <div class="roi-box-num" id="res-visits">+18</div>
-          <div class="roi-box-lbl">Доп. визитов в месяц</div>
-        </div>
-        <div class="roi-box">
-          <div class="roi-box-num" id="res-money">+27 000 ₽</div>
-          <div class="roi-box-lbl">Доп. выручка в месяц</div>
-        </div>
-        <div class="roi-box">
-          <div class="roi-box-num" id="res-year">+324 000 ₽</div>
-          <div class="roi-box-lbl">Потенциал за год</div>
-        </div>
-        <div class="roi-box">
-          <div class="roi-box-num" id="res-payback">2 мес</div>
-          <div class="roi-box-lbl">Окупаемость (30к пакет)</div>
-        </div>
-      </div>
-      <p class="roi-disclaimer">Консервативный расчёт: 30% реактивация спящей базы + 20% снижение неявок</p>
+<!-- ROI -->
+<section class="features-bg sec-pad" id="roi">
+  <h2 class="sec-title">Посчитайте выгоду для КЭП</h2>
+  <p class="sec-sub">Реалистичный расчёт на основе средних показателей барбершопов</p>
+  <div class="roi-card">
+    <div class="roi-row">
+      <div class="roi-lbl"><span>Клиентов в базе</span><span id="vC">200</span></div>
+      <input type="range" id="rC" min="50" max="800" value="200" step="10" oninput="calc()">
     </div>
+    <div class="roi-row">
+      <div class="roi-lbl"><span>Средний чек, ₽</span><span id="vP">1 800 ₽</span></div>
+      <input type="range" id="rP" min="800" max="4000" value="1800" step="100" oninput="calc()">
+    </div>
+    <div class="roi-row">
+      <div class="roi-lbl"><span>% «спящих» клиентов</span><span id="vS">30%</span></div>
+      <input type="range" id="rS" min="10" max="60" value="30" step="5" oninput="calc()">
+    </div>
+    <div class="roi-div"></div>
+    <div class="roi-res">
+      <div class="roi-box"><div class="roi-n" id="rN1">+19</div><div class="roi-l">Доп. визитов/мес</div></div>
+      <div class="roi-box"><div class="roi-n" id="rN2">+34 200 ₽</div><div class="roi-l">Доп. выручка/мес</div></div>
+      <div class="roi-box"><div class="roi-n" id="rN3">+410 400 ₽</div><div class="roi-l">Потенциал за год</div></div>
+      <div class="roi-box"><div class="roi-n" id="rN4">1 мес</div><div class="roi-l">Окупаемость</div></div>
+    </div>
+    <p class="roi-note">Расчёт: 12% реактивация базы + снижение неявок на 30% + новые записи 24/7</p>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="cta">
-  <div class="cta-inner">
-    <h2>Готово за <span>5–7 дней</span>.<br>Первый месяц покажет.</h2>
-    <p>Нажмите кнопку — попробуйте живой бот прямо сейчас. Это займёт 2 минуты.</p>
-    <div class="cta-btns">
-      <a href="https://t.me/zeldetaildemobot" target="_blank" class="btn-tg">
-        🤖 Попробовать живой бот в Telegram
-      </a>
-      <p class="cta-contact">
-        Вопросы и расчёт именно для КЭП:<br>
-        <a href="https://t.me/tridavy2000">@tridavy2000</a> ·
-        <a href="mailto:tridavy2000@gmail.com">tridavy2000@gmail.com</a>
-      </p>
-    </div>
+<section class="cta-wrap">
+  <h2 class="cta-h">Запустить для <span>КЭП</span><br>за 5–7 дней</h2>
+  <p class="cta-sub">Попробуйте живой бот — убедитесь сами как это работает.</p>
+  <div>
+    <a href="https://t.me/zeldetaildemobot" target="_blank" class="btn-tg">🤖 Попробовать в Telegram</a>
   </div>
+  <p class="contact-line">
+    Расчёт и вопросы именно для КЭП:<br>
+    <a href="https://t.me/tridavy2000">@tridavy2000</a> · <a href="mailto:tridavy2000@gmail.com">tridavy2000@gmail.com</a>
+  </p>
 </section>
 
 <footer>
-  <div class="logo">ДАНИЛ · AI АВТОМАТИЗАЦИЯ</div>
-  <p>Персональное демо для КЭП Барбершоп · Арбат</p>
+  <div class="fl">ДАНИЛ · AI АВТОМАТИЗАЦИЯ</div>
+  <p>Персональное демо · КЭП Барбершоп · Арбат</p>
 </footer>
 
 <script>
-// ── CHAT ANIMATION ──────────────────────────────────────────────
-const chat = document.getElementById('chat');
-const sequence = [
-  { type:'bot', delay:800,  html:'Привет! 👋 Хочешь записаться в <strong>КЭП</strong>?' },
-  { type:'user',delay:2000, html:'Да, на стрижку с бородой' },
-  { type:'typing',delay:2600},
-  { type:'bot', delay:3200, html:'Выбери мастера:', btns:['✂️ Иван','🪒 Артём','✨ Максим'] },
-  { type:'user',delay:5000, html:'Иван' },
-  { type:'typing',delay:5600},
-  { type:'bot', delay:6200, html:'<strong>Иван</strong> — свободное время на завтра:', btns:['11:00','14:00','17:00'] },
-  { type:'user',delay:8000, html:'14:00' },
-  { type:'typing',delay:8600},
-  { type:'bot', delay:9400, html:'✅ <strong>Записал!</strong><br>Иван · завтра 14:00<br>Напомню тебе утром 🔔' },
-];
-
-let step = 0;
-function nextMsg() {
-  if (step >= sequence.length) {
-    setTimeout(() => { chat.innerHTML = ''; step = 0; setTimeout(nextMsg, 1000); }, 4000);
-    return;
-  }
-  const s = sequence[step++];
-  setTimeout(() => {
-    // remove typing indicator
-    const typing = chat.querySelector('.typing');
-    if (typing && s.type !== 'typing') typing.remove();
-
-    if (s.type === 'typing') {
-      const t = document.createElement('div');
-      t.className = 'typing';
-      t.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-      chat.appendChild(t);
-      requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
-    } else {
-      const m = document.createElement('div');
-      m.className = `msg ${s.type}`;
-      let inner = s.html;
-      if (s.btns) {
-        inner += '<div class="msg-btns">' + s.btns.map(b => `<div class="msg-btn">${b}</div>`).join('') + '</div>';
-      }
-      m.innerHTML = inner;
-      chat.appendChild(m);
-      requestAnimationFrame(() => { requestAnimationFrame(() => { m.classList.add('show'); }); });
-    }
-    chat.scrollTop = chat.scrollHeight;
-    nextMsg();
-  }, s.delay - (sequence[step - 1 > 0 ? step - 2 : 0]?.delay || 0));
+// ── NOW TIME ──────────────────────────────────────────────────
+function nowTime(){
+  const d=new Date();
+  return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')
 }
 
-// run with absolute delays
-let startTime = null;
-function runSeq(ts) {
-  if (!startTime) startTime = ts;
-  const elapsed = ts - startTime;
-  while (step < sequence.length && sequence[step].delay <= elapsed) {
-    const s = sequence[step++];
-    const typing = chat.querySelector('.typing');
-    if (typing && s.type !== 'typing') typing.remove();
-    if (s.type === 'typing') {
-      const t = document.createElement('div');
-      t.className = 'typing';
-      t.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
-      chat.appendChild(t);
-      requestAnimationFrame(() => t.classList.add('show'));
-    } else {
-      const m = document.createElement('div');
-      m.className = `msg ${s.type}`;
-      let inner = s.html;
-      if (s.btns) inner += '<div class="msg-btns">' + s.btns.map(b=>`<div class="msg-btn">${b}</div>`).join('') + '</div>';
-      m.innerHTML = inner;
-      chat.appendChild(m);
-      requestAnimationFrame(() => m.classList.add('show'));
-    }
-    chat.scrollTop = chat.scrollHeight;
+// ── CHAT STATE MACHINE ────────────────────────────────────────
+const msgs = document.getElementById('wmsgs');
+let botTyping = null;
+let selectedService = '';
+let selectedMaster  = '';
+
+function getTime(){ return `<div class="wm-time">${nowTime()}</div>`; }
+
+function addMsg(type, html, btns=null, id=null){
+  const d = document.createElement('div');
+  d.className = `wm ${type}`;
+  if(id) d.id = id;
+  let inner = html;
+  if(btns){
+    inner += '<div class="wm-btns">' + btns.map((b,i)=>`<div class="wm-btn" onclick="btnClick(this,'${escQ(b)}')">${b}</div>`).join('') + '</div>';
   }
-  if (step < sequence.length) {
-    requestAnimationFrame(runSeq);
-  } else {
-    setTimeout(() => { chat.innerHTML = ''; step = 0; startTime = null; requestAnimationFrame(runSeq); }, 5000);
-  }
+  inner += getTime();
+  d.innerHTML = inner;
+  msgs.appendChild(d);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('show')));
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
 }
-requestAnimationFrame(runSeq);
 
-// ── ROI CALCULATOR ──────────────────────────────────────────────
-function fmt(n) { return n.toLocaleString('ru-RU'); }
-function calc() {
-  const clients = +document.getElementById('r-clients').value;
-  const check   = +document.getElementById('r-check').value;
-  const sleep   = +document.getElementById('r-sleep').value;
+function escQ(s){ return s.replace(/'/g,"\\'"); }
 
-  document.getElementById('v-clients').textContent = clients;
-  document.getElementById('v-check').textContent   = fmt(check) + ' ₽';
-  document.getElementById('v-sleep').textContent   = sleep + '%';
+function showTyping(){
+  const t=document.createElement('div');
+  t.className='typing-ind';
+  t.innerHTML='<span class="td"></span><span class="td"></span><span class="td"></span>';
+  msgs.appendChild(t);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
+  msgs.scrollTop=msgs.scrollHeight;
+  botTyping=t;
+  return t;
+}
 
-  // update range gradient
-  ['r-clients','r-check','r-sleep'].forEach(id => {
-    const el = document.getElementById(id);
-    const pct = (el.value - el.min) / (el.max - el.min) * 100;
-    el.style.setProperty('--val', pct + '%');
-    el.style.background = `linear-gradient(90deg,var(--cyan) ${pct}%,rgba(0,212,255,0.15) ${pct}%)`;
+function removeTyping(){
+  if(botTyping){botTyping.remove();botTyping=null;}
+}
+
+function disableAllBtns(){
+  msgs.querySelectorAll('.wm-btn').forEach(b=>b.classList.add('disabled'));
+}
+
+// ── INITIAL WELCOME ────────────────────────────────────────────
+function welcome(){
+  msgs.innerHTML='';
+  setTimeout(()=>{
+    addMsg('bot','👋 Привет! Я <strong>AI-помощник КЭП</strong>.<br>Чем могу помочь?',[
+      '✂️ Записаться',
+      '💬 Задать вопрос',
+      '💰 Цены и услуги',
+      '🎁 Программа лояльности'
+    ]);
+  },400);
+}
+
+// ── BUTTON CLICK ROUTER ────────────────────────────────────────
+function btnClick(el, val){
+  disableAllBtns();
+  el.classList.add('picked');
+  setTimeout(()=>addMsg('user', val), 200);
+
+  const v = val;
+  if(v.includes('Записаться'))      setTimeout(()=>stepServices(),900);
+  else if(v.includes('вопрос'))     setTimeout(()=>stepAI(),900);
+  else if(v.includes('Цены'))       setTimeout(()=>stepPrices(),900);
+  else if(v.includes('лояльност'))  setTimeout(()=>stepLoyalty(),900);
+  else if(v.includes('Стрижка классика')) { selectedService='Стрижка классика (от 1 500 ₽)'; setTimeout(()=>stepMasters(),900); }
+  else if(v.includes('Стрижка + укладка')) { selectedService='Стрижка + укладка (от 2 000 ₽)'; setTimeout(()=>stepMasters(),900); }
+  else if(v.includes('Борода'))     { selectedService='Борода (от 800 ₽)'; setTimeout(()=>stepMasters(),900); }
+  else if(v.includes('Комплекс'))   { selectedService='Комплекс (от 2 200 ₽)'; setTimeout(()=>stepMasters(),900); }
+  else if(v.includes('Бритьё'))     { selectedService='Бритьё опасной бритвой (от 1 200 ₽)'; setTimeout(()=>stepMasters(),900); }
+  else if(v.includes('Иван'))       { selectedMaster='Иван'; setTimeout(()=>stepTime(),900); }
+  else if(v.includes('Артём'))      { selectedMaster='Артём'; setTimeout(()=>stepTime(),900); }
+  else if(v.includes('Максим'))     { selectedMaster='Максим'; setTimeout(()=>stepTime(),900); }
+  else if(v.includes('занято'))     setTimeout(()=>stepTimeBusy(),600);
+  else if(/^\d{2}:\d{2}$/.test(v.trim())) setTimeout(()=>stepConfirm(v.trim()),900);
+  else if(v.includes('Назад') || v.includes('меню')) setTimeout(()=>welcome(),600);
+  else if(v.includes('Записаться на')) setTimeout(()=>stepServices(),900);
+  else if(v.includes('Сколько стоит')) setTimeout(()=>stepAIPrice(),900);
+  else if(v.includes('Где вы')) setTimeout(()=>stepAIAddr(),900);
+  else if(v.includes('Как записаться')) setTimeout(()=>stepAIBooking(),900);
+}
+
+function stepServices(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot','Выбери услугу:',[
+      '✂️ Стрижка классика',
+      '✂️ Стрижка + укладка',
+      '🪒 Борода',
+      '👑 Комплекс (стрижка + борода)',
+      '🔪 Бритьё опасной бритвой'
+    ]);
+  },900);
+}
+
+function stepMasters(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',`Отлично! <strong>${selectedService}</strong><br><br>Выбери мастера:`,[
+      '💈 Иван — мастер барбер (5 лет)',
+      '💈 Артём — старший мастер (8 лет)',
+      '💈 Максим — мастер барбер (3 года)'
+    ]);
+  },1000);
+}
+
+function stepTime(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',`<strong>${selectedMaster}</strong> — свободное время на завтра:`,[
+      '🟢 10:00','🔴 12:00 — занято','🟢 14:00','🟢 16:00','🟢 18:00'
+    ]);
+  },1000);
+}
+
+function stepTimeBusy(){
+  addMsg('bot','❌ Это время уже занято. Выбери другой слот 👆');
+}
+
+function stepConfirm(time){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',
+      `✅ <strong>Готово! Записал тебя.</strong><br><br>`+
+      `✂️ Услуга: <strong>${selectedService}</strong><br>`+
+      `💈 Мастер: <strong>${selectedMaster}</strong><br>`+
+      `📅 Завтра в <strong>${time}</strong><br><br>`+
+      `🔔 Напомню тебе завтра утром.`,
+      ['← В главное меню']
+    );
+    showOwnerNotif(time);
+  },1100);
+}
+
+function showOwnerNotif(time){
+  const now = nowTime();
+  document.getElementById('opTime').textContent = now;
+  document.getElementById('opBody').innerHTML =
+    `✂️ <b>Алексей М.</b><br>`+
+    `Услуга: <b>${selectedService}</b><br>`+
+    `Мастер: <b>${selectedMaster}</b><br>`+
+    `Время: <b>завтра ${time}</b><br>`+
+    `<span style="color:var(--muted)">+7 916 ••• ••-12</span>`;
+  const p = document.getElementById('ownerPopup');
+  p.classList.add('show');
+  setTimeout(()=>p.classList.remove('show'), 8000);
+}
+
+function stepAI(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot','🤖 <strong>AI-ассистент</strong> — спрашивай всё что угодно:<br><br><i>Например:</i>',[
+      '💰 Сколько стоит стрижка?',
+      '📍 Где вы находитесь?',
+      '📅 Как записаться?',
+      '← В главное меню'
+    ]);
+  },900);
+}
+
+function stepAIPrice(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',
+      `🤖 <strong>Цены на стрижки в КЭП:</strong><br><br>`+
+      `✂️ Стрижка классика — <strong>от 1 500 ₽</strong><br>`+
+      `✂️ Стрижка + укладка — <strong>от 2 000 ₽</strong><br>`+
+      `🪒 Борода — <strong>от 800 ₽</strong><br>`+
+      `👑 Комплекс — <strong>от 2 200 ₽</strong><br>`+
+      `🔪 Бритьё — <strong>от 1 200 ₽</strong>`,
+      ['✂️ Записаться','← В главное меню']
+    );
+  },900);
+}
+
+function stepAIAddr(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',
+      `🤖 <strong>КЭП Барбершоп:</strong><br><br>`+
+      `📍 Москва, Арбат<br>`+
+      `🕐 Ежедневно с 10:00 до 21:00<br><br>`+
+      `<i>Рядом с метро Арбатская</i>`,
+      ['✂️ Записаться','← В главное меню']
+    );
+  },900);
+}
+
+function stepAIBooking(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',
+      `🤖 Всё просто! Нажми кнопку ниже — выберешь услугу, мастера и время.<br><br>`+
+      `Запись занимает <strong>30 секунд</strong> 👇`,
+      ['✂️ Записаться','← В главное меню']
+    );
+  },900);
+}
+
+function stepPrices(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',
+      `💰 <strong>Прайс КЭП Барбершоп:</strong><br><br>`+
+      `✂️ Стрижка классика — <strong>1 500 – 2 000 ₽</strong><br>`+
+      `✂️ Стрижка + укладка — <strong>2 000 – 2 500 ₽</strong><br>`+
+      `🪒 Борода — <strong>800 – 1 500 ₽</strong><br>`+
+      `👑 Комплекс — <strong>2 200 – 3 000 ₽</strong><br>`+
+      `🔪 Бритьё опасной бритвой — <strong>1 200 – 1 800 ₽</strong><br>`+
+      `🧴 Детская стрижка — <strong>1 000 ₽</strong><br><br>`+
+      `<i>Точная цена зависит от длины и сложности</i>`,
+      ['✂️ Записаться','← В главное меню']
+    );
+  },900);
+}
+
+function stepLoyalty(){
+  showTyping();
+  setTimeout(()=>{
+    removeTyping();
+    addMsg('bot',
+      `🎁 <strong>Твоя карта лояльности:</strong><br><br>`+
+      `<strong>Алексей М.</strong><br>`+
+      `Визитов: ████░ <strong>4 из 5</strong><br><br>`+
+      `До кешбэка <strong>500 ₽</strong> — всего 1 визит!<br><br>`+
+      `<i>При каждом визите +1 балл. 5-й визит = скидка 15% или кешбэк.</i>`,
+      ['✂️ Записаться','← В главное меню']
+    );
+  },900);
+}
+
+// Start
+welcome();
+
+// ── ROI CALCULATOR ─────────────────────────────────────────────
+function fmt(n){ return n.toLocaleString('ru-RU'); }
+function calc(){
+  const c=+document.getElementById('rC').value;
+  const p=+document.getElementById('rP').value;
+  const s=+document.getElementById('rS').value;
+  document.getElementById('vC').textContent=c;
+  document.getElementById('vP').textContent=fmt(p)+' ₽';
+  document.getElementById('vS').textContent=s+'%';
+  ['rC','rP','rS'].forEach(id=>{
+    const el=document.getElementById(id);
+    const pct=(el.value-el.min)/(el.max-el.min)*100;
+    el.style.background=`linear-gradient(90deg,var(--cyan) ${pct}%,rgba(0,212,255,.12) ${pct}%)`;
   });
-
-  const sleeping    = Math.round(clients * sleep / 100);
-  const reactivated = Math.round(sleeping * 0.12);   // 12% реактивация
-  const noshow_save = Math.round(clients * 0.05 * 0.3); // 5% неявки * 30% снижение
-  const visits      = reactivated + noshow_save + 3;  // +3 из новых за счёт 24/7
-  const money       = visits * check;
-  const year        = money * 12;
-  const payback     = Math.ceil(30000 / money);
-
-  document.getElementById('res-visits').textContent = '+' + visits;
-  document.getElementById('res-money').textContent  = '+' + fmt(money) + ' ₽';
-  document.getElementById('res-year').textContent   = '+' + fmt(year) + ' ₽';
-  document.getElementById('res-payback').textContent = payback <= 1 ? '< 1 мес' : payback + ' мес';
+  const sleep=Math.round(c*s/100);
+  const react=Math.round(sleep*.12);
+  const noshow=Math.round(c*.05*.3);
+  const extra=3;
+  const visits=react+noshow+extra;
+  const money=visits*p;
+  const year=money*12;
+  const pb=Math.max(1,Math.ceil(30000/money));
+  document.getElementById('rN1').textContent='+'+visits;
+  document.getElementById('rN2').textContent='+'+fmt(money)+' ₽';
+  document.getElementById('rN3').textContent='+'+fmt(year)+' ₽';
+  document.getElementById('rN4').textContent=pb<=1?'< 1 мес':pb+' мес';
 }
 calc();
 </script>
