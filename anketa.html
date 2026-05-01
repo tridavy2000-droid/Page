@@ -620,22 +620,8 @@ function goalBullets(goal){
 function submit(){
   saveNote(QS[cur].id);
   prog(QS.length);
-  const res=analyzePackage(D);
-  const w=PKGS[res.winner];
-  const bulletArr=goalBullets(D.goal).split('\n').map(b=>b.replace(/^• /,''));
-  document.getElementById('winnerCard').innerHTML=`
-    <div class="wd-label">Подобрали под ваши ответы</div>
-    <div class="wd-name">${w.name}</div>
-    <div class="wd-meta">${w.price} · ${w.days}</div>
-    <div class="wd-sep"></div>
-    <div class="wd-bullets">
-      ${bulletArr.map(b=>`<div class="wd-bullet"><span class="wd-arr">→</span><span>${b}</span></div>`).join('')}
-    </div>`;
   document.getElementById('sQ').style.display='none';
-  document.getElementById('sR').style.display='flex';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.getElementById('winnerCard').classList.add('in');
-  }));
+  showThanks();
 }
 
 function showThanks(){
@@ -686,10 +672,7 @@ ${tmpl}
     fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({answers:D,notes,pcts:res.pcts,winner:res.winner,ts:new Date().toISOString()})}).catch(()=>{});
   }
-  setTimeout(()=>{
-    document.getElementById('sR').style.display='none';
-    document.getElementById('sT').style.display='flex';
-  },350);
+  document.getElementById('sT').style.display='flex';
 }
 
 document.addEventListener('keydown',e=>{
