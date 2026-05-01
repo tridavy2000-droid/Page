@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КЭП — AI-система автозаписи</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#000810;
+    --bg2:#000f1e;
+    --cyan:#00d4ff;
+    --cyan2:#00a8cc;
+    --green:#00ff88;
+    --border:rgba(0,212,255,0.25);
+    --glow:0 0 30px rgba(0,212,255,0.15);
+    --text:#e0f4ff;
+    --muted:rgba(224,244,255,0.5);
+  }
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:16px;overflow-x:hidden}
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--cyan2);border-radius:2px}
+
+  /* ── GRID BG ── */
+  body::before{
+    content:'';position:fixed;inset:0;
+    background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+    background-size:50px 50px;pointer-events:none;z-index:0
+  }
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    padding:16px 40px;display:flex;align-items:center;justify-content:space-between;
+    background:rgba(0,8,16,0.85);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border)
+  }
+  .nav-logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan);letter-spacing:3px}
+  .nav-badge{
+    background:rgba(0,212,255,0.1);border:1px solid var(--border);
+    padding:6px 16px;border-radius:20px;font-size:13px;color:var(--muted)
+  }
+  .nav-badge span{color:var(--cyan)}
+
+  /* ── SECTIONS ── */
+  section{position:relative;z-index:1}
+
+  /* ── HERO ── */
+  .hero{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:100px 40px 60px;text-align:center
+  }
+  .hero-inner{max-width:800px}
+  .hero-tag{
+    display:inline-block;background:rgba(0,212,255,0.08);border:1px solid var(--border);
+    padding:8px 20px;border-radius:20px;font-size:13px;color:var(--cyan);
+    letter-spacing:2px;text-transform:uppercase;margin-bottom:32px
+  }
+  .hero h1{
+    font-family:'Orbitron',sans-serif;font-size:clamp(36px,6vw,72px);
+    font-weight:900;line-height:1.1;margin-bottom:24px;
+    background:linear-gradient(135deg,#fff 0%,var(--cyan) 50%,#fff 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text
+  }
+  .hero-sub{font-size:clamp(16px,2.5vw,22px);color:var(--muted);max-width:560px;margin:0 auto 48px;line-height:1.6}
+  .hero-sub strong{color:var(--text)}
+
+  .btn-main{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--cyan);color:#000;
+    font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;
+    letter-spacing:1px;padding:18px 40px;border-radius:4px;
+    text-decoration:none;transition:.3s;
+    box-shadow:0 0 40px rgba(0,212,255,0.4)
+  }
+  .btn-main:hover{background:#fff;box-shadow:0 0 60px rgba(0,212,255,0.6);transform:translateY(-2px)}
+  .btn-ghost{
+    display:inline-flex;align-items:center;gap:10px;
+    border:1px solid var(--border);color:var(--cyan);
+    font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;
+    padding:16px 32px;border-radius:4px;text-decoration:none;transition:.3s;margin-left:16px
+  }
+  .btn-ghost:hover{background:rgba(0,212,255,0.08);border-color:var(--cyan)}
+  .hero-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+
+  .hero-stats{
+    display:flex;gap:40px;justify-content:center;margin-top:64px;flex-wrap:wrap
+  }
+  .stat{text-align:center}
+  .stat-num{font-family:'Orbitron',sans-serif;font-size:32px;font-weight:900;color:var(--cyan)}
+  .stat-lbl{font-size:13px;color:var(--muted);margin-top:4px}
+
+  /* ── DEMO CHAT ── */
+  .demo{padding:80px 40px;background:var(--bg2)}
+  .demo-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+  .demo-text h2{font-family:'Orbitron',sans-serif;font-size:clamp(24px,3vw,36px);font-weight:700;margin-bottom:20px;color:var(--cyan)}
+  .demo-text p{color:var(--muted);line-height:1.7;margin-bottom:28px;font-size:16px}
+  .feature-list{list-style:none;display:flex;flex-direction:column;gap:14px}
+  .feature-list li{display:flex;align-items:center;gap:12px;font-size:15px;font-weight:500}
+  .feature-list li::before{
+    content:'';display:block;width:8px;height:8px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 8px var(--cyan);flex-shrink:0
+  }
+
+  /* ── PHONE MOCKUP ── */
+  .phone{
+    width:300px;margin:0 auto;
+    background:#0a1628;border:2px solid var(--border);border-radius:32px;
+    padding:20px 16px;box-shadow:var(--glow),0 40px 80px rgba(0,0,0,0.6);
+    position:relative;overflow:hidden
+  }
+  .phone::before{
+    content:'';display:block;width:80px;height:6px;background:var(--border);
+    border-radius:3px;margin:0 auto 20px
+  }
+  .phone-header{
+    display:flex;align-items:center;gap:10px;padding-bottom:16px;
+    border-bottom:1px solid var(--border);margin-bottom:16px
+  }
+  .phone-ava{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+    display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0
+  }
+  .phone-name{font-weight:700;font-size:14px}
+  .phone-status{font-size:11px;color:var(--green);margin-top:2px}
+  .chat-messages{display:flex;flex-direction:column;gap:10px;min-height:320px}
+  .msg{max-width:85%;padding:10px 14px;border-radius:16px;font-size:13px;line-height:1.5;opacity:0;transition:opacity .4s,transform .4s;transform:translateY(8px)}
+  .msg.show{opacity:1;transform:translateY(0)}
+  .msg.bot{background:rgba(0,212,255,0.12);border:1px solid rgba(0,212,255,0.2);align-self:flex-start;border-bottom-left-radius:4px}
+  .msg.user{background:rgba(0,212,255,0.25);align-self:flex-end;border-bottom-right-radius:4px}
+  .msg.bot strong{color:var(--cyan)}
+  .msg-btns{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  .msg-btn{
+    background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);
+    color:var(--cyan);font-size:12px;padding:6px 10px;border-radius:8px;cursor:pointer;
+    transition:.2s;text-align:center
+  }
+  .msg-btn:hover,.msg-btn.active{background:rgba(0,212,255,0.25)}
+  .typing{display:flex;gap:4px;align-items:center;padding:10px 14px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);border-radius:16px;border-bottom-left-radius:4px;align-self:flex-start;opacity:0;transition:.3s}
+  .typing.show{opacity:1}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:bounce 1.2s infinite}
+  .dot:nth-child(2){animation-delay:.2s}
+  .dot:nth-child(3){animation-delay:.4s}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+
+  /* ── FEATURES ── */
+  .features{padding:80px 40px}
+  .features-inner{max-width:1100px;margin:0 auto}
+  .section-title{font-family:'Orbitron',sans-serif;font-size:clamp(22px,3vw,32px);font-weight:700;text-align:center;margin-bottom:12px}
+  .section-sub{text-align:center;color:var(--muted);margin-bottom:56px;font-size:16px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+  .card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:8px;
+    padding:28px 24px;transition:.3s;position:relative;overflow:hidden
+  }
+  .card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+    opacity:0;transition:.3s
+  }
+  .card:hover{border-color:rgba(0,212,255,0.5);box-shadow:var(--glow);transform:translateY(-4px)}
+  .card:hover::before{opacity:1}
+  .card-icon{font-size:32px;margin-bottom:16px}
+  .card h3{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px;color:var(--cyan);letter-spacing:1px}
+  .card p{color:var(--muted);font-size:14px;line-height:1.6}
+  .card-result{margin-top:16px;font-size:13px;font-weight:600;color:var(--green)}
+
+  /* ── OWNER BLOCK ── */
+  .owner{padding:80px 40px;background:var(--bg2)}
+  .owner-inner{max-width:900px;margin:0 auto;text-align:center}
+  .notif-card{
+    background:var(--bg);border:1px solid var(--border);border-radius:12px;
+    padding:24px 28px;margin:40px auto;max-width:420px;text-align:left;
+    box-shadow:var(--glow);animation:pulse-glow 3s ease-in-out infinite
+  }
+  @keyframes pulse-glow{0%,100%{box-shadow:0 0 20px rgba(0,212,255,0.1)}50%{box-shadow:0 0 40px rgba(0,212,255,0.25)}}
+  .notif-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+  .notif-dot{width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+  .notif-title{font-weight:700;font-size:15px}
+  .notif-time{font-size:12px;color:var(--muted);margin-left:auto}
+  .notif-body{font-size:14px;line-height:1.8;color:var(--text)}
+  .notif-body strong{color:var(--cyan)}
+  .notif-footer{margin-top:12px;font-size:12px;color:var(--muted);font-style:italic}
+
+  /* ── ROI CALCULATOR ── */
+  .roi{padding:80px 40px}
+  .roi-inner{max-width:700px;margin:0 auto}
+  .roi-card{
+    background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+    padding:40px;box-shadow:var(--glow)
+  }
+  .roi-row{margin-bottom:28px}
+  .roi-label{display:flex;justify-content:space-between;margin-bottom:10px;font-size:15px;font-weight:600}
+  .roi-val{color:var(--cyan);font-family:'Orbitron',sans-serif}
+  input[type=range]{
+    width:100%;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;
+    background:linear-gradient(90deg,var(--cyan) var(--val,50%),rgba(0,212,255,0.15) var(--val,50%));
+    cursor:pointer
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 8px var(--cyan);cursor:pointer
+  }
+  .roi-divider{height:1px;background:var(--border);margin:28px 0}
+  .roi-result{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .roi-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:20px;text-align:center}
+  .roi-box-num{font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:var(--green)}
+  .roi-box-lbl{font-size:12px;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+  .roi-disclaimer{text-align:center;margin-top:20px;font-size:12px;color:var(--muted)}
+
+  /* ── CTA ── */
+  .cta{padding:100px 40px;text-align:center}
+  .cta-inner{max-width:640px;margin:0 auto}
+  .cta h2{font-family:'Orbitron',sans-serif;font-size:clamp(24px,4vw,42px);font-weight:900;margin-bottom:20px}
+  .cta h2 span{color:var(--cyan)}
+  .cta p{color:var(--muted);font-size:18px;margin-bottom:48px;line-height:1.6}
+  .cta-btns{display:flex;flex-direction:column;gap:16px;align-items:center}
+  .btn-tg{
+    display:inline-flex;align-items:center;gap:12px;
+    background:linear-gradient(135deg,var(--cyan),var(--cyan2));
+    color:#000;font-family:'Orbitron',sans-serif;font-size:15px;font-weight:700;
+    letter-spacing:1px;padding:20px 48px;border-radius:4px;text-decoration:none;
+    transition:.3s;box-shadow:0 0 50px rgba(0,212,255,0.5);width:100%;max-width:400px;justify-content:center
+  }
+  .btn-tg:hover{transform:translateY(-3px);box-shadow:0 0 70px rgba(0,212,255,0.7)}
+  .cta-contact{font-size:14px;color:var(--muted)}
+  .cta-contact a{color:var(--cyan);text-decoration:none}
+
+  /* ── FOOTER ── */
+  footer{
+    padding:32px 40px;border-top:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px
+  }
+  footer .logo{font-family:'Orbitron',sans-serif;font-size:14px;color:var(--cyan);letter-spacing:2px}
+  footer p{font-size:13px;color:var(--muted)}
+
+  @media(max-width:768px){
+    nav{padding:14px 20px}
+    .hero{padding:90px 20px 50px}
+    .demo-inner{grid-template-columns:1fr}
+    .phone{width:260px}
+    .features{padding:60px 20px}
+    .roi{padding:60px 20px}
+    .cta{padding:70px 20px}
+    footer{padding:24px 20px;flex-direction:column;text-align:center}
+    .btn-ghost{margin-left:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">КЭП</div>
+  <div class="nav-badge">Персональное демо · <span>AI-система</span></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">✂️ Барбершоп КЭП · Арбат</div>
+    <h1>Ваши клиенты<br>записываются<br>пока вы спите</h1>
+    <p class="hero-sub">
+      AI-бот принимает запись <strong>24/7</strong>, напоминает клиентам,<br>
+      возвращает тех кто давно не приходил — <strong>без участия администратора</strong>
+    </p>
+    <div class="hero-btns">
+      <a href="https://t.me/zeldetaildemobot" target="_blank" class="btn-main">
+        <span>▶</span> Попробовать живой бот
+      </a>
+      <a href="#roi" class="btn-ghost">Посчитать выгоду →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">24/7</div><div class="stat-lbl">Запись без телефона</div></div>
+      <div class="stat"><div class="stat-num">+12</div><div class="stat-lbl">Возвратов в месяц</div></div>
+      <div class="stat"><div class="stat-num">87%</div><div class="stat-lbl">Клиентов приходят с напоминанием</div></div>
+      <div class="stat"><div class="stat-num">5 дней</div><div class="stat-lbl">До запуска</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO CHAT -->
+<section class="demo">
+  <div class="demo-inner">
+    <div class="demo-text">
+      <h2>Вот как это<br>работает для КЭП</h2>
+      <p>Клиент пишет в Telegram в любое время — бот отвечает мгновенно, принимает запись, записывает в CRM и сразу уведомляет вас.</p>
+      <ul class="feature-list">
+        <li>Запись к конкретному мастеру с выбором времени</li>
+        <li>Автоматическое напоминание за 24 часа</li>
+        <li>Реактивация клиентов через 3–4 недели</li>
+        <li>Мгновенное уведомление владельцу</li>
+        <li>Программа лояльности и сбор отзывов</li>
+      </ul>
+    </div>
+    <div>
+      <div class="phone" id="phone">
+        <div class="phone-header">
+          <div class="phone-ava">✂️</div>
+          <div>
+            <div class="phone-name">КЭП Барбершоп</div>
+            <div class="phone-status">● онлайн</div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chat"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <h2 class="section-title">Что получает КЭП</h2>
+    <p class="section-sub">Полная система автоматизации — настраивается за 5–7 дней</p>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">📅</div>
+        <h3>Запись 24/7</h3>
+        <p>Клиент пишет в Telegram в любое время — бот мгновенно принимает запись с выбором мастера и времени.</p>
+        <div class="card-result">▲ +8–12 новых записей/мес</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏰</div>
+        <h3>Напоминания</h3>
+        <p>Автоматическое сообщение клиенту за 24 часа до визита. 87% приходят когда получают напоминание.</p>
+        <div class="card-result">▼ −30% отмен и неявок</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h3>Реактивация базы</h3>
+        <p>Раз в месяц бот пишет тем кто давно не приходил — с персональным предложением или просто напоминанием.</p>
+        <div class="card-result">▲ +10–15 возвратов/мес</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⭐</div>
+        <h3>Отзывы на Яндекс</h3>
+        <p>Через 3 часа после визита бот просит оставить отзыв — с прямой ссылкой. Без напоминания клиенты пишут редко.</p>
+        <div class="card-result">▲ +8–12 отзывов/мес</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OWNER NOTIFICATION -->
+<section class="owner">
+  <div class="owner-inner">
+    <h2 class="section-title">Что видите вы</h2>
+    <p class="section-sub">Каждая новая запись — мгновенное уведомление. Вы не пропустите ничего.</p>
+    <div class="notif-card">
+      <div class="notif-header">
+        <div class="notif-dot"></div>
+        <div class="notif-title">Новая запись — КЭП</div>
+        <div class="notif-time">03:47</div>
+      </div>
+      <div class="notif-body">
+        ✂️ <strong>Алексей М.</strong><br>
+        Услуга: Стрижка + борода<br>
+        Мастер: <strong>Иван</strong><br>
+        Дата: завтра, <strong>14:00</strong><br>
+        Телефон: +7 916 ••• ••-12
+      </div>
+      <div class="notif-footer">Записался сам в 03:47 — пока вы спали. Бот всё сделал.</div>
+    </div>
+    <p style="color:var(--muted);font-size:15px;max-width:500px;margin:0 auto">
+      За ночь так записываются 2–4 клиента которые раньше просто не доходили до звонка.
+    </p>
+  </div>
+</section>
+
+<!-- ROI CALCULATOR -->
+<section class="roi" id="roi">
+  <div class="roi-inner">
+    <h2 class="section-title">Посчитайте выгоду для КЭП</h2>
+    <p class="section-sub">Сколько дополнительно принесёт система автоматизации</p>
+    <div class="roi-card">
+      <div class="roi-row">
+        <div class="roi-label">
+          <span>Клиентов в базе</span>
+          <span class="roi-val" id="v-clients">200</span>
+        </div>
+        <input type="range" min="50" max="1000" value="200" step="10" oninput="calc()" id="r-clients">
+      </div>
+      <div class="roi-row">
+        <div class="roi-label">
+          <span>Средний чек, ₽</span>
+          <span class="roi-val" id="v-check">1500</span>
+        </div>
+        <input type="range" min="500" max="5000" value="1500" step="100" oninput="calc()" id="r-check">
+      </div>
+      <div class="roi-row">
+        <div class="roi-label">
+          <span>% спящих клиентов</span>
+          <span class="roi-val" id="v-sleep">30%</span>
+        </div>
+        <input type="range" min="10" max="70" value="30" step="5" oninput="calc()" id="r-sleep">
+      </div>
+      <div class="roi-divider"></div>
+      <div class="roi-result">
+        <div class="roi-box">
+          <div class="roi-box-num" id="res-visits">+18</div>
+          <div class="roi-box-lbl">Доп. визитов в месяц</div>
+        </div>
+        <div class="roi-box">
+          <div class="roi-box-num" id="res-money">+27 000 ₽</div>
+          <div class="roi-box-lbl">Доп. выручка в месяц</div>
+        </div>
+        <div class="roi-box">
+          <div class="roi-box-num" id="res-year">+324 000 ₽</div>
+          <div class="roi-box-lbl">Потенциал за год</div>
+        </div>
+        <div class="roi-box">
+          <div class="roi-box-num" id="res-payback">2 мес</div>
+          <div class="roi-box-lbl">Окупаемость (30к пакет)</div>
+        </div>
+      </div>
+      <p class="roi-disclaimer">Консервативный расчёт: 30% реактивация спящей базы + 20% снижение неявок</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="cta-inner">
+    <h2>Готово за <span>5–7 дней</span>.<br>Первый месяц покажет.</h2>
+    <p>Нажмите кнопку — попробуйте живой бот прямо сейчас. Это займёт 2 минуты.</p>
+    <div class="cta-btns">
+      <a href="https://t.me/zeldetaildemobot" target="_blank" class="btn-tg">
+        🤖 Попробовать живой бот в Telegram
+      </a>
+      <p class="cta-contact">
+        Вопросы и расчёт именно для КЭП:<br>
+        <a href="https://t.me/tridavy2000">@tridavy2000</a> ·
+        <a href="mailto:tridavy2000@gmail.com">tridavy2000@gmail.com</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">ДАНИЛ · AI АВТОМАТИЗАЦИЯ</div>
+  <p>Персональное демо для КЭП Барбершоп · Арбат</p>
+</footer>
+
+<script>
+// ── CHAT ANIMATION ──────────────────────────────────────────────
+const chat = document.getElementById('chat');
+const sequence = [
+  { type:'bot', delay:800,  html:'Привет! 👋 Хочешь записаться в <strong>КЭП</strong>?' },
+  { type:'user',delay:2000, html:'Да, на стрижку с бородой' },
+  { type:'typing',delay:2600},
+  { type:'bot', delay:3200, html:'Выбери мастера:', btns:['✂️ Иван','🪒 Артём','✨ Максим'] },
+  { type:'user',delay:5000, html:'Иван' },
+  { type:'typing',delay:5600},
+  { type:'bot', delay:6200, html:'<strong>Иван</strong> — свободное время на завтра:', btns:['11:00','14:00','17:00'] },
+  { type:'user',delay:8000, html:'14:00' },
+  { type:'typing',delay:8600},
+  { type:'bot', delay:9400, html:'✅ <strong>Записал!</strong><br>Иван · завтра 14:00<br>Напомню тебе утром 🔔' },
+];
+
+let step = 0;
+function nextMsg() {
+  if (step >= sequence.length) {
+    setTimeout(() => { chat.innerHTML = ''; step = 0; setTimeout(nextMsg, 1000); }, 4000);
+    return;
+  }
+  const s = sequence[step++];
+  setTimeout(() => {
+    // remove typing indicator
+    const typing = chat.querySelector('.typing');
+    if (typing && s.type !== 'typing') typing.remove();
+
+    if (s.type === 'typing') {
+      const t = document.createElement('div');
+      t.className = 'typing';
+      t.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+      chat.appendChild(t);
+      requestAnimationFrame(() => { requestAnimationFrame(() => { t.classList.add('show'); }); });
+    } else {
+      const m = document.createElement('div');
+      m.className = `msg ${s.type}`;
+      let inner = s.html;
+      if (s.btns) {
+        inner += '<div class="msg-btns">' + s.btns.map(b => `<div class="msg-btn">${b}</div>`).join('') + '</div>';
+      }
+      m.innerHTML = inner;
+      chat.appendChild(m);
+      requestAnimationFrame(() => { requestAnimationFrame(() => { m.classList.add('show'); }); });
+    }
+    chat.scrollTop = chat.scrollHeight;
+    nextMsg();
+  }, s.delay - (sequence[step - 1 > 0 ? step - 2 : 0]?.delay || 0));
+}
+
+// run with absolute delays
+let startTime = null;
+function runSeq(ts) {
+  if (!startTime) startTime = ts;
+  const elapsed = ts - startTime;
+  while (step < sequence.length && sequence[step].delay <= elapsed) {
+    const s = sequence[step++];
+    const typing = chat.querySelector('.typing');
+    if (typing && s.type !== 'typing') typing.remove();
+    if (s.type === 'typing') {
+      const t = document.createElement('div');
+      t.className = 'typing';
+      t.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+      chat.appendChild(t);
+      requestAnimationFrame(() => t.classList.add('show'));
+    } else {
+      const m = document.createElement('div');
+      m.className = `msg ${s.type}`;
+      let inner = s.html;
+      if (s.btns) inner += '<div class="msg-btns">' + s.btns.map(b=>`<div class="msg-btn">${b}</div>`).join('') + '</div>';
+      m.innerHTML = inner;
+      chat.appendChild(m);
+      requestAnimationFrame(() => m.classList.add('show'));
+    }
+    chat.scrollTop = chat.scrollHeight;
+  }
+  if (step < sequence.length) {
+    requestAnimationFrame(runSeq);
+  } else {
+    setTimeout(() => { chat.innerHTML = ''; step = 0; startTime = null; requestAnimationFrame(runSeq); }, 5000);
+  }
+}
+requestAnimationFrame(runSeq);
+
+// ── ROI CALCULATOR ──────────────────────────────────────────────
+function fmt(n) { return n.toLocaleString('ru-RU'); }
+function calc() {
+  const clients = +document.getElementById('r-clients').value;
+  const check   = +document.getElementById('r-check').value;
+  const sleep   = +document.getElementById('r-sleep').value;
+
+  document.getElementById('v-clients').textContent = clients;
+  document.getElementById('v-check').textContent   = fmt(check) + ' ₽';
+  document.getElementById('v-sleep').textContent   = sleep + '%';
+
+  // update range gradient
+  ['r-clients','r-check','r-sleep'].forEach(id => {
+    const el = document.getElementById(id);
+    const pct = (el.value - el.min) / (el.max - el.min) * 100;
+    el.style.setProperty('--val', pct + '%');
+    el.style.background = `linear-gradient(90deg,var(--cyan) ${pct}%,rgba(0,212,255,0.15) ${pct}%)`;
+  });
+
+  const sleeping    = Math.round(clients * sleep / 100);
+  const reactivated = Math.round(sleeping * 0.12);   // 12% реактивация
+  const noshow_save = Math.round(clients * 0.05 * 0.3); // 5% неявки * 30% снижение
+  const visits      = reactivated + noshow_save + 3;  // +3 из новых за счёт 24/7
+  const money       = visits * check;
+  const year        = money * 12;
+  const payback     = Math.ceil(30000 / money);
+
+  document.getElementById('res-visits').textContent = '+' + visits;
+  document.getElementById('res-money').textContent  = '+' + fmt(money) + ' ₽';
+  document.getElementById('res-year').textContent   = '+' + fmt(year) + ' ₽';
+  document.getElementById('res-payback').textContent = payback <= 1 ? '< 1 мес' : payback + ' мес';
+}
+calc();
+</script>
+</body>
+</html>
