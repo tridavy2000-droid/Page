@@ -583,7 +583,7 @@ function tap(el, val){
   if(v.includes('видит владелец'))   return setTimeout(()=>showOwner(), 800);
   if(v.includes('лояльност'))        return setTimeout(()=>showLoyalty(), 800);
   if(v.includes('Стоимость') || v.includes('стоимость')) return setTimeout(()=>showPricing(), 800);
-  if(v.includes('Главное меню') || v.includes('меню'))   return setTimeout(()=>welcome(), 600);
+  if(v.includes('Главное меню') || v.includes('меню') || v.includes('Посмотреть ещё раз')) return setTimeout(()=>welcome(), 600);
 
   // SERVICES — по CONFIG
   for(const svc of CONFIG.services){
