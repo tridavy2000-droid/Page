@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подробная анкета · Данил Трифонов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050810;--surface:rgba(255,255,255,0.03);--surface-h:rgba(0,212,255,0.07);
+      --b:rgba(0,212,255,0.13);--ba:rgba(0,212,255,0.45);--cyan:#00d4ff;
+      --cdim:rgba(0,212,255,0.5);--text:#eef2ff;--muted:rgba(238,242,255,0.38);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-font-smoothing:antialiased}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
+      min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;
+      align-items:center;justify-content:center}
+    #cv{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);
+      background-size:60px 60px}
+    .glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:radial-gradient(ellipse 60% 45% at 50% 0%,rgba(0,212,255,0.06) 0%,transparent 70%)}
+    #bar{position:fixed;top:0;left:0;height:2px;z-index:100;
+      background:linear-gradient(90deg,var(--cyan),#818cf8);
+      box-shadow:0 0 14px var(--cyan);transition:width .55s cubic-bezier(.4,0,.2,1);width:0%}
+
+    .screen{position:relative;z-index:1;width:100%;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:80px 24px 72px}
+
+    /* INTRO */
+    .intro{text-align:center;max-width:540px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;margin-bottom:32px;
+      border:1px solid var(--b);border-radius:100px;font-size:11px;color:var(--cdim);
+      letter-spacing:.1em;text-transform:uppercase;backdrop-filter:blur(12px)}
+    .dot{width:6px;height:6px;background:var(--cyan);border-radius:50%;
+      box-shadow:0 0 8px var(--cyan);animation:blink 2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .intro h1{font-family:'Syne',sans-serif;font-weight:800;
+      font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.1;margin-bottom:14px;
+      background:linear-gradient(140deg,#fff 25%,var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .intro p{font-size:1rem;color:var(--muted);line-height:1.65;margin-bottom:24px}
+    .tip-box{padding:14px 18px;background:rgba(0,212,255,0.04);
+      border:1px solid rgba(0,212,255,0.1);border-radius:12px;
+      font-size:.83rem;color:rgba(238,242,255,0.55);line-height:1.55;
+      text-align:left;margin-bottom:36px}
+    .tip-box strong{color:var(--cdim)}
+    .btn-go{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;
+      background:var(--cyan);color:#020810;font-family:'DM Sans',sans-serif;
+      font-weight:600;font-size:.95rem;border:none;border-radius:100px;cursor:pointer;
+      box-shadow:0 0 36px rgba(0,212,255,.3);transition:transform .2s,box-shadow .2s}
+    .btn-go:hover{transform:translateY(-2px);box-shadow:0 0 55px rgba(0,212,255,.5)}
+
+    /* BLOCK TRANSITION */
+    .block-screen{text-align:center;max-width:460px}
+    .block-num{font-size:11px;color:var(--cdim);letter-spacing:.12em;text-transform:uppercase;margin-bottom:16px}
+    .block-title{font-family:'Syne',sans-serif;font-weight:800;
+      font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1;margin-bottom:14px;
+      background:linear-gradient(140deg,#fff 30%,var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .block-desc{font-size:.95rem;color:var(--muted);line-height:1.6;margin-bottom:36px}
+    .btn-cont{display:inline-flex;align-items:center;gap:9px;padding:12px 28px;
+      background:transparent;border:1px solid var(--ba);border-radius:100px;
+      color:var(--cyan);font-family:'DM Sans',sans-serif;font-size:.9rem;
+      font-weight:500;cursor:pointer;transition:background .2s,box-shadow .2s}
+    .btn-cont:hover{background:rgba(0,212,255,.08);box-shadow:0 0 20px rgba(0,212,255,.15)}
+
+    /* QUESTION */
+    #qw{width:100%;max-width:640px}
+    .qs{width:100%}
+    .q-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .q-meta{font-size:11px;color:var(--cdim);letter-spacing:.12em;text-transform:uppercase}
+    .q-block-tag{font-size:10px;padding:3px 10px;border:1px solid var(--b);
+      border-radius:100px;color:var(--cdim);letter-spacing:.06em}
+    .q-title{font-family:'Syne',sans-serif;font-weight:700;
+      font-size:clamp(1.35rem,3.2vw,1.85rem);line-height:1.25;margin-bottom:26px}
+
+    /* CHOICE */
+    .choices{display:flex;flex-direction:column;gap:8px;margin-bottom:22px}
+    .card{display:flex;align-items:center;gap:13px;padding:14px 16px;
+      background:var(--surface);border:1px solid var(--b);border-radius:11px;
+      cursor:pointer;backdrop-filter:blur(10px);
+      transition:background .17s,border-color .17s,transform .17s;user-select:none}
+    .card:hover{background:var(--surface-h);border-color:rgba(0,212,255,.3);transform:translateX(4px)}
+    .card.on{background:rgba(0,212,255,.09);border-color:var(--cyan);box-shadow:0 0 20px rgba(0,212,255,.11)}
+    .cnum{width:26px;height:26px;flex-shrink:0;border:1px solid var(--b);border-radius:6px;
+      display:flex;align-items:center;justify-content:center;font-size:10px;
+      color:var(--muted);transition:all .17s}
+    .card:hover .cnum,.card.on .cnum{border-color:var(--cyan);color:var(--cyan);background:rgba(0,212,255,.1)}
+    .clabel{font-size:.93rem}
+
+    /* MULTI */
+    .multi-hint{font-size:.78rem;color:var(--muted);margin-bottom:10px;letter-spacing:.03em}
+    .mcard{display:flex;align-items:center;gap:12px;padding:12px 15px;
+      background:var(--surface);border:1px solid var(--b);border-radius:10px;
+      cursor:pointer;backdrop-filter:blur(10px);
+      transition:background .17s,border-color .17s;user-select:none;margin-bottom:7px}
+    .mcard:hover{background:var(--surface-h);border-color:rgba(0,212,255,.3)}
+    .mcard.on{background:rgba(0,212,255,.09);border-color:var(--cyan)}
+    .mchk{width:17px;height:17px;border:1.5px solid var(--b);border-radius:5px;
+      flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .17s}
+    .mcard.on .mchk{background:var(--cyan);border-color:var(--cyan)}
+    .mchk svg{display:none}
+    .mcard.on .mchk svg{display:block}
+
+    /* DROPDOWN */
+    .dd-wrap{position:relative;margin-bottom:22px}
+    .dd-btn{width:100%;display:flex;align-items:center;justify-content:space-between;
+      padding:13px 16px;background:var(--surface);border:1px solid var(--b);
+      border-radius:11px;cursor:pointer;backdrop-filter:blur(10px);
+      font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--muted);
+      transition:border-color .2s;user-select:none}
+    .dd-btn.sel{color:var(--text)}
+    .dd-btn.open{border-color:var(--ba);border-radius:11px 11px 0 0}
+    .dd-btn svg{transition:transform .25s;flex-shrink:0}
+    .dd-btn.open svg{transform:rotate(180deg)}
+    .dd-list{position:absolute;top:100%;left:0;right:0;z-index:50;
+      background:#0b1120;border:1px solid var(--ba);border-top:none;
+      border-radius:0 0 11px 11px;max-height:0;overflow:hidden;transition:max-height .3s ease}
+    .dd-list.open{max-height:260px;overflow-y:auto}
+    .dd-opt{padding:11px 16px;cursor:pointer;font-size:.93rem;color:var(--muted);
+      transition:background .15s,color .15s;border-bottom:1px solid rgba(0,212,255,.05)}
+    .dd-opt:last-child{border-bottom:none}
+    .dd-opt:hover{background:var(--surface-h);color:var(--text)}
+    .dd-opt.sel{color:var(--cyan);background:rgba(0,212,255,.06)}
+
+    /* TEXT / TEXTAREA */
+    .iw{position:relative;margin-bottom:22px}
+    .qi{width:100%;background:transparent;border:none;border-bottom:1px solid var(--b);
+      padding:11px 0;font-family:'DM Sans',sans-serif;font-size:1rem;
+      color:var(--text);outline:none;transition:border-color .25s}
+    .qi::placeholder{color:var(--muted)}
+    .qi:focus{border-color:rgba(0,212,255,.35)}
+    .iline{position:absolute;bottom:0;left:0;height:1px;width:0;
+      background:var(--cyan);box-shadow:0 0 7px var(--cyan);
+      transition:width .38s cubic-bezier(.4,0,.2,1)}
+    .qi:focus~.iline{width:100%}
+    .qta{width:100%;min-height:110px;resize:none;background:var(--surface);
+      border:1px solid var(--b);border-radius:11px;padding:14px 16px;
+      margin-bottom:22px;font-family:'DM Sans',sans-serif;font-size:.95rem;
+      color:var(--text);outline:none;backdrop-filter:blur(10px);
+      transition:border-color .25s,box-shadow .25s}
+    .qta::placeholder{color:var(--muted)}
+    .qta:focus{border-color:var(--ba);box-shadow:0 0 0 3px rgba(0,212,255,.06)}
+
+    /* CLARIFY */
+    .clarify{margin-top:-10px;margin-bottom:22px}
+    .cl-toggle{background:none;border:none;color:rgba(0,212,255,0.6);
+      font-family:'DM Sans',sans-serif;font-size:.9rem;cursor:pointer;
+      padding:4px 0;transition:color .2s;font-weight:500}
+    .cl-toggle:hover{color:var(--cyan)}
+    .cl-ta{display:none;width:100%;min-height:68px;resize:none;
+      background:rgba(255,255,255,.02);border:1px solid rgba(0,212,255,.07);
+      border-radius:9px;padding:11px 13px;margin-top:7px;
+      font-family:'DM Sans',sans-serif;font-size:.85rem;color:var(--text);outline:none;
+      transition:border-color .2s}
+    .cl-ta::placeholder{color:rgba(238,242,255,.22)}
+    .cl-ta:focus{border-color:rgba(0,212,255,.22)}
+    .cl-ta.show{display:block}
+
+    /* NAV */
+    .actions{display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+    .btn-next{display:inline-flex;align-items:center;gap:9px;padding:11px 26px;
+      background:transparent;border:1px solid var(--ba);border-radius:100px;
+      color:var(--cyan);font-family:'DM Sans',sans-serif;font-size:.88rem;
+      font-weight:500;cursor:pointer;transition:background .2s,box-shadow .2s,transform .2s}
+    .btn-next:hover{background:rgba(0,212,255,.08);box-shadow:0 0 20px rgba(0,212,255,.15);transform:translateY(-1px)}
+    .btn-back{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;
+      font-size:.78rem;cursor:pointer;padding:4px 0;transition:color .2s}
+    .btn-back:hover{color:var(--text)}
+
+    /* ANIM */
+    @keyframes inR{from{opacity:0;transform:translateX(46px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes inL{from{opacity:0;transform:translateX(-46px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes outL{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-46px)}}
+    @keyframes outR{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(46px)}}
+    .in-r{animation:inR .37s cubic-bezier(.4,0,.2,1) forwards}
+    .in-l{animation:inL .37s cubic-bezier(.4,0,.2,1) forwards}
+    .out-l{animation:outL .26s cubic-bezier(.4,0,.2,1) forwards}
+    .out-r{animation:outR .26s cubic-bezier(.4,0,.2,1) forwards}
+
+    /* THANKS */
+    .thanks{text-align:center;max-width:420px}
+    .chk{width:84px;height:84px;margin:0 auto 26px;display:block}
+    .cc{stroke-dasharray:251;stroke-dashoffset:251;animation:dc .6s ease forwards}
+    .ck{stroke-dasharray:55;stroke-dashoffset:55;animation:dk .4s ease .55s forwards}
+    @keyframes dc{to{stroke-dashoffset:0}}
+    @keyframes dk{to{stroke-dashoffset:0}}
+    .thanks h2{font-family:'Syne',sans-serif;font-weight:800;
+      font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:12px;
+      background:linear-gradient(140deg,#fff 30%,var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .thanks p{font-size:.98rem;color:var(--muted);line-height:1.7}
+
+    .footer{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+      font-size:10px;color:rgba(238,242,255,.18);letter-spacing:.07em;z-index:10;white-space:nowrap}
+
+    @media(max-width:480px){.screen{padding:54px 15px 66px}.card{padding:11px 13px}}
+  </style>
+</head>
+<body>
+
+<canvas id="cv"></canvas>
+<div class="grid"></div>
+<div class="glow"></div>
+<div id="bar"></div>
+
+<!-- INTRO -->
+<div class="screen" id="sI">
+  <div class="intro">
+    <div class="badge"><div class="dot"></div>Подробный бриф</div>
+    <h1>Расскажите о вашем бизнесе</h1>
+    <p>Эта анкета поможет мне подготовить решение точно под вас — без лишних вопросов на звонке</p>
+    <div class="tip-box">
+      💡 <strong>Важно:</strong> чем подробнее вы отвечаете — тем точнее и быстрее я смогу настроить систему под ваши задачи. Под каждым вопросом есть поле для уточнений — используйте его.
+    </div>
+    <button class="btn-go" onclick="start()">
+      Начать
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- QUESTIONS -->
+<div class="screen" id="sQ" style="display:none">
+  <div id="qw"></div>
+</div>
+
+<!-- THANKS -->
+<div class="screen" id="sT" style="display:none">
+  <div class="thanks">
+    <svg class="chk" viewBox="0 0 84 84" fill="none">
+      <circle class="cc" cx="42" cy="42" r="40" stroke="#00d4ff" stroke-width="1.8" fill="none" transform="rotate(-90 42 42)"/>
+      <path class="ck" d="M25 42l12 13 22-26" stroke="#00d4ff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2>Получил, спасибо!</h2>
+    <p>Изучу ваши ответы и подготовлю<br>конкретный план под ваш бизнес.<br>Свяжусь в течение нескольких часов.</p>
+  </div>
+</div>
+
+<div class="footer">Данил Трифонов · AI-автоматизация</div>
+
+<script>
+const ENDPOINT = 'YOUR_ENDPOINT';
+
+const BLOCKS = [
+  { id:'numbers',   title:'Цифры бизнеса',   desc:'Несколько вопросов о масштабе — помогают подобрать нужный объём автоматизации' },
+  { id:'journey',   title:'Путь клиента',    desc:'Как сейчас работает запись и что происходит до и после визита' },
+  { id:'base',      title:'База клиентов',   desc:'Существующая база — главный актив для реактивации и повторных продаж' },
+  { id:'cancels',   title:'Отмены',          desc:'Отмены и переносы — часто главная точка потерь в сервисном бизнесе' },
+  { id:'tech',      title:'Техника',         desc:'Контакты и инструменты для настройки интеграций' },
+  { id:'goals',     title:'Приоритеты',      desc:'Что запустить в первую очередь и что важно учесть' },
+];
+
+const QS = [
+  // Block 1 — Цифры
+  { block:'numbers', id:'staff', type:'dropdown', text:'Сколько мастеров/сотрудников принимают клиентов?',
+    opts:['Только я','2–3 человека','4–7 человек','8 и больше'] },
+  { block:'numbers', id:'daily', type:'dropdown', text:'Среднее количество записей в день?',
+    opts:['До 5','5–10','10–20','20 и больше'] },
+
+  // Block 2 — Путь клиента
+  { block:'journey', id:'channels', type:'multi', text:'Через какие каналы приходят клиенты?',
+    opts:['Сайт','Instagram','Telegram','WhatsApp','Рекомендации','Авито / 2ГИС','ВКонтакте','Другое'] },
+  { block:'journey', id:'flow', type:'textarea', text:'Как клиент записывается — опишите шаг за шагом',
+    placeholder:'Например: пишет в WhatsApp → администратор отвечает → вносит в журнал → клиент приходит...' },
+  { block:'journey', id:'after_book', type:'choice', text:'Что происходит после того как клиент записался?',
+    opts:['Ничего','Подтверждаем вручную','Напоминаем вручную за день','Всё происходит автоматически'] },
+  { block:'journey', id:'after_visit', type:'choice', text:'Что происходит после визита клиента?',
+    opts:['Ничего','Просим отзыв лично','Пишем вручную через день-два','Автоматически отправляем сообщение'] },
+
+  // Block 3 — База
+  { block:'base', id:'base_size', type:'dropdown', text:'Есть ли база клиентов? Сколько примерно контактов?',
+    opts:['Базы нет совсем','До 100 контактов','100–500','500–1 000','Больше 1 000'] },
+  { block:'base', id:'base_format', type:'choice', text:'В каком формате хранится база?',
+    opts:['Нет базы','Бумажный журнал','Excel / Google Таблицы','YClients / DIKIDI','CRM-система'] },
+  { block:'base', id:'return_rate', type:'dropdown', text:'Примерно какой % клиентов возвращается в течение 3 месяцев?',
+    opts:['Почти никто','Около 20–30%','Около половины','Больше половины'] },
+  { block:'base', id:'reactivation', type:'choice', text:'Делаете повторные касания со старыми клиентами?',
+    opts:['Нет','Иногда пишем вручную','Регулярно вручную','Автоматически'] },
+
+  // Block 4 — Отмены
+  { block:'cancels', id:'cancel_rate', type:'dropdown', text:'Примерный % отмен и переносов?',
+    opts:['До 10%','10–25%','25–40%','Больше 40%','Не считали'] },
+  { block:'cancels', id:'cancel_why', type:'multi', text:'По каким причинам чаще всего отменяют?',
+    opts:['Забыли про запись','Изменились планы','Не напомнили вовремя','Нашли дешевле','Далеко ехать','Другое'] },
+  { block:'cancels', id:'no_show', type:'choice', text:'Что делаете когда клиент не пришёл без предупреждения?',
+    opts:['Ничего','Перезваниваем','Пишем в мессенджер','Списываем и забываем'] },
+
+  // Block 5 — Техника
+  { block:'tech', id:'phone', type:'text', text:'Телефон который будет привязан к боту',
+    placeholder:'+7 (999) 000-00-00' },
+  { block:'tech', id:'notify', type:'text', text:'Telegram или WhatsApp для уведомлений вам как владельцу',
+    placeholder:'@username или номер телефона' },
+  { block:'tech', id:'crm', type:'choice', text:'Есть ли сейчас ПО или CRM?',
+    opts:['Нет ничего','Excel / Google Таблицы','YClients','DIKIDI','AmoCRM / Bitrix24','Другое'] },
+  { block:'tech', id:'online_book', type:'choice', text:'Есть ли онлайн-запись сейчас?',
+    opts:['Нет','Через YClients','Через DIKIDI','Через сайт / другое','Да, но почти не пользуются'] },
+
+  // Block 6 — Приоритеты
+  { block:'goals', id:'priorities', type:'multi', text:'Что должно заработать в первую очередь?',
+    opts:['Запись 24/7 без звонков','Автонапоминания перед визитом','Реактивация спящих клиентов','Сбор отзывов на Яндексе / Google','Уведомления владельцу о каждой записи','Аналитика и отчёты'] },
+  { block:'goals', id:'tried', type:'textarea', text:'Что пробовали раньше для автоматизации — и почему не зашло?',
+    placeholder:'Если ничего не пробовали — напишите "нет". Если пробовали — расскажите коротко что и почему не прижилось.' },
+  { block:'goals', id:'special', type:'textarea', text:'Особые пожелания, ограничения или что важно учесть?',
+    placeholder:'Например: нет сайта, работаем только в Telegram, важна интеграция с 1С, клиенты 50+ и не пользуются ботами...' },
+];
+
+let cur=0, D={}, notes={}, shownBlocks=new Set();
+
+function start(){
+  document.getElementById('sI').style.display='none';
+  document.getElementById('sQ').style.display='flex';
+  showBlockIntro(QS[0].block, ()=>render(0,'r'));
+}
+
+function prog(n){ document.getElementById('bar').style.width=(n/QS.length*100)+'%'; }
+
+function showBlockIntro(blockId, cb){ cb(); }
+
+function render(i,dir){
+  prog(i);
+  const q=QS[i];
+  const wrap=document.getElementById('qw');
+  const bl=BLOCKS.find(b=>b.id===q.block);
+  let body='';
+
+  if(q.type==='dropdown'){
+    const sel=D[q.id]||'';
+    body=`<div class="dd-wrap">
+      <div class="dd-btn${sel?' sel':''}" id="ddb_${i}" onclick="toggleDD(${i})">
+        <span id="ddv_${i}">${sel||'Выберите...'}</span>
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M2 4.5l4.5 4.5 4.5-4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="dd-list" id="ddl_${i}">
+        ${q.opts.map(o=>`<div class="dd-opt${o===sel?' sel':''}" onclick="pickDD(${i},'${o.replace(/'/g,"\\'")}')">${o}</div>`).join('')}
+      </div>
+    </div>`;
+  } else if(q.type==='choice'){
+    body=`<div class="choices">
+      ${q.opts.map((o,j)=>`<div class="card${D[q.id]===o?' on':''}" onclick="pickOne(this,'${o.replace(/'/g,"\\'")}')">
+        <div class="cnum">${j+1}</div><div class="clabel">${o}</div>
+      </div>`).join('')}
+    </div>`;
+  } else if(q.type==='multi'){
+    const sel=D[q.id]||[];
+    body=`<div class="multi-hint">Можно выбрать несколько</div>
+      ${q.opts.map(o=>`<div class="mcard${sel.includes(o)?' on':''}" onclick="toggleM(this,'${o.replace(/'/g,"\\'")}')">
+        <div class="mchk"><svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+          <path d="M1 4l3 3 5-6" stroke="#020810" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></div><div class="clabel">${o}</div>
+      </div>`).join('')}<div style="height:12px"></div>`;
+  } else if(q.type==='text'){
+    body=`<div class="iw">
+      <input class="qi" id="qi_${i}" type="text" placeholder="${q.placeholder||''}" autocomplete="off">
+      <div class="iline"></div>
+    </div>`;
+  } else if(q.type==='textarea'){
+    body=`<textarea class="qta" id="qta_${i}" placeholder="${q.placeholder||''}"></textarea>`;
+  }
+
+  body+=`<div class="clarify">
+    <button class="cl-toggle" onclick="this.nextElementSibling.classList.toggle('show');this.style.display='none'">
+      + Уточнить / добавить детали
+    </button>
+    <textarea class="cl-ta" id="note_${q.id}" placeholder="Уточните если нужно..."></textarea>
+  </div>`;
+
+  const isAutoAdvance=(q.type==='choice');
+  if(!isAutoAdvance){
+    body+=`<div class="actions">
+      <button class="btn-next" onclick="next()">
+        ${i===QS.length-1?'Отправить':'Далее'}
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      ${i>0?`<button class="btn-back" onclick="back()">← Назад</button>`:''}
+    </div>`;
+  } else {
+    if(i>0) body+=`<div style="margin-top:4px"><button class="btn-back" onclick="back()">← Назад</button></div>`;
+  }
+
+  wrap.innerHTML=`<div class="qs ${dir==='r'?'in-r':'in-l'}" id="qs">
+    <div class="q-header">
+      <div class="q-meta">${i+1} / ${QS.length}</div>
+    </div>
+    <div class="q-title">${q.text}</div>
+    ${body}
+  </div>`;
+
+  // restore values
+  const qi=document.getElementById('qi_'+i);
+  if(qi && D[q.id]) qi.value=D[q.id];
+  const qta=document.getElementById('qta_'+i);
+  if(qta && D[q.id]) qta.value=D[q.id];
+  const nt=document.getElementById('note_'+q.id);
+  if(nt && notes[q.id]) nt.value=notes[q.id];
+  setTimeout(()=>{ (document.getElementById('qi_'+i)||document.getElementById('qta_'+i))?.focus(); },80);
+}
+
+function toggleDD(i){
+  document.getElementById('ddb_'+i).classList.toggle('open');
+  document.getElementById('ddl_'+i).classList.toggle('open');
+}
+function pickDD(i,v){
+  D[QS[i].id]=v;
+  document.getElementById('ddv_'+i).textContent=v;
+  document.getElementById('ddb_'+i).classList.add('sel');
+  document.getElementById('ddb_'+i).classList.remove('open');
+  document.getElementById('ddl_'+i).classList.remove('open');
+  document.querySelectorAll('#ddl_'+i+' .dd-opt').forEach(o=>o.classList.toggle('sel',o.textContent.trim()===v));
+}
+function pickOne(el,v){
+  D[QS[cur].id]=v;
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  if(cur<QS.length-1) setTimeout(()=>goNext(),240); else setTimeout(submit,240);
+}
+function toggleM(el,v){
+  if(!D[QS[cur].id]) D[QS[cur].id]=[];
+  const arr=D[QS[cur].id];
+  const idx=arr.indexOf(v);
+  if(idx>-1) arr.splice(idx,1); else arr.push(v);
+  el.classList.toggle('on',arr.includes(v));
+}
+function saveNote(id){ const e=document.getElementById('note_'+id); if(e) notes[id]=e.value; }
+function next(){
+  const q=QS[cur];
+  if(q.type==='text'){
+    const v=(document.getElementById('qi_'+cur)?.value||'').trim();
+    if(!v){ const el=document.getElementById('qi_'+cur); if(el){el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',700);} return; }
+    D[q.id]=v;
+  } else if(q.type==='textarea'){
+    D[q.id]=(document.getElementById('qta_'+cur)?.value||'').trim();
+  } else if(q.type==='dropdown' && !D[q.id]){
+    const btn=document.getElementById('ddb_'+cur);
+    if(btn){btn.style.borderColor='#f87171';setTimeout(()=>btn.style.borderColor='',700);}
+    return;
+  }
+  saveNote(q.id);
+  goNext();
+}
+function goNext(){
+  if(cur<QS.length-1){
+    const nextQ=QS[cur+1];
+    const curBlock=QS[cur].block;
+    slideOut('l',()=>{
+      cur++;
+      if(nextQ.block!==curBlock) showBlockIntro(nextQ.block,()=>render(cur,'r'));
+      else render(cur,'r');
+    });
+  } else submit();
+}
+function back(){
+  saveNote(QS[cur].id);
+  slideOut('r',()=>{ cur--; render(cur,'l'); });
+}
+function slideOut(dir,cb){
+  const s=document.getElementById('qs');
+  if(!s){cb();return;}
+  s.classList.add(dir==='l'?'out-l':'out-r');
+  setTimeout(cb,240);
+}
+function submit(){
+  prog(QS.length);
+  const lines=QS.map(q=>{
+    let a=D[q.id]||(q.type==='multi'?[]:'')||'—';
+    if(Array.isArray(a)) a=a.join(', ')||'—';
+    const n=notes[q.id];
+    return `${q.text}\n→ ${a}${n?'\n   + '+n:''}`;
+  }).join('\n\n');
+  if(ENDPOINT!=='YOUR_ENDPOINT'){
+    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({answers:D,notes,ts:new Date().toISOString()})}).catch(()=>{});
+  }
+  const sub=encodeURIComponent('Подробная анкета');
+  const bod=encodeURIComponent(lines+'\n\nОтправлено: '+new Date().toLocaleString('ru-RU'));
+  window.location.href=`mailto:tridavy2000@gmail.com?subject=${sub}&body=${bod}`;
+  setTimeout(()=>{
+    document.getElementById('sQ').style.display='none';
+    document.getElementById('sT').style.display='flex';
+  },350);
+}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('sQ').style.display==='none') return;
+  const q=QS[cur];
+  if(e.key==='Enter'&&!e.shiftKey&&(q.type==='text'||q.type==='dropdown')) next();
+  if(q.type==='choice'){const n=parseInt(e.key);if(n>=1&&n<=q.opts.length) document.querySelectorAll('.card')[n-1]?.click();}
+});
+
+(function(){
+  const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+  let W,H,pts;
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  function init(){resize();pts=Array.from({length:48},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.1+.4,op:Math.random()*.45+.18}));}
+  function frame(){
+    cx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(d<105){cx.beginPath();cx.strokeStyle=`rgba(0,212,255,${.05*(1-d/105)})`;cx.lineWidth=.5;cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.stroke();}
+    }
+    pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=`rgba(0,212,255,${p.op*.28})`;cx.fill();});
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',resize);init();frame();
+})();
+</script>
+</body>
+</html>

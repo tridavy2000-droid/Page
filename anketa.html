@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Анкета · Данил Трифонов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <style>
+    :root {
+      --bg:#050810; --surface:rgba(255,255,255,0.03); --surface-h:rgba(0,212,255,0.07);
+      --b:rgba(0,212,255,0.13); --ba:rgba(0,212,255,0.45); --cyan:#00d4ff;
+      --cdim:rgba(0,212,255,0.5); --text:#eef2ff; --muted:rgba(238,242,255,0.38);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{-webkit-font-smoothing:antialiased}
+    body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;
+      min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;
+      align-items:center;justify-content:center}
+
+    #cv{position:fixed;inset:0;z-index:0;pointer-events:none}
+    .grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);
+      background-size:60px 60px}
+    .glow{position:fixed;inset:0;z-index:0;pointer-events:none;
+      background:radial-gradient(ellipse 60% 45% at 50% 0%,rgba(0,212,255,0.06) 0%,transparent 70%)}
+
+    #bar{position:fixed;top:0;left:0;height:2px;z-index:100;
+      background:linear-gradient(90deg,var(--cyan),#818cf8);
+      box-shadow:0 0 14px var(--cyan);transition:width .55s cubic-bezier(.4,0,.2,1);width:0%}
+
+    .screen{position:relative;z-index:1;width:100%;min-height:100vh;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:80px 24px 72px}
+
+    /* INTRO */
+    .intro{text-align:center;max-width:520px}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;
+      margin-bottom:34px;border:1px solid var(--b);border-radius:100px;
+      font-size:11px;color:var(--cdim);letter-spacing:.1em;text-transform:uppercase;
+      backdrop-filter:blur(12px)}
+    .dot{width:6px;height:6px;background:var(--cyan);border-radius:50%;
+      box-shadow:0 0 8px var(--cyan);animation:blink 2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .intro h1{font-family:'Syne',sans-serif;font-weight:800;
+      font-size:clamp(2.2rem,5vw,3.6rem);line-height:1.08;margin-bottom:16px;
+      background:linear-gradient(140deg,#fff 25%,var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .intro p{font-size:1.05rem;color:var(--muted);line-height:1.65;margin-bottom:40px}
+    .tip{display:inline-flex;align-items:center;gap:8px;margin-bottom:40px;
+      padding:10px 18px;background:rgba(0,212,255,0.05);border:1px solid var(--b);
+      border-radius:10px;font-size:0.82rem;color:var(--cdim);line-height:1.4;text-align:left}
+    .tip-icon{font-size:1rem;flex-shrink:0}
+    .btn-go{display:inline-flex;align-items:center;gap:10px;padding:14px 36px;
+      background:var(--cyan);color:#020810;font-family:'DM Sans',sans-serif;
+      font-weight:600;font-size:.95rem;border:none;border-radius:100px;cursor:pointer;
+      box-shadow:0 0 36px rgba(0,212,255,.3);transition:transform .2s,box-shadow .2s}
+    .btn-go:hover{transform:translateY(-2px);box-shadow:0 0 55px rgba(0,212,255,.5)}
+    .btn-go svg{transition:transform .2s}
+    .btn-go:hover svg{transform:translateX(4px)}
+
+    /* QUESTION */
+    #qw{width:100%;max-width:620px}
+    .qs{width:100%}
+    .q-meta{font-size:11px;color:var(--cdim);letter-spacing:.12em;
+      text-transform:uppercase;margin-bottom:12px}
+    .q-title{font-family:'Syne',sans-serif;font-weight:700;
+      font-size:clamp(1.45rem,3.5vw,2rem);line-height:1.22;margin-bottom:28px}
+
+    /* CHOICE CARDS */
+    .choices{display:flex;flex-direction:column;gap:9px;margin-bottom:24px}
+    .card{display:flex;align-items:center;gap:14px;padding:15px 18px;
+      background:var(--surface);border:1px solid var(--b);border-radius:12px;
+      cursor:pointer;backdrop-filter:blur(10px);
+      transition:background .17s,border-color .17s,transform .17s;user-select:none}
+    .card:hover{background:var(--surface-h);border-color:rgba(0,212,255,.3);transform:translateX(4px)}
+    .card.on{background:rgba(0,212,255,.09);border-color:var(--cyan);
+      box-shadow:0 0 22px rgba(0,212,255,.12)}
+    .cnum{width:28px;height:28px;flex-shrink:0;border:1px solid var(--b);border-radius:7px;
+      display:flex;align-items:center;justify-content:center;font-size:11px;
+      color:var(--muted);font-weight:500;transition:all .17s}
+    .card:hover .cnum,.card.on .cnum{border-color:var(--cyan);color:var(--cyan);
+      background:rgba(0,212,255,.1)}
+    .clabel{font-size:.96rem}
+
+    /* MULTI SELECT */
+    .multi-hint{font-size:.8rem;color:var(--muted);margin-bottom:12px;
+      letter-spacing:.03em}
+    .mcard{display:flex;align-items:center;gap:12px;padding:13px 16px;
+      background:var(--surface);border:1px solid var(--b);border-radius:11px;
+      cursor:pointer;backdrop-filter:blur(10px);
+      transition:background .17s,border-color .17s;user-select:none;margin-bottom:8px}
+    .mcard:hover{background:var(--surface-h);border-color:rgba(0,212,255,.3)}
+    .mcard.on{background:rgba(0,212,255,.09);border-color:var(--cyan)}
+    .mchk{width:18px;height:18px;border:1.5px solid var(--b);border-radius:5px;
+      flex-shrink:0;display:flex;align-items:center;justify-content:center;
+      transition:all .17s}
+    .mcard.on .mchk{background:var(--cyan);border-color:var(--cyan)}
+    .mchk svg{display:none}
+    .mcard.on .mchk svg{display:block}
+
+    /* DROPDOWN */
+    .dd-wrap{position:relative;margin-bottom:24px}
+    .dd-btn{width:100%;display:flex;align-items:center;justify-content:space-between;
+      padding:14px 18px;background:var(--surface);border:1px solid var(--b);
+      border-radius:12px;cursor:pointer;backdrop-filter:blur(10px);
+      font-family:'DM Sans',sans-serif;font-size:.97rem;color:var(--muted);
+      transition:border-color .2s;user-select:none}
+    .dd-btn.sel{color:var(--text)}
+    .dd-btn.open{border-color:var(--ba);border-radius:12px 12px 0 0}
+    .dd-btn svg{transition:transform .25s;flex-shrink:0}
+    .dd-btn.open svg{transform:rotate(180deg)}
+    .dd-list{position:absolute;top:100%;left:0;right:0;z-index:50;
+      background:#0b1120;border:1px solid var(--ba);border-top:none;
+      border-radius:0 0 12px 12px;overflow:hidden;
+      max-height:0;transition:max-height .3s ease}
+    .dd-list.open{max-height:260px;overflow-y:auto}
+    .dd-opt{padding:12px 18px;cursor:pointer;font-size:.95rem;color:var(--muted);
+      transition:background .15s,color .15s;border-bottom:1px solid rgba(0,212,255,.05)}
+    .dd-opt:last-child{border-bottom:none}
+    .dd-opt:hover{background:var(--surface-h);color:var(--text)}
+    .dd-opt.sel{color:var(--cyan);background:rgba(0,212,255,.06)}
+
+    /* TEXT / TEXTAREA */
+    .iw{position:relative;margin-bottom:24px}
+    .qi{width:100%;background:transparent;border:none;border-bottom:1px solid var(--b);
+      padding:12px 0;font-family:'DM Sans',sans-serif;font-size:1.05rem;
+      color:var(--text);outline:none;transition:border-color .25s}
+    .qi::placeholder{color:var(--muted)}
+    .qi:focus{border-color:rgba(0,212,255,.35)}
+    .iline{position:absolute;bottom:0;left:0;height:1px;width:0;
+      background:var(--cyan);box-shadow:0 0 7px var(--cyan);
+      transition:width .38s cubic-bezier(.4,0,.2,1)}
+    .qi:focus~.iline{width:100%}
+    .qta{width:100%;min-height:120px;resize:none;background:var(--surface);
+      border:1px solid var(--b);border-radius:12px;padding:16px 18px;
+      margin-bottom:24px;font-family:'DM Sans',sans-serif;font-size:.97rem;
+      color:var(--text);outline:none;backdrop-filter:blur(10px);
+      transition:border-color .25s,box-shadow .25s}
+    .qta::placeholder{color:var(--muted)}
+    .qta:focus{border-color:var(--ba);box-shadow:0 0 0 3px rgba(0,212,255,.06)}
+
+    /* CLARIFICATION */
+    .clarify{margin-top:-12px;margin-bottom:24px}
+    .clarify-toggle{background:none;border:none;color:rgba(0,212,255,0.6);
+      font-family:'DM Sans',sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;
+      padding:4px 0;transition:color .2s;letter-spacing:.02em}
+    .clarify-toggle:hover{color:var(--cyan)}
+    .clarify-ta{display:none;width:100%;min-height:72px;resize:none;
+      background:rgba(255,255,255,.02);border:1px solid rgba(0,212,255,.08);
+      border-radius:10px;padding:12px 14px;margin-top:8px;
+      font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);
+      outline:none;transition:border-color .2s}
+    .clarify-ta::placeholder{color:rgba(238,242,255,.25)}
+    .clarify-ta:focus{border-color:rgba(0,212,255,.25)}
+    .clarify-ta.show{display:block}
+
+    /* BUTTONS */
+    .actions{display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+    .btn-next{display:inline-flex;align-items:center;gap:9px;padding:12px 28px;
+      background:transparent;border:1px solid var(--ba);border-radius:100px;
+      color:var(--cyan);font-family:'DM Sans',sans-serif;font-size:.9rem;
+      font-weight:500;cursor:pointer;transition:background .2s,box-shadow .2s,transform .2s}
+    .btn-next:hover{background:rgba(0,212,255,.08);box-shadow:0 0 22px rgba(0,212,255,.17);
+      transform:translateY(-1px)}
+    .btn-back{background:none;border:none;color:var(--muted);
+      font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;
+      padding:4px 0;transition:color .2s}
+    .btn-back:hover{color:var(--text)}
+
+    /* ANIMATIONS */
+    @keyframes inR{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes inL{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes outL{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-48px)}}
+    @keyframes outR{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(48px)}}
+    .in-r{animation:inR .38s cubic-bezier(.4,0,.2,1) forwards}
+    .in-l{animation:inL .38s cubic-bezier(.4,0,.2,1) forwards}
+    .out-l{animation:outL .27s cubic-bezier(.4,0,.2,1) forwards}
+    .out-r{animation:outR .27s cubic-bezier(.4,0,.2,1) forwards}
+    @keyframes shake{0%,100%{transform:translateX(0)}25%,75%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
+    .shake{animation:shake .35s ease}
+
+    /* RESULT */
+    .result{max-width:580px;width:100%}
+    .result-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px;
+      margin-bottom:28px;border:1px solid var(--b);border-radius:100px;
+      font-size:11px;color:var(--cdim);letter-spacing:.1em;text-transform:uppercase}
+    .result h2{font-family:'Syne',sans-serif;font-weight:800;
+      font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.1;margin-bottom:8px;
+      background:linear-gradient(140deg,#fff 30%,var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .result-sub{font-size:.95rem;color:var(--muted);margin-bottom:32px;line-height:1.5}
+    .pkg-cards{display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+    .pkg-card{padding:16px 18px;border:1px solid var(--b);border-radius:13px;
+      background:var(--surface);backdrop-filter:blur(10px);transition:border-color .2s}
+    .pkg-card.winner{border-color:var(--cyan);box-shadow:0 0 24px rgba(0,212,255,.12);
+      background:rgba(0,212,255,.06)}
+    .pkg-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+    .pkg-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem}
+    .pkg-pct{font-size:.85rem;font-weight:600;color:var(--cyan)}
+    .pkg-card:not(.winner) .pkg-pct{color:var(--muted)}
+    .pkg-bar-bg{height:5px;background:rgba(255,255,255,.07);border-radius:100px;overflow:hidden}
+    .pkg-bar-fill{height:100%;border-radius:100px;
+      background:linear-gradient(90deg,var(--cyan),#818cf8);
+      box-shadow:0 0 8px rgba(0,212,255,.4);transition:width 1s cubic-bezier(.4,0,.2,1)}
+    .pkg-card:not(.winner) .pkg-bar-fill{background:rgba(255,255,255,.15);box-shadow:none}
+    .pkg-price{font-size:.82rem;color:var(--muted);margin-top:6px}
+    .winner-tag{display:inline-block;padding:2px 10px;background:var(--cyan);
+      color:#020810;font-size:10px;font-weight:700;border-radius:100px;
+      letter-spacing:.06em;text-transform:uppercase;margin-left:10px}
+    .result-note{font-size:.82rem;color:var(--muted);line-height:1.6;
+      padding:12px 16px;border:1px solid rgba(0,212,255,.08);border-radius:10px;
+      background:rgba(0,212,255,.03)}
+
+    /* THANKS */
+    .thanks{text-align:center;max-width:420px}
+    .chk{width:84px;height:84px;margin:0 auto 28px;display:block}
+    .cc{stroke-dasharray:251;stroke-dashoffset:251;animation:dc .6s ease forwards}
+    .ck{stroke-dasharray:55;stroke-dashoffset:55;animation:dk .4s ease .55s forwards}
+    @keyframes dc{to{stroke-dashoffset:0}}
+    @keyframes dk{to{stroke-dashoffset:0}}
+    .thanks h2{font-family:'Syne',sans-serif;font-weight:800;
+      font-size:clamp(1.9rem,4vw,2.6rem);margin-bottom:14px;
+      background:linear-gradient(140deg,#fff 30%,var(--cyan));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .thanks p{font-size:1rem;color:var(--muted);line-height:1.7}
+
+    .footer{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+      font-size:10px;color:rgba(238,242,255,.18);letter-spacing:.07em;
+      z-index:10;white-space:nowrap}
+
+    /* CONTACT PAIR */
+    .contact-pair{display:flex;flex-direction:column;gap:0;margin-bottom:24px}
+
+    /* WINNER DISPLAY */
+    .winner-display{padding:26px 24px;border:1px solid var(--cyan);border-radius:16px;
+      background:rgba(0,212,255,.06);box-shadow:0 0 40px rgba(0,212,255,.08);
+      margin-bottom:24px;opacity:0;transform:translateY(20px);
+      transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1)}
+    .winner-display.in{opacity:1;transform:translateY(0)}
+    .wd-label{font-size:10px;color:var(--cdim);letter-spacing:.13em;text-transform:uppercase;margin-bottom:10px}
+    .wd-name{font-family:'Syne',sans-serif;font-weight:800;font-size:2.4rem;
+      line-height:1;color:var(--cyan);margin-bottom:6px}
+    .wd-meta{font-size:.9rem;color:var(--muted);margin-bottom:22px}
+    .wd-sep{height:1px;background:rgba(0,212,255,.12);margin-bottom:18px}
+    .wd-bullets{display:flex;flex-direction:column;gap:11px}
+    .wd-bullet{display:flex;gap:10px;font-size:.9rem;color:rgba(238,242,255,.65);line-height:1.4}
+    .wd-arr{color:var(--cyan);flex-shrink:0}
+
+    @media(max-width:480px){
+      .screen{padding:56px 16px 68px}
+      .card{padding:12px 14px}
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="cv"></canvas>
+<div class="grid"></div>
+<div class="glow"></div>
+<div id="bar"></div>
+
+<!-- INTRO -->
+<div class="screen" id="sI">
+  <div class="intro">
+    <div class="badge"><div class="dot"></div>AI-автоматизация</div>
+    <h1>Быстрая анкета</h1>
+    <p>Помогу подобрать точное решение под ваш бизнес</p>
+    <div class="tip">
+      <span class="tip-icon">💡</span>
+      <span>Чем подробнее ваши ответы — тем точнее решение. Под каждым вопросом есть поле для уточнений.</span>
+    </div>
+    <button class="btn-go" onclick="start()">
+      Начать
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- QUESTIONS -->
+<div class="screen" id="sQ" style="display:none">
+  <div id="qw"></div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="sR" style="display:none">
+  <div class="result">
+    <div class="result-badge"><div class="dot"></div>Анализ готов</div>
+    <h2>Ваш вариант</h2>
+    <p class="result-sub">Подобрали под ваши ответы</p>
+    <div id="winnerCard" class="winner-display"></div>
+    <div class="result-note">Данил изучит ваши ответы и свяжется с конкретным предложением в течение нескольких часов.</div>
+    <div style="height:24px"></div>
+    <button class="btn-go" onclick="showThanks()" style="max-width:260px;width:100%;justify-content:center">
+      Отлично, жду ответа
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- THANKS -->
+<div class="screen" id="sT" style="display:none">
+  <div class="thanks">
+    <svg class="chk" viewBox="0 0 84 84" fill="none">
+      <circle class="cc" cx="42" cy="42" r="40" stroke="#00d4ff" stroke-width="1.8" fill="none" transform="rotate(-90 42 42)"/>
+      <path class="ck" d="M25 42l12 13 22-26" stroke="#00d4ff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <h2>Спасибо!</h2>
+    <p>Изучу ваши ответы и напишу<br>с конкретным предложением.</p>
+  </div>
+</div>
+
+<div class="footer">Данил Трифонов · AI-автоматизация</div>
+
+<script>
+const ENDPOINT = 'YOUR_ENDPOINT';
+
+// ── EmailJS — надёжная отправка (200 писем/мес бесплатно) ──────────────────
+// 1. Зарегистрируйся на emailjs.com
+// 2. Email Services → Add Service (Gmail) → скопируй Service ID
+// 3. Email Templates → Create Template:
+//    Subject: {{subject}}   Body: {{message}}  To email: tridavy2000@gmail.com
+// 4. Account → API Keys → Public Key
+const EMAILJS_PK  = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SVC = 'YOUR_SERVICE_ID';
+const EMAILJS_TPL = 'YOUR_TEMPLATE_ID';
+if(typeof emailjs!=='undefined'&&EMAILJS_PK!=='YOUR_PUBLIC_KEY') emailjs.init({publicKey:EMAILJS_PK});
+
+const QS = [
+  { id:'contact', type:'contact', text:'Как вас зовут и как с вами связаться?', noNote:true },
+  { id:'niche', type:'dropdown', text:'В какой сфере работаете?',
+    opts:['Барбершоп','Парикмахерская','Маникюр / ногти','Брови / ресницы','Салон красоты',
+          'Автосервис / СТО','Детейлинг / Автомойка','Шиномонтаж',
+          'Стоматология / Клиника','Ресторан / кафе','Другое'] },
+  { id:'clients', type:'dropdown', text:'Сколько клиентов в месяц?',
+    opts:['До 50','50–150','150–300','300–500','Больше 500'] },
+  { id:'booking', type:'choice', text:'Как сейчас принимаете запись?',
+    opts:['Только по звонку','WhatsApp / Telegram вручную','Онлайн-запись уже есть','Несколько способов'] },
+  { id:'goal', type:'choice', text:'Какой главный результат хотите?',
+    opts:['Больше новых клиентов','Вернуть тех кто давно не приходил','Меньше отмен и пропусков','Автоматизировать всё целиком'] },
+  { id:'tools', type:'choice', text:'Есть ли уже какие-то инструменты?',
+    opts:['Ничего нет','Excel / Google Таблицы','YClients или DIKIDI','CRM-система'] },
+  { id:'messengers', type:'multi', text:'В каких мессенджерах общаетесь с клиентами?',
+    opts:['Telegram','WhatsApp','Instagram Direct','ВКонтакте','Только звонки'] },
+  { id:'team', type:'dropdown', text:'Работаете один или есть команда?',
+    opts:['Только я','2–3 человека','4–7 человек','8 и больше'] },
+  { id:'timeline', type:'choice', text:'Когда хотите запустить?',
+    opts:['Как можно быстрее','В течение месяца','Просто изучаю варианты'] },
+  { id:'approach', type:'choice', text:'Что важнее на старте?',
+    opts:['Быстро запустить базовое','Сразу сделать полноценно'] },
+  { id:'budget', type:'dropdown', text:'Комфортный бюджет на старт?',
+    opts:['До 20 000 ₽','20 000 – 40 000 ₽','40 000 – 60 000 ₽','Выше 60 000 ₽'] },
+];
+
+let cur=0, D={}, notes={};
+
+function start(){
+  document.getElementById('sI').style.display='none';
+  document.getElementById('sQ').style.display='flex';
+  render(0,'r');
+}
+
+function prog(n){ document.getElementById('bar').style.width=(n/QS.length*100)+'%'; }
+
+function render(i,dir){
+  prog(i);
+  const q=QS[i];
+  const wrap=document.getElementById('qw');
+  let body='';
+
+  if(q.type==='dropdown'){
+    const sel=D[q.id]||'';
+    body=`<div class="dd-wrap" id="ddw">
+      <div class="dd-btn${sel?' sel':''}" id="ddb" onclick="toggleDD()">
+        <span id="ddv">${sel||'Выберите...'}</span>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M2 5l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="dd-list" id="ddl">
+        ${q.opts.map(o=>`<div class="dd-opt${o===sel?' sel':''}" onclick="pickDD('${o.replace(/'/g,"\\'")}')">${o}</div>`).join('')}
+      </div>
+    </div>`;
+  } else if(q.type==='choice'){
+    body=`<div class="choices">
+      ${q.opts.map((o,j)=>`<div class="card${D[q.id]===o?' on':''}" onclick="pickOne(this,'${o.replace(/'/g,"\\'")}')">
+        <div class="cnum">${j+1}</div><div class="clabel">${o}</div>
+      </div>`).join('')}
+    </div>`;
+  } else if(q.type==='multi'){
+    const sel=D[q.id]||[];
+    body=`<div class="multi-hint">Можно выбрать несколько</div>
+      ${q.opts.map(o=>`<div class="mcard${sel.includes(o)?' on':''}" onclick="toggleM(this,'${o.replace(/'/g,"\\'")}')">
+        <div class="mchk"><svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+          <path d="M1 4l3 3 5-6" stroke="#020810" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg></div>
+        <div class="clabel">${o}</div>
+      </div>`).join('')}
+      <div style="height:16px"></div>`;
+  } else if(q.type==='contact'){
+    body=`<div class="contact-pair">
+      <div class="iw">
+        <input class="qi" id="inp_name" type="text" autocomplete="name"
+          placeholder="Ваше имя *"
+          value="${(D.contact_name||'').replace(/"/g,'&quot;')}"
+          oninput="D.contact_name=this.value.trim()">
+        <div class="iline"></div>
+      </div>
+      <div class="iw" style="margin-top:22px">
+        <input class="qi" id="inp_contact" type="text" autocomplete="tel"
+          placeholder="Telegram (@username) или телефон"
+          value="${(D.contact_messenger||'').replace(/"/g,'&quot;')}"
+          oninput="D.contact_messenger=this.value.trim()">
+        <div class="iline"></div>
+      </div>
+    </div>`;
+  }
+
+  if(!q.noNote){
+    body+=`<div class="clarify">
+      <button class="clarify-toggle" onclick="this.nextElementSibling.classList.toggle('show');this.style.display='none'">
+        + Уточнить / добавить детали
+      </button>
+      <textarea class="clarify-ta" id="note_${q.id}" placeholder="Уточните если нужно..." onchange="notes['${q.id}']=this.value"></textarea>
+    </div>`;
+  }
+
+  const hasNext=(q.type!=='choice');
+  if(hasNext){
+    body+=`<div class="actions">
+      <button class="btn-next" onclick="next()">
+        ${i===QS.length-1?'Отправить':'Далее'}
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      ${i>0?`<button class="btn-back" onclick="back()">← Назад</button>`:''}
+    </div>`;
+  } else {
+    if(i>0) body+=`<button class="btn-back" onclick="back()">← Назад</button>`;
+  }
+
+  wrap.innerHTML=`<div class="qs ${dir==='r'?'in-r':'in-l'}" id="qs">
+    <div class="q-meta">Вопрос ${i+1} / ${QS.length}</div>
+    <div class="q-title">${q.text}</div>
+    ${body}
+  </div>`;
+
+  // restore notes
+  const nt=document.getElementById('note_'+q.id);
+  if(nt && notes[q.id]){ nt.value=notes[q.id]; }
+}
+
+function toggleDD(){
+  document.getElementById('ddb').classList.toggle('open');
+  document.getElementById('ddl').classList.toggle('open');
+}
+
+function pickDD(v){
+  D[QS[cur].id]=v;
+  document.getElementById('ddv').textContent=v;
+  document.getElementById('ddb').classList.add('sel');
+  document.getElementById('ddb').classList.remove('open');
+  document.getElementById('ddl').classList.remove('open');
+  document.querySelectorAll('.dd-opt').forEach(o=>{
+    o.classList.toggle('sel',o.textContent.trim()===v);
+  });
+}
+
+function pickOne(el,v){
+  D[QS[cur].id]=v;
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  if(cur<QS.length-1) setTimeout(()=>slideOut('l',()=>{cur++;render(cur,'r');}),240);
+  else setTimeout(submit,240);
+}
+
+function toggleM(el,v){
+  if(!D[QS[cur].id]) D[QS[cur].id]=[];
+  const arr=D[QS[cur].id];
+  const idx=arr.indexOf(v);
+  if(idx>-1) arr.splice(idx,1); else arr.push(v);
+  el.classList.toggle('on',arr.includes(v));
+}
+
+function next(){
+  const q=QS[cur];
+  if(q.type==='dropdown' && !D[q.id]){
+    const btn=document.getElementById('ddb');
+    if(btn){btn.style.borderColor='#f87171';setTimeout(()=>btn.style.borderColor='',700);}
+    return;
+  }
+  if(q.type==='contact'){
+    const el=document.getElementById('inp_name');
+    if(!el||!el.value.trim()){
+      if(el){el.style.borderColor='#f87171';setTimeout(()=>el.style.borderColor='',700);}
+      return;
+    }
+    D.contact_name=el.value.trim();
+    const el2=document.getElementById('inp_contact');
+    if(el2) D.contact_messenger=el2.value.trim();
+  }
+  saveNote(q.id);
+  if(cur<QS.length-1) slideOut('l',()=>{cur++;render(cur,'r');});
+  else submit();
+}
+
+function back(){
+  saveNote(QS[cur].id);
+  slideOut('r',()=>{cur--;render(cur,'l');});
+}
+
+function saveNote(id){
+  const el=document.getElementById('note_'+id);
+  if(el) notes[id]=el.value;
+}
+
+function slideOut(dir,cb){
+  const s=document.getElementById('qs');
+  if(!s){cb();return;}
+  s.classList.add(dir==='l'?'out-l':'out-r');
+  setTimeout(cb,250);
+}
+
+const PKGS = [
+  { name:'Базовый',  price:'15 000 ₽', days:'3–5 дней' },
+  { name:'Старт',    price:'30 000 ₽', days:'10–12 дней' },
+  { name:'Стандарт', price:'55 000 ₽', days:'14–18 дней' },
+  { name:'Под ключ', price:'89 000 ₽', days:'21–28 дней' },
+];
+
+function analyzePackage(D){
+  const s=[0,0,0,0];
+  const add=(v,map)=>{ if(v&&map[v]) map[v].forEach((n,i)=>s[i]+=n); };
+  add(D.clients,{
+    'До 50':      [3,1,0,0], '50–150':[1,3,1,0],
+    '150–300':    [0,1,3,1], '300–500':[0,0,2,3], 'Больше 500':[0,0,1,3]
+  });
+  add(D.booking,{
+    'Только по звонку':            [1,3,2,1],
+    'WhatsApp / Telegram вручную': [2,2,1,0],
+    'Онлайн-запись уже есть':      [0,1,2,3],
+    'Несколько способов':          [0,1,2,3]
+  });
+  add(D.goal,{
+    'Больше новых клиентов':             [0,1,2,3],
+    'Вернуть тех кто давно не приходил': [0,1,3,1],
+    'Меньше отмен и пропусков':          [1,3,2,0],
+    'Автоматизировать всё целиком':      [0,0,2,3]
+  });
+  add(D.tools,{
+    'Ничего нет':             [3,2,0,0],
+    'Excel / Google Таблицы': [1,3,1,0],
+    'YClients или DIKIDI':    [0,2,3,1],
+    'CRM-система':            [0,0,2,3]
+  });
+  const msgs=D.messengers||[];
+  if(msgs.includes('Только звонки')||!msgs.length) [2,2,1,0].forEach((v,i)=>s[i]+=v);
+  else if(msgs.length===1) [3,1,0,0].forEach((v,i)=>s[i]+=v);
+  else if(msgs.length===2) [1,2,2,1].forEach((v,i)=>s[i]+=v);
+  else [0,1,2,3].forEach((v,i)=>s[i]+=v);
+  add(D.team,{
+    'Только я':     [3,2,0,0], '2–3 человека':[1,3,2,0],
+    '4–7 человек':  [0,1,3,2], '8 и больше':  [0,0,1,3]
+  });
+  add(D.timeline,{
+    'Как можно быстрее':      [3,1,0,0],
+    'В течение месяца':       [1,3,2,1],
+    'Просто изучаю варианты': [1,1,1,1]
+  });
+  add(D.approach,{
+    'Быстро запустить базовое': [3,2,1,0],
+    'Сразу сделать полноценно': [0,1,2,3]
+  });
+  // budget — двойной вес
+  add(D.budget,{
+    'До 20 000 ₽':        [6,0,0,0],
+    '20 000 – 40 000 ₽':  [2,6,0,0],
+    '40 000 – 60 000 ₽':  [0,2,6,0],
+    'Выше 60 000 ₽':      [0,0,2,6]
+  });
+  const MAX=30;
+  const pcts=s.map(v=>Math.round(v/MAX*100));
+  return { pcts, winner:pcts.indexOf(Math.max(...pcts)) };
+}
+
+function goalBullets(goal){
+  const map={
+    'Больше новых клиентов':[
+      'Реферальная система приводит новых клиентов автоматически',
+      'Квиз-воронка для захвата заявок с сайта',
+      'Автоматический сбор отзывов на Яндекс.Картах'
+    ],
+    'Вернуть тех кто давно не приходил':[
+      'Реактивационные сообщения возвращают 15–25% спящей базы',
+      'Автоматические напоминания о следующем визите',
+      'Сегментация клиентов по активности'
+    ],
+    'Меньше отмен и пропусков':[
+      'Напоминания за 24ч снижают отмены на 30–40%',
+      'Подтверждение записи в 2 клика',
+      'Автозаполнение свободных окон при отмене'
+    ],
+    'Автоматизировать всё целиком':[
+      'Запись, напоминания, реактивация — без участия администратора',
+      'CRM с полной аналитикой по клиентам и мастерам',
+      'Интеграция со всеми мессенджерами и YClients/DIKIDI'
+    ]
+  };
+  const b=map[goal]||['Автоматизация ключевых процессов','Меньше ручной работы','Рост возвращаемости клиентов'];
+  return b.map(x=>`• ${x}`).join('\n');
+}
+
+function submit(){
+  saveNote(QS[cur].id);
+  prog(QS.length);
+  const res=analyzePackage(D);
+  const w=PKGS[res.winner];
+  const bulletArr=goalBullets(D.goal).split('\n').map(b=>b.replace(/^• /,''));
+  document.getElementById('winnerCard').innerHTML=`
+    <div class="wd-label">Подобрали под ваши ответы</div>
+    <div class="wd-name">${w.name}</div>
+    <div class="wd-meta">${w.price} · ${w.days}</div>
+    <div class="wd-sep"></div>
+    <div class="wd-bullets">
+      ${bulletArr.map(b=>`<div class="wd-bullet"><span class="wd-arr">→</span><span>${b}</span></div>`).join('')}
+    </div>`;
+  document.getElementById('sQ').style.display='none';
+  document.getElementById('sR').style.display='flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.getElementById('winnerCard').classList.add('in');
+  }));
+}
+
+function showThanks(){
+  const res=analyzePackage(D);
+  const w=PKGS[res.winner];
+  const pctLine=PKGS.map((p,i)=>`${p.name}: ${res.pcts[i]}%`).join(' | ');
+  const lines=QS.map(q=>{
+    if(q.type==='contact') return `Имя: ${D.contact_name||'—'}\nКонтакт: ${D.contact_messenger||'—'}`;
+    let a=D[q.id]||(q.type==='multi'?[]:'')||'—';
+    if(Array.isArray(a)) a=a.join(', ')||'—';
+    const n=notes[q.id];
+    return `${q.text}\n→ ${a}${n?'\n   Уточнение: '+n:''}`;
+  }).join('\n\n');
+  const tmpl=`Привет${D.contact_name?', '+D.contact_name:''}! Изучил ваши ответы.\n\nПод вашу ситуацию лучше всего подойдёт ${w.name} — ${w.price}.\n\nЧто даст:\n${goalBullets(D.goal)}\n\nСрок: ${w.days}. Окупается за 1–2 месяца.\nГотов обсудить детали — когда удобно созвониться?`;
+  const emailBody=
+`📋 НОВЫЙ ЛИД — Анкета квалификации
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+👤 КОНТАКТ:
+Имя: ${D.contact_name||'—'}
+Связь: ${D.contact_messenger||'—'}
+
+📊 АНАЛИЗ ПАКЕТА:
+🏆 Рекомендуется: ${w.name.toUpperCase()} (${w.price}) — ${res.pcts[res.winner]}%
+${pctLine}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 ОТВЕТЫ:
+${lines}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💬 ШАБЛОН СООБЩЕНИЯ КЛИЕНТУ:
+
+${tmpl}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🕐 ${new Date().toLocaleString('ru-RU')}`;
+
+  if(typeof emailjs!=='undefined'&&EMAILJS_PK!=='YOUR_PUBLIC_KEY'){
+    emailjs.send(EMAILJS_SVC,EMAILJS_TPL,{
+      subject:'📋 Новый лид — '+(D.contact_name||'Анкета')+(D.niche?' · '+D.niche:''),
+      message:emailBody
+    }).catch(()=>{});
+  } else {
+    window.location.href=`mailto:tridavy2000@gmail.com?subject=${encodeURIComponent('📋 Новый лид — Анкета')}&body=${encodeURIComponent(emailBody)}`;
+  }
+  if(ENDPOINT!=='YOUR_ENDPOINT'){
+    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({answers:D,notes,pcts:res.pcts,winner:res.winner,ts:new Date().toISOString()})}).catch(()=>{});
+  }
+  setTimeout(()=>{
+    document.getElementById('sR').style.display='none';
+    document.getElementById('sT').style.display='flex';
+  },350);
+}
+
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('sQ').style.display==='none') return;
+  const q=QS[cur];
+  if(e.key==='Enter'&&!e.shiftKey&&q.type==='dropdown') next();
+  if(q.type==='choice'){const n=parseInt(e.key);if(n>=1&&n<=q.opts.length) document.querySelectorAll('.card')[n-1]?.click();}
+});
+
+// PARTICLES
+(function(){
+  const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+  let W,H,pts;
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight;}
+  function init(){resize();pts=Array.from({length:48},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.26,vy:(Math.random()-.5)*.26,r:Math.random()*1.1+.4,op:Math.random()*.45+.18}));}
+  function frame(){
+    cx.clearRect(0,0,W,H);
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const d=Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y);
+      if(d<105){cx.beginPath();cx.strokeStyle=`rgba(0,212,255,${.05*(1-d/105)})`;cx.lineWidth=.5;cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);cx.stroke();}
+    }
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;
+      if(p.x<0||p.x>W)p.vx*=-1;if(p.y<0||p.y>H)p.vy*=-1;
+      cx.beginPath();cx.arc(p.x,p.y,p.r,0,Math.PI*2);cx.fillStyle=`rgba(0,212,255,${p.op*.28})`;cx.fill();
+    });
+    requestAnimationFrame(frame);
+  }
+  window.addEventListener('resize',resize);init();frame();
+})();
+</script>
+</body>
+</html>
