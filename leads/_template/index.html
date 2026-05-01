@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>КЭП Барбершоп — AI-система автозаписи</title>
+<title id="page-title">НАЗВАНИЕ — AI-система автозаписи</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -72,8 +72,6 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
 .widget{background:#0a1624;border:1px solid var(--border2);border-radius:18px;
   overflow:hidden;box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.5);
   max-width:400px;margin:0 auto;position:relative}
-
-/* top bar */
 .wbar{background:#070f1c;padding:12px 16px;display:flex;align-items:center;gap:10px;
   border-bottom:1px solid var(--border)}
 .wdots{display:flex;gap:5px;flex-shrink:0}
@@ -85,13 +83,10 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
 .wname{font-weight:700;font-size:13px}
 .wonline{font-size:10px;color:var(--green);display:flex;align-items:center;gap:3px;margin-top:1px}
 .wdot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green)}
-
-/* messages area */
 .wmsgs{padding:14px;display:flex;flex-direction:column;gap:7px;
   height:420px;overflow-y:auto;scroll-behavior:smooth}
 .wmsgs::-webkit-scrollbar{width:2px}
 .wmsgs::-webkit-scrollbar-thumb{background:var(--border2)}
-
 .wm{max-width:90%;padding:9px 13px;border-radius:13px;font-size:13px;line-height:1.55;
   opacity:0;transform:translateY(5px) scale(.98);transition:opacity .3s,transform .3s;flex-shrink:0}
 .wm.show{opacity:1;transform:none}
@@ -101,8 +96,6 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
   align-self:flex-end;border-bottom-right-radius:3px}
 .wm b,.wm strong{color:var(--cyan)}
 .wm-t{font-size:10px;color:var(--muted);margin-top:3px;text-align:right}
-
-/* button rows */
 .wbtns{display:flex;flex-direction:column;gap:5px;margin-top:7px}
 .wbtn{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);
   color:var(--text);font-size:12px;padding:8px 11px;border-radius:7px;
@@ -113,8 +106,6 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
 .wbtn.busy{background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.3);
   color:rgba(255,71,87,.7);pointer-events:none;cursor:default}
 .wbtn.disabled{opacity:.35;pointer-events:none}
-
-/* typing indicator */
 .wtyping{display:flex;gap:4px;align-items:center;padding:9px 13px;
   background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.14);
   border-radius:13px;border-bottom-left-radius:3px;align-self:flex-start;
@@ -123,8 +114,6 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
 .td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:td 1.2s infinite}
 .td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
-
-/* input */
 .winput-bar{padding:9px 12px;border-top:1px solid var(--border);
   display:flex;gap:8px;align-items:center;background:#070f1c}
 .winput{flex:1;background:rgba(0,212,255,.05);border:1px solid var(--border);
@@ -141,7 +130,7 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
 .wphoto-btn:hover{color:var(--cyan)}
 #photo-input{display:none}
 
-/* owner popup */
+/* OWNER POPUP */
 .owner-popup{
   position:absolute;top:8px;right:-8px;
   background:#041018;border:1px solid rgba(0,255,136,.28);border-radius:10px;
@@ -160,7 +149,6 @@ h1{font-family:'Orbitron',sans-serif;font-size:clamp(28px,3.5vw,50px);font-weigh
 .op-badge{display:inline-block;margin-top:7px;background:rgba(0,255,136,.08);
   border:1px solid rgba(0,255,136,.2);color:var(--green);
   font-size:9px;padding:2px 7px;border-radius:8px;letter-spacing:1px;text-transform:uppercase}
-
 .widget-hint{text-align:center;margin-top:10px;font-size:12px;color:var(--muted)}
 .widget-hint b{color:var(--cyan)}
 
@@ -177,7 +165,7 @@ section{position:relative;z-index:1}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;
   max-width:1100px;margin:0 auto}
 .card{background:var(--bg);border:1px solid var(--border);border-radius:7px;
-  padding:24px 20px;transition:.25s;position:relative;overflow:hidden}
+  padding:24px 20px;transition:.25s;position:relative;overflow:hidden;cursor:pointer}
 .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:.25s}
 .card:hover{border-color:var(--border2);box-shadow:var(--glow);transform:translateY(-3px)}
@@ -187,7 +175,6 @@ section{position:relative;z-index:1}
   color:var(--cyan);letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
 .cx{color:rgba(224,244,255,0.78);font-size:13.5px;line-height:1.65}
 .cr{margin-top:12px;font-size:13px;font-weight:700;color:var(--green)}
-.card{cursor:pointer}
 .card-hint{margin-top:10px;font-size:11px;color:rgba(0,212,255,0.4);letter-spacing:.5px}
 .card:hover .card-hint{color:var(--cyan)}
 
@@ -244,7 +231,6 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;heigh
 .btn-tg:hover{transform:translateY(-3px);box-shadow:0 0 65px rgba(0,212,255,.55)}
 .contact{font-size:13px;color:var(--muted)}
 .contact a{color:var(--cyan);text-decoration:none}
-
 footer{padding:24px 44px;border-top:1px solid var(--border);
   display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
 footer .fl{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--cyan);letter-spacing:2px}
@@ -263,26 +249,19 @@ footer p{font-size:11px;color:var(--muted)}
 <body>
 
 <nav>
-  <div class="nav-logo">КЭП</div>
-  <div class="nav-tag">✂️ Арбат · AI-автоматизация</div>
+  <div class="nav-logo" id="nav-logo">НАЗВАНИЕ</div>
+  <div class="nav-tag" id="nav-tag">✂️ Город · AI-автоматизация</div>
   <a href="https://t.me/tridavy2000" target="_blank" class="nav-cta">Связаться →</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
  <div class="hero-inner">
-
-  <!-- LEFT -->
   <div>
-    <div class="eyebrow">Персональное демо для КЭП</div>
+    <div class="eyebrow" id="eyebrow">Персональное демо для НАЗВАНИЕ</div>
     <h1>Ваши клиенты<br>записываются<br>пока вы спите</h1>
     <p class="hero-sub">AI-система принимает запись <b>24/7</b>, напоминает, возвращает спящих клиентов и собирает отзывы — <b>полностью без администратора</b>.</p>
-    <div class="pills">
-      <div class="pill">✂️ Стрижки</div>
-      <div class="pill">🪒 Борода</div>
-      <div class="pill">👑 Бритьё</div>
-      <div class="pill">📍 Арбат</div>
-    </div>
+    <div class="pills" id="pills-row"></div>
     <div class="btns">
       <a href="#roi" class="btn-p">Посчитать выгоду</a>
       <a href="#how" class="btn-o">Как это работает →</a>
@@ -291,7 +270,7 @@ footer p{font-size:11px;color:var(--muted)}
       <div class="st"><div class="st-n">24/7</div><div class="st-l">Запись без звонка</div></div>
       <div class="st"><div class="st-n">+12</div><div class="st-l">Возвратов / мес</div></div>
       <div class="st"><div class="st-n">87%</div><div class="st-l">Приходят с напомин.</div></div>
-      <div class="st"><div class="st-n">5 дней</div><div class="st-l">До запуска</div></div>
+      <div class="st"><div class="st-n" id="launch-stat">5 дней</div><div class="st-l">До запуска</div></div>
     </div>
   </div>
 
@@ -300,9 +279,9 @@ footer p{font-size:11px;color:var(--muted)}
     <div class="widget">
       <div class="wbar">
         <div class="wdots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
-        <div class="wava">✂️</div>
+        <div class="wava" id="wava">✂️</div>
         <div>
-          <div class="wname">КЭП Барбершоп</div>
+          <div class="wname" id="wname">Бизнес</div>
           <div class="wonline"><div class="wdot"></div>онлайн — отвечает мгновенно</div>
         </div>
       </div>
@@ -317,24 +296,16 @@ footer p{font-size:11px;color:var(--muted)}
       </div>
     </div>
     <div class="widget-hint">👆 <b>Кликайте кнопки</b> или пишите вопрос — всё живое</div>
-
-    <!-- OWNER POPUP -->
     <div class="owner-popup" id="op">
       <div class="op-hdr">
         <div class="op-blink"></div>
         <div class="op-title">🔔 НОВАЯ ЗАПИСЬ</div>
         <div class="op-time" id="op-t">03:47</div>
       </div>
-      <div class="op-body" id="op-b">
-        ✂️ <b>Алексей М.</b><br>
-        Услуга: <b>Стрижка</b><br>
-        Мастер: <b>Иван</b><br>
-        Время: <b>завтра 14:00</b>
-      </div>
+      <div class="op-body" id="op-b"></div>
       <div class="op-badge">ПРИШЛО ПОКА ВЫ СПАЛИ</div>
     </div>
   </div>
-
  </div>
 </section>
 
@@ -384,8 +355,8 @@ footer p{font-size:11px;color:var(--muted)}
 
 <!-- ROI -->
 <section class="sp" id="roi">
-  <h2 class="sec-h">Посчитайте выгоду для КЭП</h2>
-  <p class="sec-s">Реалистичный расчёт на основе средних показателей барбершопов Москвы</p>
+  <h2 class="sec-h" id="roi-title">Посчитайте выгоду</h2>
+  <p class="sec-s" id="roi-sub">Реалистичный расчёт на основе средних показателей</p>
   <div class="roi-card">
     <div class="rl"><span>Клиентов в базе</span><span id="vC">200</span></div>
     <input type="range" id="rC" min="50" max="800" value="200" step="10" oninput="calc()">
@@ -406,7 +377,7 @@ footer p{font-size:11px;color:var(--muted)}
 
 <!-- CTA -->
 <section class="cta-s">
-  <h2 class="cta-h">Запустить для <span>КЭП</span> за 5–7 дней</h2>
+  <h2 class="cta-h">Запустить для <span id="cta-name">вас</span> за <span id="cta-days">5–7</span> дней</h2>
   <p class="cta-sub">Всё что вы видели в чате — ваша реальная система.<br>Настраиваем под ваши услуги, мастеров и цены.</p>
   <div>
     <a href="https://t.me/tridavy2000" target="_blank" class="btn-tg">💬 Написать и обсудить</a>
@@ -419,7 +390,7 @@ footer p{font-size:11px;color:var(--muted)}
 
 <footer>
   <div class="fl">ДАНИЛ · AI АВТОМАТИЗАЦИЯ</div>
-  <p>Персональное демо · КЭП Барбершоп · Арбат</p>
+  <p id="footer-note">Персональное демо</p>
 </footer>
 
 <!-- CARD MODAL -->
@@ -432,18 +403,123 @@ footer p{font-size:11px;color:var(--muted)}
   </div>
 </div>
 
-<!-- ═══════════════ CHAT ENGINE ═══════════════════════════════ -->
 <script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║   ЗАПОЛНИ ЭТОТ БЛОК — ОСТАЛЬНОЕ РАБОТАЕТ САМО               ║
+// ╚══════════════════════════════════════════════════════════════╝
+const CONFIG = {
+
+  // ─── ОСНОВНОЕ ───────────────────────────────────────────────
+  name:       'Название Барбершоп',    // полное название (в чате)
+  nameShort:  'НАЗВАНИЕ',              // для nav + заголовков
+  niche:      'Барбершоп',
+  emoji:      '✂️',                    // эмодзи ниши (в аватаре виджета)
+  location:   'Москва',               // район/город
+  launchDays: '5–7',                  // срок запуска
+
+  // ─── ТЕГИ ПОД ЗАГОЛОВКОМ HERO ───────────────────────────────
+  pills: ['✂️ Стрижки', '🪒 Борода', '👑 Бритьё', '📍 Москва'],
+
+  // ─── УСЛУГИ ─────────────────────────────────────────────────
+  services: [
+    { name:'Стрижка классика',          price:1500, emoji:'✂️' },
+    { name:'Стрижка + укладка',         price:2000, emoji:'✂️' },
+    { name:'Борода',                    price:800,  emoji:'🪒' },
+    { name:'Комплекс (стрижка+борода)', price:2200, emoji:'👑' },
+    { name:'Бритьё опасной бритвой',    price:1200, emoji:'🔪' },
+  ],
+
+  // ─── МАСТЕРА ────────────────────────────────────────────────
+  masters: [
+    { name:'Иван',   title:'мастер-барбер',  exp:'5 лет',  key:'ivan'  },
+    { name:'Артём',  title:'старший мастер', exp:'8 лет',  key:'artem' },
+    { name:'Максим', title:'мастер-барбер',  exp:'3 года', key:'max'   },
+  ],
+
+  // ─── РАСПИСАНИЕ ─────────────────────────────────────────────
+  slots: {
+    ivan:  { free:['11:00','15:00','17:00','19:00'], busy:['13:00'] },
+    artem: { free:['10:00','12:00','16:00'],          busy:['14:00'] },
+    max:   { free:['11:00','14:00','18:00'],           busy:['16:00'] },
+  },
+
+  // ─── ROI КАЛЬКУЛЯТОР ────────────────────────────────────────
+  roi: {
+    clients:  200,   // клиентов в базе по умолчанию
+    check:    1800,  // средний чек ₽
+    sleeping: 30,    // % спящих клиентов
+    subtitle: 'Реалистичный расчёт на основе средних показателей барбершопов Москвы'
+  },
+
+  // ─── ПРИМЕР КЛИЕНТА (в уведомлении владельцу) ───────────────
+  demoClient: { name:'Алексей М.', service:'Стрижка', master:'Иван' },
+};
+// ╚══════════════════════════════════════════════════════════════╝
+
+// ── ИНИЦИАЛИЗАЦИЯ HTML ────────────────────────────────────────
+(function initHTML(){
+  const C = CONFIG;
+  document.getElementById('page-title').textContent = `${C.name} — AI-система автозаписи`;
+  document.getElementById('nav-logo').textContent   = C.nameShort;
+  document.getElementById('nav-tag').textContent    = `${C.emoji} ${C.location} · AI-автоматизация`;
+  document.getElementById('eyebrow').textContent    = `Персональное демо для ${C.nameShort}`;
+  document.getElementById('wava').textContent       = C.emoji;
+  document.getElementById('wname').textContent      = C.name;
+  document.getElementById('launch-stat').textContent= C.launchDays;
+  document.getElementById('roi-title').textContent  = `Посчитайте выгоду для ${C.nameShort}`;
+  document.getElementById('roi-sub').textContent    = C.roi.subtitle;
+  document.getElementById('cta-name').textContent   = C.nameShort;
+  document.getElementById('cta-days').textContent   = C.launchDays;
+  document.getElementById('footer-note').textContent= `Персональное демо · ${C.name} · ${C.location}`;
+
+  // pills
+  const pr = document.getElementById('pills-row');
+  C.pills.forEach(p => { const d=document.createElement('div'); d.className='pill'; d.textContent=p; pr.appendChild(d); });
+
+  // owner popup initial
+  document.getElementById('op-b').innerHTML =
+    `${C.emoji} <b>${C.demoClient.name}</b><br>Услуга: <b>${C.demoClient.service}</b><br>Мастер: <b>${C.demoClient.master}</b><br>Время: <b>завтра 14:00</b>`;
+
+  // ROI sliders initial
+  document.getElementById('rC').value = C.roi.clients;
+  document.getElementById('rP').value = C.roi.check;
+  document.getElementById('rS').value = C.roi.sleeping;
+  document.getElementById('vC').textContent = C.roi.clients;
+  document.getElementById('vP').textContent = fmt(C.roi.check) + ' ₽';
+  document.getElementById('vS').textContent = C.roi.sleeping + '%';
+  calc();
+})();
+
+// ── ROI ───────────────────────────────────────────────────────
+function fmt(n){ return n.toLocaleString('ru-RU'); }
+function calc(){
+  const c = +document.getElementById('rC').value;
+  const p = +document.getElementById('rP').value;
+  const s = +document.getElementById('rS').value / 100;
+  document.getElementById('vC').textContent = c;
+  document.getElementById('vP').textContent = fmt(p) + ' ₽';
+  document.getElementById('vS').textContent = Math.round(s*100) + '%';
+  const ret  = Math.round(c * s * 0.12);
+  const noShow = Math.round(c * 0.05);
+  const new_  = Math.round(c * 0.04);
+  const total = ret + noShow + new_;
+  const rev   = total * p;
+  document.getElementById('rN1').textContent = '+' + total;
+  document.getElementById('rN2').textContent = '+' + fmt(rev) + ' ₽';
+  document.getElementById('rN3').textContent = '+' + fmt(rev * 12) + ' ₽';
+  const pay = Math.ceil(55000 / rev);
+  document.getElementById('rN4').textContent = pay <= 1 ? '< 1 мес' : pay + ' мес';
+}
+
+// ── UTILS ─────────────────────────────────────────────────────
 const wm = document.getElementById('wm');
 let typing = null;
 let ctx = { service:'', master:'' };
 
-// ── UTILS ─────────────────────────────────────────────────────
 function T(){ const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
-function fmt(n){ return n.toLocaleString('ru-RU'); }
 function scroll(){ wm.scrollTop = wm.scrollHeight; }
 
-function addMsg(side, html, btns, extra){
+function addMsg(side, html, btns){
   const d = document.createElement('div');
   d.className = `wm ${side}`;
   let inner = html;
@@ -457,7 +533,6 @@ function addMsg(side, html, btns, extra){
   }
   inner += `<div class="wm-t">${T()}</div>`;
   d.innerHTML = inner;
-  if(extra) extra(d);
   wm.appendChild(d);
   requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('show')));
   scroll();
@@ -465,32 +540,17 @@ function addMsg(side, html, btns, extra){
 }
 
 function esc(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
-
-function showTyping(){
-  removeTyping();
-  const t = document.createElement('div');
-  t.className = 'wtyping';
-  t.innerHTML = '<span class="td"></span><span class="td"></span><span class="td"></span>';
-  wm.appendChild(t);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show')));
-  typing = t; scroll();
-}
+function showTyping(){ removeTyping(); const t=document.createElement('div'); t.className='wtyping'; t.innerHTML='<span class="td"></span><span class="td"></span><span class="td"></span>'; wm.appendChild(t); requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show'))); typing=t; scroll(); }
 function removeTyping(){ if(typing){ typing.remove(); typing=null; } }
-
 function disableAll(){ wm.querySelectorAll('.wbtn:not(.busy)').forEach(b=>b.classList.add('disabled')); }
-
-function bot(html, btns, delay=900){
-  showTyping();
-  setTimeout(()=>{ removeTyping(); addMsg('bot', html, btns); }, delay);
-}
-
+function bot(html, btns, delay=900){ showTyping(); setTimeout(()=>{ removeTyping(); addMsg('bot', html, btns); }, delay); }
 function user(text){ addMsg('user', text); }
 
 function ownerPop(service, master, time){
   const now = T();
   document.getElementById('op-t').textContent = now;
   document.getElementById('op-b').innerHTML =
-    `✂️ <b>Алексей М.</b><br>Услуга: <b>${service}</b><br>Мастер: <b>${master}</b><br>Время: <b>завтра ${time}</b>`;
+    `${CONFIG.emoji} <b>${CONFIG.demoClient.name}</b><br>Услуга: <b>${service}</b><br>Мастер: <b>${master}</b><br>Время: <b>завтра ${time}</b>`;
   const p = document.getElementById('op');
   p.classList.add('show');
   setTimeout(()=>p.classList.remove('show'), 9000);
@@ -515,10 +575,8 @@ function tap(el, val){
   disableAll();
   el.classList.add('picked');
   setTimeout(()=>user(val), 150);
-
   const v = val.replace(/[✂️🪒👑🔪🧴💈📅⏰💬⭐💡🤖📸👁🎁←→]/g,'').trim();
 
-  // MAIN MENU
   if(v.includes('Записаться') && !v.includes('Назад') && !v.includes('к ')) return setTimeout(()=>showServices(), 800);
   if(v.includes('Задать вопрос') || v.includes('Спросить AI'))  return setTimeout(()=>showAIDemo(), 800);
   if(v.includes('Подобрать стиль') || v.includes('по фото'))    return setTimeout(()=>showPhotoDemo(), 800);
@@ -527,17 +585,15 @@ function tap(el, val){
   if(v.includes('Стоимость') || v.includes('стоимость')) return setTimeout(()=>showPricing(), 800);
   if(v.includes('Главное меню') || v.includes('меню'))   return setTimeout(()=>welcome(), 600);
 
-  // SERVICES
-  if(v.includes('Стрижка классика'))   { ctx.service='Стрижка классика (1 500 ₽)'; return setTimeout(()=>showMasters(), 800); }
-  if(v.includes('Стрижка + укладка'))  { ctx.service='Стрижка + укладка (2 000 ₽)'; return setTimeout(()=>showMasters(), 800); }
-  if(v.includes('Борода'))             { ctx.service='Борода (800 ₽)'; return setTimeout(()=>showMasters(), 800); }
-  if(v.includes('Комплекс'))           { ctx.service='Комплекс стрижка+борода (2 200 ₽)'; return setTimeout(()=>showMasters(), 800); }
-  if(v.includes('Бритьё'))             { ctx.service='Бритьё опасной бритвой (1 200 ₽)'; return setTimeout(()=>showMasters(), 800); }
+  // SERVICES — по CONFIG
+  for(const svc of CONFIG.services){
+    if(v.includes(svc.name)){ ctx.service=`${svc.name} (${svc.price} ₽)`; return setTimeout(()=>showMasters(), 800); }
+  }
 
-  // MASTERS
-  if(v.includes('Иван'))   { ctx.master='Иван';  return setTimeout(()=>showTime('ivan'), 800); }
-  if(v.includes('Артём'))  { ctx.master='Артём'; return setTimeout(()=>showTime('artem'), 800); }
-  if(v.includes('Максим')) { ctx.master='Максим';return setTimeout(()=>showTime('max'), 800); }
+  // MASTERS — по CONFIG
+  for(const m of CONFIG.masters){
+    if(v.includes(m.name)){ ctx.master=m.name; return setTimeout(()=>showTime(m.key), 800); }
+  }
   if(v.includes('мастер')) return setTimeout(()=>showMasters(), 700);
 
   // TIME SLOTS
@@ -545,25 +601,20 @@ function tap(el, val){
   if(timeM && !v.includes('занято')) return setTimeout(()=>confirmBooking(timeM[1]), 800);
 
   // AI SAMPLE QUESTIONS
-  if(v.includes('Сколько стоит стрижка'))  return setTimeout(()=>{ bot(aiReply('сколько стоит стрижка'), ['📅 Записаться','← Главное меню']); }, 900);
-  if(v.includes('Какие мастера'))          return setTimeout(()=>{ bot(aiReply('какие мастера'), ['📅 Записаться','← Главное меню']); }, 900);
-  if(v.includes('Есть скидки'))            return setTimeout(()=>{ bot(aiReply('скидки акции'), ['📅 Записаться','← Главное меню']); }, 900);
-  if(v.includes('Бритьё опасной'))         return setTimeout(()=>{ bot(aiReply('бритьё опасной'), ['📅 Записаться','← Главное меню']); }, 900);
-  if(v.includes('Где вы находитесь'))      return setTimeout(()=>{ bot(aiReply('адрес где'), ['📅 Записаться','← Главное меню']); }, 900);
+  if(v.includes('Сколько стоит'))   return setTimeout(()=>{ bot(aiReply('сколько стоит'), ['📅 Записаться','← Главное меню']); }, 900);
+  if(v.includes('Какие мастера'))   return setTimeout(()=>{ bot(aiReply('какие мастера'), ['📅 Записаться','← Главное меню']); }, 900);
+  if(v.includes('Есть скидки'))     return setTimeout(()=>{ bot(aiReply('скидки'), ['📅 Записаться','← Главное меню']); }, 900);
+  if(v.includes('Где вы'))          return setTimeout(()=>{ bot(aiReply('адрес'), ['📅 Записаться','← Главное меню']); }, 900);
 
-  // OWNER SUBMENU
-  if(v.includes('Напоминание')) return setTimeout(()=>showReminder(), 800);
-  if(v.includes('Реактивац'))   return setTimeout(()=>showReactivation(), 800);
-
-  // LOYALTY / REVIEWS
-  if(v.includes('Отзывы'))     return setTimeout(()=>showReviews(), 800);
-  if(v.includes('К услугам'))  return setTimeout(()=>showServices(), 700);
-  if(v.includes('Записаться к')) { const m=val.match(/Артём|Иван|Максим/); if(m){ ctx.master=m[0]; return setTimeout(()=>showTime('artem'), 800); } }
+  if(v.includes('Напоминание'))     return setTimeout(()=>showReminder(), 800);
+  if(v.includes('Реактивац'))       return setTimeout(()=>showReactivation(), 800);
+  if(v.includes('Отзывы'))          return setTimeout(()=>showReviews(), 800);
+  if(v.includes('К услугам'))       return setTimeout(()=>showServices(), 700);
 }
 
 // ── SCREENS ───────────────────────────────────────────────────
 function welcome(){
-  bot('👋 Привет! Я <b>AI-помощник КЭП</b>.<br>Чем могу помочь?',[
+  bot(`👋 Привет! Я <b>AI-помощник ${CONFIG.name}</b>.<br>Чем могу помочь?`,[
     '✂️ Записаться (запись 24/7)',
     '🤖 Задать вопрос AI',
     '📸 Подобрать стиль по фото',
@@ -574,36 +625,22 @@ function welcome(){
 }
 
 function showServices(){
-  bot('📅 Выбери услугу:',[
-    '✂️ Стрижка классика — 1 500 ₽',
-    '✂️ Стрижка + укладка — 2 000 ₽',
-    '🪒 Борода — 800 ₽',
-    '👑 Комплекс (стрижка + борода) — 2 200 ₽',
-    '🔪 Бритьё опасной бритвой — 1 200 ₽',
-    '← Главное меню'
-  ]);
+  const btns = CONFIG.services.map(s=>`${s.emoji} ${s.name} — ${s.price.toLocaleString('ru-RU')} ₽`);
+  btns.push('← Главное меню');
+  bot('📅 Выбери услугу:', btns);
 }
 
 function showMasters(){
-  bot(`<b>${ctx.service}</b><br><br>▓▓▓░░░░░░░ 30%<br><br>💈 Выбери мастера:`,[
-    '💈 Иван — мастер-барбер · 5 лет',
-    '💈 Артём — старший мастер · 8 лет',
-    '💈 Максим — мастер-барбер · 3 года',
-    '← К услугам'
-  ]);
+  const btns = CONFIG.masters.map(m=>`💈 ${m.name} — ${m.title} · ${m.exp}`);
+  btns.push('← К услугам');
+  bot(`<b>${ctx.service}</b><br><br>▓▓▓░░░░░░░ 30%<br><br>💈 Выбери мастера:`, btns);
 }
 
-const slots = {
-  ivan:  { free:['11:00','15:00','17:00','19:00'], busy:['13:00'] },
-  artem: { free:['10:00','12:00','16:00'],          busy:['14:00'] },
-  max:   { free:['11:00','14:00','18:00'],           busy:['16:00'] }
-};
-
-function showTime(who){
-  const s = slots[who] || slots.ivan;
+function showTime(key){
+  const s = CONFIG.slots[key] || CONFIG.slots[CONFIG.masters[0].key];
   const rows = [];
-  s.free.forEach(t => rows.push(`🟢 ${t}`));
-  s.busy.forEach(t => rows.push(`🔴 ${t} — занято`));
+  (s.free||[]).forEach(t => rows.push(`🟢 ${t}`));
+  (s.busy||[]).forEach(t => rows.push(`🔴 ${t} — занято`));
   rows.sort();
   rows.push('← Другой мастер');
   bot(`▓▓▓▓▓▓░░░░ 60%<br><br>📅 <b>${ctx.master}</b> — свободное время на завтра:`, rows);
@@ -612,12 +649,11 @@ function showTime(who){
 function confirmBooking(time){
   bot(
     `✅ <b>Готово! Записал тебя.</b><br><br>`+
-    `✂️ Услуга: <b>${ctx.service}</b><br>`+
-    `💈 Мастер: <b>${ctx.master}</b><br>`+
+    `Услуга: <b>${ctx.service}</b><br>`+
+    `Мастер: <b>${ctx.master}</b><br>`+
     `📅 Завтра в <b>${time}</b><br><br>`+
     `🔔 Напомню тебе завтра утром автоматически.`,
-    ['👁 Что ещё умеет система?','← Главное меню'],
-    1100
+    ['👁 Что ещё умеет система?','← Главное меню'], 1100
   );
   setTimeout(()=>ownerPop(ctx.service, ctx.master, time), 1800);
 }
@@ -625,12 +661,7 @@ function confirmBooking(time){
 function showAIDemo(){
   bot(
     `🤖 <b>AI-ассистент</b> — спрашивай что угодно.<br><br>Или выбери пример:`,
-    ['💰 Сколько стоит стрижка?',
-     '💈 Какие мастера работают?',
-     '🎁 Есть скидки и акции?',
-     '🔪 Бритьё опасной бритвой — что это?',
-     '📍 Где вы находитесь?',
-     '← Главное меню']
+    ['💰 Сколько стоит стрижка?','💈 Какие мастера работают?','🎁 Есть скидки и акции?','📍 Где вы находитесь?','← Главное меню']
   );
 }
 
@@ -647,32 +678,30 @@ function photoAnalysis(){
   showTyping();
   setTimeout(()=>{
     removeTyping();
+    const m = CONFIG.masters[1] || CONFIG.masters[0];
     bot(
-      `📸 <b>Анализирую фото...</b><br><br>`+
-      `──────────────<br>`+
+      `📸 <b>Анализирую фото...</b><br><br>──────────────<br>`+
       `💈 <b>Результат:</b><br><br>`+
       `• Тип волос: средней толщины, прямые<br>`+
       `• Рекомендуемый стиль: <b>классика с пробором</b><br>`+
-      `• Мастер: <b>Артём</b> (специализация — классика)<br><br>`+
-      `💰 Стрижка + укладка — от <b>2 000 ₽</b> · 60–75 мин<br><br>`+
+      `• Мастер: <b>${m.name}</b> (специализация — классика)<br><br>`+
       `<i>В реальной системе — Claude Vision анализирует ваше фото точно</i>`,
-      ['📅 Записаться к Артём','← Главное меню'],
-      200
+      [`📅 Записаться к ${m.name}`,'← Главное меню'], 200
     );
   }, 1400);
 }
 
 function showOwner(){
+  const first = CONFIG.services[0];
+  const master = CONFIG.masters[0];
   bot(
-    `📲 <b>Уведомление владельцу — мгновенно:</b><br><br>`+
-    `──────────────<br>`+
-    `✂️ <b>Новая запись!</b><br><br>`+
-    `Клиент: Алексей М.<br>`+
-    `Услуга: <b>Стрижка + укладка</b><br>`+
-    `Мастер: <b>Артём</b><br>`+
+    `📲 <b>Уведомление владельцу — мгновенно:</b><br><br>──────────────<br>`+
+    `${CONFIG.emoji} <b>Новая запись!</b><br><br>`+
+    `Клиент: ${CONFIG.demoClient.name}<br>`+
+    `Услуга: <b>${first.name}</b><br>`+
+    `Мастер: <b>${master.name}</b><br>`+
     `Дата: завтра <b>14:00</b><br>`+
-    `Тел: +7 916 ••• ••-12<br>`+
-    `──────────────<br><br>`+
+    `Тел: +7 916 ••• ••-12<br>──────────────<br><br>`+
     `<i>Это пришло в 23:52 пока вы спали.<br>Бот принял запись сам.</i>`,
     ['⏰ Напоминание клиенту за 24ч','💬 Реактивация спящего клиента','← Главное меню']
   );
@@ -680,27 +709,22 @@ function showOwner(){
 
 function showReminder(){
   bot(
-    `⏰ <b>Автонапоминание за 24 часа:</b><br><br>`+
-    `──────────────<br>`+
-    `✂️ Алексей, напоминаем!<br><br>`+
-    `Завтра в <b>14:00</b> ждём вас в КЭП.<br><br>`+
-    `✅ Буду &nbsp;&nbsp;&nbsp; ❌ Перенести<br>`+
-    `──────────────<br><br>`+
-    `📊 <b>87%</b> с напоминанием приходят<br>`+
-    `<b>61%</b> без напоминания — часть не доходит`,
+    `⏰ <b>Автонапоминание за 24 часа:</b><br><br>──────────────<br>`+
+    `${CONFIG.emoji} ${CONFIG.demoClient.name}, напоминаем!<br><br>`+
+    `Завтра в <b>14:00</b> ждём вас.<br><br>`+
+    `✅ Буду &nbsp;&nbsp;&nbsp; ❌ Перенести<br>──────────────<br><br>`+
+    `📊 <b>87%</b> с напоминанием приходят<br><b>61%</b> без напоминания — часть не доходит`,
     ['💬 Реактивация клиентов','← Владелец']
   );
 }
 
 function showReactivation(){
   bot(
-    `💬 <b>Реактивация — 4 недели без визита:</b><br><br>`+
-    `──────────────<br>`+
-    `✂️ Алексей, привет!<br><br>`+
+    `💬 <b>Реактивация — 4 недели без визита:</b><br><br>──────────────<br>`+
+    `${CONFIG.emoji} ${CONFIG.demoClient.name}, привет!<br><br>`+
     `Давно тебя не было — успел зарасти? 😄<br><br>`+
     `Есть окно на этой неделе. Специально для тебя — <b>скидка 10%</b> до пятницы.<br><br>`+
-    `Записать тебя?<br>`+
-    `──────────────<br><br>`+
+    `Записать тебя?<br>──────────────<br><br>`+
     `<i>Так работает по всей базе каждые 3–4 недели автоматически</i>`,
     ['🎁 Программа лояльности','← Владелец']
   );
@@ -708,12 +732,10 @@ function showReactivation(){
 
 function showLoyalty(){
   bot(
-    `🎁 <b>Карта лояльности клиента:</b><br><br>`+
-    `──────────────<br>`+
-    `<b>Алексей М.</b><br>`+
+    `🎁 <b>Карта лояльности клиента:</b><br><br>──────────────<br>`+
+    `<b>${CONFIG.demoClient.name}</b><br>`+
     `Визитов: <b>████░ 4 из 5</b><br><br>`+
-    `До бесплатной стрижки — <b>1 визит!</b><br>`+
-    `──────────────<br><br>`+
+    `До бесплатной стрижки — <b>1 визит!</b><br>──────────────<br><br>`+
     `<b>Как работает:</b><br>`+
     `• Каждый визит — +1 балл<br>`+
     `• 5-й визит → бесплатная стрижка или скидка 15%<br>`+
@@ -725,12 +747,10 @@ function showLoyalty(){
 function showReviews(){
   bot(
     `⭐ <b>Автосбор отзывов на Яндекс:</b><br><br>`+
-    `<i>Через 3 часа после визита бот пишет:</i><br><br>`+
-    `──────────────<br>`+
-    `🌟 Алексей, как прошёл визит?<br><br>`+
+    `<i>Через 3 часа после визита бот пишет:</i><br><br>──────────────<br>`+
+    `🌟 ${CONFIG.demoClient.name}, как прошёл визит?<br><br>`+
     `Если всё понравилось — оставьте отзыв на Яндексе. Займёт 1 минуту!<br><br>`+
-    `👉 [Оставить отзыв]<br>`+
-    `──────────────<br><br>`+
+    `👉 [Оставить отзыв]<br>──────────────<br><br>`+
     `<b>+8–12 новых отзывов в месяц</b> на автопилоте`,
     ['💡 Стоимость системы','← Главное меню']
   );
@@ -738,7 +758,7 @@ function showReviews(){
 
 function showPricing(){
   bot(
-    `💡 <b>Стоимость системы для вашего барбершопа:</b><br><br>`+
+    `💡 <b>Стоимость системы для вашего бизнеса:</b><br><br>`+
     `──────────────<br>`+
     `🔹 <b>Базовый — 15 000 ₽</b><br>`+
     `<i>Для тех кто хочет попробовать</i><br><br>`+
@@ -775,6 +795,26 @@ function showPricing(){
   );
 }
 
+// ── AI REPLIES ────────────────────────────────────────────────
+function aiReply(text){
+  const t = (text||'').toLowerCase();
+  if(/цен|стоит|сколько|прайс/.test(t)){
+    const lines = CONFIG.services.map(s=>`${s.emoji} ${s.name} — <b>от ${s.price.toLocaleString('ru-RU')} ₽</b>`).join('<br>');
+    return `🤖 <b>Цены на услуги:</b><br><br>${lines}<br><br><i>Точная цена зависит от длины и сложности</i>`;
+  }
+  if(/мастер|барбер|кто|работ/.test(t)){
+    const lines = CONFIG.masters.map(m=>`💈 <b>${m.name}</b> — ${m.title}, ${m.exp}`).join('<br>');
+    return `🤖 <b>Наши мастера:</b><br><br>${lines}<br><br><i>У каждого своё расписание. Выбирай при записи.</i>`;
+  }
+  if(/скидк|акц|промо|бонус/.test(t))
+    return `🤖 <b>Актуальные акции:</b><br><br>🎁 Первый визит через бота — <b>скидка 10%</b><br>⭐ 5-й визит — <b>бесплатная услуга</b><br>👥 Приведи друга — <b>скидка 500 ₽ обоим</b>`;
+  if(/адрес|где|находит|проезд/.test(t))
+    return `🤖 <b>Мы находимся:</b><br><br>📍 ${CONFIG.location}<br><br><i>Адрес уточняется при записи</i>`;
+  if(/час|работ|время|расписан/.test(t))
+    return `🤖 <b>Режим работы:</b><br><br>⏰ Ежедневно с 10:00 до 21:00<br><br><i>Запись через бота — 24/7</i>`;
+  return `🤖 Хороший вопрос! В реальной системе AI знает всё о вашем бизнесе и отвечает мгновенно на любые вопросы клиентов.<br><br><i>Попробуй спросить про цены, мастеров или акции</i>`;
+}
+
 // ── CARD MODALS ───────────────────────────────────────────────
 const cardDetails = {
   booking: {
@@ -791,11 +831,11 @@ const cardDetails = {
   },
   reminder: {
     icon:'⏰', title:'Напоминания за 24 часа',
-    body:`За сутки до визита клиент получает: <b>«Привет! Завтра в 15:00 к Ивану. Всё в силе?»</b><br><br>Те кто не может — отменяют заранее. Ты успеваешь заполнить окно другим клиентом вместо пустого стула. Те кто забыл — вспоминают и приходят.<br><br><span class="cmodal-stat">▼ −30% отмен и неявок</span>`
+    body:`За сутки до визита клиент получает: <b>«Привет! Завтра в 15:00 к мастеру. Всё в силе?»</b><br><br>Те кто не может — отменяют заранее. Ты успеваешь заполнить окно другим клиентом вместо пустого стула. Те кто забыл — вспоминают и приходят.<br><br><span class="cmodal-stat">▼ −30% отмен и неявок</span>`
   },
   reactivation: {
     icon:'💬', title:'Реактивация клиентов',
-    body:`Через 3–4 недели после последнего визита бот сам пишет клиенту: <b>«Привет, Антон! Давно тебя не было — записаться к Ивану?»</b><br><br>По всей базе автоматически, раз в месяц. Без участия администратора. Клиент уже знает тебя — барьер входа низкий, отклик высокий.<br><br><span class="cmodal-stat">▲ +10–15 возвратов в месяц</span>`
+    body:`Через 3–4 недели после последнего визита бот сам пишет клиенту: <b>«Привет! Давно тебя не было — записаться?»</b><br><br>По всей базе автоматически, раз в месяц. Без участия администратора. Клиент уже знает тебя — барьер входа низкий, отклик высокий.<br><br><span class="cmodal-stat">▲ +10–15 возвратов в месяц</span>`
   },
   reviews: {
     icon:'⭐', title:'Отзывы на Яндекс',
@@ -815,91 +855,8 @@ function closeCard(){
   document.getElementById('card-modal').classList.remove('open');
 }
 
-// ── AI REPLIES ────────────────────────────────────────────────
-function aiReply(text){
-  const t = (text||'').toLowerCase();
-  if(/цен|стоит|сколько|прайс/.test(t))
-    return `🤖 <b>Цены на услуги:</b><br><br>`+
-      `✂️ Стрижка классика — <b>от 1 500 ₽</b><br>`+
-      `✂️ Стрижка + укладка — <b>от 2 000 ₽</b><br>`+
-      `🪒 Борода — <b>от 800 ₽</b><br>`+
-      `👑 Комплекс — <b>от 2 200 ₽</b><br>`+
-      `🔪 Бритьё — <b>от 1 200 ₽</b><br>`+
-      `🧴 Детская — <b>от 1 000 ₽</b><br><br>`+
-      `<i>Точная цена зависит от длины и сложности</i>`;
-  if(/мастер|барбер|кто|работ/.test(t))
-    return `🤖 <b>Наши мастера:</b><br><br>`+
-      `💈 <b>Иван</b> — мастер-барбер, 5 лет опыта<br>`+
-      `💈 <b>Артём</b> — старший мастер, 8 лет<br>`+
-      `💈 <b>Максим</b> — мастер-барбер, 3 года<br><br>`+
-      `<i>У каждого своё расписание. Выбирай при записи.</i>`;
-  if(/скидк|акц|промо|бонус/.test(t))
-    return `🤖 <b>Актуальные акции:</b><br><br>`+
-      `🎁 Первый визит через бота — <b>скидка 10%</b><br>`+
-      `⭐ 5-й визит — <b>бесплатная стрижка</b><br>`+
-      `👥 Приведи друга — <b>скидка 500 ₽ обоим</b>`;
-  if(/борода|beard|усы/.test(t))
-    return `🤖 <b>По бороде:</b><br><br>`+
-      `Моделирование — от <b>800 ₽</b><br>`+
-      `Коррекция + укладка — от <b>1 200 ₽</b><br>`+
-      `Комплекс — от <b>2 200 ₽</b><br><br>`+
-      `<i>Пришли фото желаемого стиля — подберём форму под лицо</i>`;
-  if(/стрижк|haircut|волос/.test(t))
-    return `🤖 <b>По стрижкам:</b><br><br>`+
-      `Классика (ножницы) — от <b>1 500 ₽</b><br>`+
-      `С укладкой — от <b>2 000 ₽</b><br>`+
-      `Детская — от <b>1 000 ₽</b><br><br>`+
-      `<i>Первый визит через бота — скидка 10%</i>`;
-  if(/брить|опасн|royal/.test(t))
-    return `🤖 <b>Бритьё опасной бритвой:</b><br><br>`+
-      `• Классическое бритьё — от <b>1 200 ₽</b><br>`+
-      `• С горячим полотенцем и уходом — от <b>1 800 ₽</b><br>`+
-      `• Время: 40–50 минут<br><br>`+
-      `<i>Настоящий мужской ритуал. Включает подготовку кожи.</i>`;
-  if(/адрес|где|находит|доехать|метро/.test(t))
-    return `🤖 <b>КЭП Барбершоп:</b><br><br>`+
-      `📍 Москва, Арбат<br>`+
-      `🚇 Рядом с метро Арбатская<br>`+
-      `🕐 Ежедневно с 10:00 до 21:00`;
-  if(/запис|когда|слот|свобод/.test(t))
-    return `🤖 <b>Свободное время на завтра:</b><br><br>`+
-      `🟢 11:00 — свободно<br>🔴 13:00 — занято<br>`+
-      `🟢 15:00 — свободно<br>🟢 17:00 — свободно<br>🟢 19:00 — свободно<br><br>`+
-      `<i>Записать прямо сейчас? Нажми кнопку ниже</i>`;
-  return `🤖 <b>Понял вопрос!</b><br><br>`+
-    `В боевой системе AI обучен на вашем прайсе, FAQ и услугах.<br>`+
-    `Знает всё: цены, мастеров, адрес, акции — отвечает мгновенно 24/7.`;
-}
-
-// ── ROI ───────────────────────────────────────────────────────
-function calc(){
-  const c=+document.getElementById('rC').value;
-  const p=+document.getElementById('rP').value;
-  const s=+document.getElementById('rS').value;
-  document.getElementById('vC').textContent=c;
-  document.getElementById('vP').textContent=fmt(p)+' ₽';
-  document.getElementById('vS').textContent=s+'%';
-  ['rC','rP','rS'].forEach(id=>{
-    const el=document.getElementById(id);
-    const pct=(el.value-el.min)/(el.max-el.min)*100;
-    el.style.background=`linear-gradient(90deg,var(--cyan) ${pct}%,rgba(0,212,255,.1) ${pct}%)`;
-  });
-  const sleep=Math.round(c*s/100);
-  const react=Math.round(sleep*.12);
-  const noshow=Math.round(c*.05*.3);
-  const visits=react+noshow+3;
-  const money=visits*p;
-  const year=money*12;
-  const pb=Math.max(1,Math.ceil(30000/money));
-  document.getElementById('rN1').textContent='+'+visits;
-  document.getElementById('rN2').textContent='+'+fmt(money)+' ₽';
-  document.getElementById('rN3').textContent='+'+fmt(year)+' ₽';
-  document.getElementById('rN4').textContent=pb<=1?'< 1 мес':pb+' мес';
-}
-calc();
-
 // ── START ─────────────────────────────────────────────────────
-welcome();
+window.addEventListener('load', ()=>{ setTimeout(welcome, 600); });
 </script>
 </body>
 </html>
