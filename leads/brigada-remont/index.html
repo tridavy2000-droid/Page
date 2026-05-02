@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бригада ремонта — AI-система без пропущенных заявок</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000810;--bg2:#000f1e;--bg3:#001020;
+  --cyan:#00d4ff;--cyan2:#0099bb;
+  --green:#00ff88;--red:#ff4757;--yellow:#ffd32a;
+  --orange:#ff8c00;
+  --border:rgba(0,212,255,0.18);--border2:rgba(0,212,255,0.35);
+  --glow:0 0 30px rgba(0,212,255,0.12);--glow2:0 0 60px rgba(0,212,255,0.22);
+  --text:#e0f4ff;--muted:rgba(224,244,255,0.45)
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--cyan2)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,212,255,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,212,255,.022) 1px,transparent 1px);
+  background-size:55px 55px}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:13px 44px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,8,16,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--cyan);letter-spacing:3px}
+.nav-tag{font-size:12px;color:var(--muted);letter-spacing:1px}
+.nav-cta{background:rgba(0,212,255,.1);border:1px solid var(--border2);color:var(--cyan);
+  padding:7px 18px;border-radius:3px;font-size:12px;font-weight:600;text-decoration:none;transition:.2s;letter-spacing:1px}
+.nav-cta:hover{background:rgba(0,212,255,.2)}
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 44px 60px;
+  position:relative;z-index:1}
+.hero-inner{max-width:1180px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,.06);border:1px solid var(--border);
+  padding:5px 15px;border-radius:20px;font-size:11px;color:var(--cyan);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 5px var(--cyan);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-family:'Orbitron',sans-serif;font-size:clamp(26px,3.2vw,46px);font-weight:900;
+  line-height:1.1;margin-bottom:18px;
+  background:linear-gradient(145deg,#fff 20%,var(--cyan) 55%,#fff 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:32px;max-width:420px}
+.hero-sub b{color:var(--text)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.pill{background:rgba(0,212,255,.05);border:1px solid var(--border);
+  padding:5px 13px;border-radius:20px;font-size:12px;color:var(--muted)}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{background:var(--cyan);color:#000;font-family:'Orbitron',sans-serif;font-size:12px;
+  font-weight:700;letter-spacing:1px;padding:14px 30px;border-radius:3px;
+  text-decoration:none;transition:.3s;box-shadow:0 0 35px rgba(0,212,255,.3)}
+.btn-p:hover{background:#fff;box-shadow:0 0 55px rgba(0,212,255,.5);transform:translateY(-2px)}
+.btn-o{border:1px solid var(--border2);color:var(--cyan);font-size:13px;font-weight:600;
+  padding:13px 24px;border-radius:3px;text-decoration:none;transition:.2s}
+.btn-o:hover{background:rgba(0,212,255,.08)}
+.stats{display:flex;gap:28px;margin-top:44px;flex-wrap:wrap}
+.st{border-left:2px solid var(--cyan);padding-left:12px}
+.st-n{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--cyan)}
+.st-l{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.widget-col{position:sticky;top:90px}
+.widget{background:#0a1624;border:1px solid var(--border2);border-radius:18px;
+  overflow:hidden;box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.5);
+  max-width:400px;margin:0 auto;position:relative}
+.wbar{background:#070f1c;padding:12px 16px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border)}
+.wdots{display:flex;gap:5px;flex-shrink:0}
+.wd{width:9px;height:9px;border-radius:50%}
+.wd:nth-child(1){background:#ff5f57}.wd:nth-child(2){background:#febc2e}.wd:nth-child(3){background:#28c840}
+.wava{width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),#0060a0);
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.wname{font-weight:700;font-size:13px}
+.wonline{font-size:10px;color:var(--green);display:flex;align-items:center;gap:3px;margin-top:1px}
+.wdot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green)}
+.wmsgs{padding:14px;display:flex;flex-direction:column;gap:7px;
+  height:440px;overflow-y:auto;scroll-behavior:smooth}
+.wmsgs::-webkit-scrollbar{width:2px}
+.wmsgs::-webkit-scrollbar-thumb{background:var(--border2)}
+.wm{max-width:92%;padding:9px 13px;border-radius:13px;font-size:13px;line-height:1.55;
+  opacity:0;transform:translateY(5px) scale(.98);transition:opacity .3s,transform .3s;flex-shrink:0}
+.wm.show{opacity:1;transform:none}
+.wm.bot{background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.16);
+  align-self:flex-start;border-bottom-left-radius:3px}
+.wm.user{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(0,130,180,.2));
+  align-self:flex-end;border-bottom-right-radius:3px}
+.wm b,.wm strong{color:var(--cyan)}
+.wm-t{font-size:10px;color:var(--muted);margin-top:3px;text-align:right}
+.wbtns{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.wbtn{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);
+  color:var(--text);font-size:12px;padding:8px 11px;border-radius:7px;
+  cursor:pointer;transition:.18s;text-align:left;font-family:'Rajdhani',sans-serif;font-weight:500;
+  display:flex;align-items:center;gap:6px}
+.wbtn:hover{background:rgba(0,212,255,.18);border-color:var(--cyan);color:var(--cyan)}
+.wbtn.picked{background:rgba(0,212,255,.22);border-color:var(--cyan);color:var(--cyan);pointer-events:none}
+.wbtn.busy{background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.3);
+  color:rgba(255,71,87,.7);pointer-events:none;cursor:default}
+.wbtn.disabled{opacity:.35;pointer-events:none}
+.wtyping{display:flex;gap:4px;align-items:center;padding:9px 13px;
+  background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.14);
+  border-radius:13px;border-bottom-left-radius:3px;align-self:flex-start;
+  opacity:0;transition:.25s;flex-shrink:0}
+.wtyping.show{opacity:1}
+.td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:td 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
+.winput-bar{padding:9px 12px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;background:#070f1c}
+.winput{flex:1;background:rgba(0,212,255,.05);border:1px solid var(--border);
+  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;
+  padding:8px 12px;border-radius:18px;outline:none;transition:.2s}
+.winput:focus{border-color:var(--cyan2);background:rgba(0,212,255,.08)}
+.winput::placeholder{color:var(--muted)}
+.wsend{width:30px;height:30px;border-radius:50%;background:var(--cyan);border:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.wsend:hover{background:#fff;box-shadow:0 0 12px var(--cyan)}
+.wsend svg{width:13px;height:13px;fill:#000}
+.owner-popup{
+  position:absolute;top:8px;right:-8px;
+  background:#041018;border:1px solid rgba(0,255,136,.28);border-radius:10px;
+  padding:12px 15px;width:215px;box-shadow:0 0 25px rgba(0,255,136,.12);
+  opacity:0;transform:translateX(10px) scale(.95);
+  transition:opacity .5s,transform .5s;pointer-events:none;z-index:10}
+.owner-popup.show{opacity:1;transform:none}
+.op-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.op-blink{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);animation:blnk 1.5s infinite;flex-shrink:0}
+@keyframes blnk{0%,100%{opacity:1}50%{opacity:.15}}
+.op-title{font-size:11px;font-weight:700;color:var(--green)}
+.op-time{font-size:10px;color:var(--muted);margin-left:auto}
+.op-body{font-size:11px;line-height:1.7;color:var(--text)}
+.op-body b{color:var(--cyan)}
+.op-badge{display:inline-block;margin-top:7px;background:rgba(0,255,136,.08);
+  border:1px solid rgba(0,255,136,.2);color:var(--green);
+  font-size:9px;padding:2px 7px;border-radius:8px;letter-spacing:1px;text-transform:uppercase}
+.widget-hint{text-align:center;margin-top:10px;font-size:12px;color:var(--muted)}
+.widget-hint b{color:var(--cyan)}
+section{position:relative;z-index:1}
+.sp{padding:80px 44px}
+.bg2{background:var(--bg2)}
+.sec-h{font-family:'Orbitron',sans-serif;font-size:clamp(18px,2.5vw,28px);
+  font-weight:700;text-align:center;margin-bottom:8px}
+.sec-s{text-align:center;color:var(--muted);margin-bottom:48px;font-size:15px;
+  max-width:480px;margin-left:auto;margin-right:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;
+  max-width:1100px;margin:0 auto}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:7px;
+  padding:24px 20px;transition:.25s;position:relative;overflow:hidden;cursor:pointer}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:.25s}
+.card:hover{border-color:var(--border2);box-shadow:var(--glow);transform:translateY(-3px)}
+.card:hover::after{opacity:1}
+.ci{font-size:28px;margin-bottom:12px}
+.ct{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;
+  color:var(--cyan);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+.cx{color:rgba(224,244,255,0.62);font-size:13px;line-height:1.7}
+.cr{margin-top:14px;font-size:13px;font-weight:700;color:var(--green)}
+.card-hint{margin-top:10px;font-size:11px;color:rgba(0,212,255,0.4);letter-spacing:.5px}
+.card:hover .card-hint{color:var(--cyan)}
+.cmodal{position:fixed;inset:0;z-index:999;background:rgba(0,8,16,.88);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(10px)}
+.cmodal.open{opacity:1;pointer-events:all}
+.cmodal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;
+  padding:36px;max-width:480px;width:100%;position:relative;
+  box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.6);
+  transform:translateY(12px) scale(.97);transition:.3s}
+.cmodal.open .cmodal-box{transform:none}
+.cmodal-close{position:absolute;top:14px;right:16px;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:18px;transition:.2s;padding:4px 8px;
+  font-family:'Rajdhani',sans-serif}
+.cmodal-close:hover{color:var(--cyan)}
+.cmodal-icon{font-size:44px;margin-bottom:14px}
+.cmodal-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;
+  color:rgba(0,212,255,0.6);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.cmodal-body{color:rgba(224,244,255,0.65);font-size:15px;line-height:1.8}
+.cmodal-body b{color:rgba(0,212,255,0.75)}
+.cmodal-stat{display:inline-block;margin-top:18px;padding:7px 16px;
+  background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);
+  border-radius:20px;color:rgba(0,255,136,0.65);font-size:13px;font-weight:700}
+.roi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:36px;max-width:680px;margin:0 auto;box-shadow:var(--glow)}
+.rl{display:flex;justify-content:space-between;margin-bottom:7px;font-size:14px;font-weight:600}
+.rl span:last-child{color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:12px}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;outline:none;
+  cursor:pointer;border-radius:2px;margin-bottom:20px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan)}
+.rdiv{height:1px;background:var(--border);margin:20px 0}
+.rres{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rbox{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:16px;text-align:center}
+.rn{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--green)}
+.rl2{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.rnote{text-align:center;margin-top:14px;font-size:11px;color:var(--muted)}
+.cta-s{padding:90px 44px;text-align:center}
+.cta-h{font-family:'Orbitron',sans-serif;font-size:clamp(22px,3.5vw,40px);
+  font-weight:900;margin-bottom:14px}
+.cta-h span{color:var(--cyan)}
+.cta-sub{color:var(--muted);font-size:17px;margin-bottom:44px;line-height:1.6}
+.btn-tg{display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#000;
+  font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;
+  padding:18px 44px;border-radius:3px;text-decoration:none;transition:.3s;
+  box-shadow:0 0 45px rgba(0,212,255,.35);margin-bottom:20px}
+.btn-tg:hover{transform:translateY(-3px);box-shadow:0 0 65px rgba(0,212,255,.55)}
+.contact{font-size:13px;color:var(--muted)}
+.contact a{color:var(--cyan);text-decoration:none}
+footer{padding:24px 44px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+footer .fl{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--cyan);letter-spacing:2px}
+footer p{font-size:11px;color:var(--muted)}
+@media(max-width:920px){
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+  .widget-col{position:static}
+  nav{padding:11px 18px}
+  .sp{padding:60px 18px}
+  .cta-s{padding:60px 18px}
+  footer{flex-direction:column;text-align:center;padding:18px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">БРИГАДА РЕМОНТА</div>
+  <div class="nav-tag">🏠 Москва · AI-автоматизация</div>
+  <a href="https://t.me/tridavy2000" target="_blank" class="nav-cta">Связаться →</a>
+</nav>
+
+<section class="hero">
+ <div class="hero-inner">
+  <div>
+    <div class="eyebrow">Персональное демо для вашей бригады</div>
+    <h1>Заявки<br>приходят<br>сами.<br>Клиенты<br>не уходят.</h1>
+    <p class="hero-sub">Три сценария для бригады по ремонту: <b>заявка вечером без пропущенных</b>, <b>напоминание клиенту перед выездом замерщика</b> и <b>возврат тех кто пропал после замера</b> — всё это внутри чата справа.</p>
+    <div class="pills">
+      <div class="pill">🏠 Ремонт под ключ</div>
+      <div class="pill">🪣 Косметический ремонт</div>
+      <div class="pill">🚿 Ванная и санузел</div>
+      <div class="pill">📍 Москва</div>
+    </div>
+    <div class="btns">
+      <a href="#roi" class="btn-p">Посчитать выгоду</a>
+      <a href="#how" class="btn-o">Как это работает →</a>
+    </div>
+    <div class="stats">
+      <div class="st"><div class="st-n">24/7</div><div class="st-l">Приём заявок</div></div>
+      <div class="st"><div class="st-n">0</div><div class="st-l">Пустых выездов</div></div>
+      <div class="st"><div class="st-n">+5</div><div class="st-l">Возвратов / мес</div></div>
+      <div class="st"><div class="st-n">5–7</div><div class="st-l">Дней до запуска</div></div>
+    </div>
+  </div>
+
+  <div class="widget-col">
+    <div class="widget">
+      <div class="wbar">
+        <div class="wdots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
+        <div class="wava">🏠</div>
+        <div>
+          <div class="wname">Бригада ремонта</div>
+          <div class="wonline"><div class="wdot"></div>онлайн — отвечает мгновенно</div>
+        </div>
+      </div>
+      <div class="wmsgs" id="wm"></div>
+      <div class="winput-bar">
+        <input class="winput" id="wi" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter')sendText()">
+        <button class="wsend" onclick="sendText()">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="widget-hint">👆 <b>Кликайте кнопки</b> — три живых сценария</div>
+    <div class="owner-popup" id="op">
+      <div class="op-hdr">
+        <div class="op-blink"></div>
+        <div class="op-title">🔔 НОВАЯ ЗАЯВКА</div>
+        <div class="op-time" id="op-t">21:03</div>
+      </div>
+      <div class="op-body" id="op-b">
+        🏠 <b>Андрей М.</b><br>2-комн. квартира, 54 м²<br>Тип: <b>Ремонт под ключ</b><br>Замер: <b>завтра 10:00</b>
+      </div>
+      <div class="op-badge">ПРИШЛО ПОКА ВЫ СПАЛИ</div>
+    </div>
+  </div>
+ </div>
+</section>
+
+<section class="sp bg2" id="how">
+  <h2 class="sec-h">Три сценария в одной системе</h2>
+  <p class="sec-s">Всё что вы видите в чате — реальный функционал. Кликните на карточку.</p>
+  <div class="cards">
+    <div class="card" onclick="showCardDetail('booking')">
+      <div class="ci">📅</div>
+      <div class="ct">Заявка вечером</div>
+      <p class="cx">Клиент пишет в 21:00 — бот принимает заявку на замер, уточняет тип ремонта и площадь, ставит удобное время. Вы видите уведомление утром.</p>
+      <div class="cr">0 пропущенных заявок ночью</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('antimiss')">
+      <div class="ci">🔔</div>
+      <div class="ct">Без пустых выездов</div>
+      <p class="cx">Бот напоминает клиенту за 24ч до приезда замерщика. Клиент подтверждает или переносит. Замерщик едет только туда где его ждут.</p>
+      <div class="cr">▼ −60% пустых выездов</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('reactivation')">
+      <div class="ci">💬</div>
+      <div class="ct">Возврат через 2 месяца</div>
+      <p class="cx">Клиент запросил замер и пропал. Через 2 месяца бот пишет: «Актуально ещё? Могу помочь с новым расчётом». Без вашего участия.</p>
+      <div class="cr">▲ +5 возвратов в месяц</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('reminder')">
+      <div class="ci">📲</div>
+      <div class="ct">Что видит владелец</div>
+      <p class="cx">На каждую новую заявку — мгновенное уведомление: кто, что, когда, площадь. Не нужно проверять почту или мессенджеры вручную.</p>
+      <div class="cr">Всё в одном уведомлении</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('reviews')">
+      <div class="ci">⭐</div>
+      <div class="ct">Отзывы на Яндекс</div>
+      <p class="cx">После сдачи объекта бот пишет клиенту: «Как остались довольны? Оставьте отзыв — займёт минуту». Рейтинг растёт без напоминаний вручную.</p>
+      <div class="cr">▲ +4–8 отзывов в месяц</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('calc')">
+      <div class="ci">🧮</div>
+      <div class="ct">Предварительный расчёт</div>
+      <p class="cx">Клиент указывает площадь и тип ремонта — бот даёт ориентировочную стоимость и сразу предлагает записаться на замер.</p>
+      <div class="cr">Из расчёта — сразу в запись</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+  </div>
+</section>
+
+<section class="sp" id="roi">
+  <h2 class="sec-h">Посчитайте выгоду для бригады</h2>
+  <p class="sec-s">Реалистичный расчёт на основе средних показателей ремонтных бригад Москвы</p>
+  <div class="roi-card">
+    <div class="rl"><span>Клиентов в базе</span><span id="vC">40</span></div>
+    <input type="range" id="rC" min="10" max="300" value="40" step="5" oninput="calc()">
+    <div class="rl"><span>Средний чек, ₽</span><span id="vP">120 000 ₽</span></div>
+    <input type="range" id="rP" min="30000" max="500000" value="120000" step="5000" oninput="calc()">
+    <div class="rl"><span>% клиентов без повторного обращения</span><span id="vS">55%</span></div>
+    <input type="range" id="rS" min="20" max="80" value="55" step="5" oninput="calc()">
+    <div class="rdiv"></div>
+    <div class="rres">
+      <div class="rbox"><div class="rn" id="rN1">+5</div><div class="rl2">Доп. заказов/мес</div></div>
+      <div class="rbox"><div class="rn" id="rN2">+600 000 ₽</div><div class="rl2">Доп. выручка/мес</div></div>
+      <div class="rbox"><div class="rn" id="rN3">+7 200 000 ₽</div><div class="rl2">Потенциал за год</div></div>
+      <div class="rbox"><div class="rn" id="rN4">1 мес</div><div class="rl2">Окупаемость</div></div>
+    </div>
+    <p class="rnote">Расчёт: реактивация 10% базы + снижение пустых выездов 60% + новые заявки 24/7</p>
+  </div>
+</section>
+
+<section class="cta-s">
+  <h2 class="cta-h">Запустить для <span>вашей бригады</span> за <span>5–7</span> дней</h2>
+  <p class="cta-sub">Всё что вы видели в чате — ваша реальная система.<br>Настраиваем под ваши услуги, бригаду и процессы работы.</p>
+  <div>
+    <a href="https://t.me/tridavy2000" target="_blank" class="btn-tg">💬 Написать Данилу</a>
+  </div>
+  <p class="contact">
+    <a href="https://t.me/tridavy2000">@tridavy2000</a> ·
+    <a href="mailto:tridavy2000@gmail.com">tridavy2000@gmail.com</a>
+  </p>
+</section>
+
+<footer>
+  <div class="fl">ДАНИЛ · AI АВТОМАТИЗАЦИЯ</div>
+  <p>Персональное демо · Бригада ремонта квартир · Москва</p>
+</footer>
+
+<div id="card-modal" class="cmodal" onclick="if(event.target===this)closeCard()">
+  <div class="cmodal-box">
+    <button class="cmodal-close" onclick="closeCard()">✕ закрыть</button>
+    <div class="cmodal-icon" id="cm-icon"></div>
+    <div class="cmodal-title" id="cm-title"></div>
+    <div class="cmodal-body" id="cm-body"></div>
+  </div>
+</div>
+
+<script>
+const wm = document.getElementById('wm');
+let typing = null;
+let ctx = { service:'', area:'' };
+
+function T(){ const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+function scroll(){ wm.scrollTop = wm.scrollHeight; }
+function fmt(n){ return n.toLocaleString('ru-RU'); }
+
+function addMsg(side, html, btns){
+  const d = document.createElement('div');
+  d.className = `wm ${side}`;
+  let inner = html;
+  if(btns && btns.length){
+    inner += '<div class="wbtns">' + btns.map(b => {
+      const busy = b.includes('занято');
+      const cls  = busy ? 'wbtn busy' : 'wbtn';
+      const act  = busy ? '' : `onclick="tap(this,'${esc(b)}')"`;
+      return `<div class="${cls}" ${act}>${b}</div>`;
+    }).join('') + '</div>';
+  }
+  inner += `<div class="wm-t">${T()}</div>`;
+  d.innerHTML = inner;
+  wm.appendChild(d);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('show')));
+  scroll();
+  return d;
+}
+
+function esc(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function showTyping(){ removeTyping(); const t=document.createElement('div'); t.className='wtyping'; t.innerHTML='<span class="td"></span><span class="td"></span><span class="td"></span>'; wm.appendChild(t); requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show'))); typing=t; scroll(); }
+function removeTyping(){ if(typing){ typing.remove(); typing=null; } }
+function disableAll(){ wm.querySelectorAll('.wbtn:not(.busy)').forEach(b=>b.classList.add('disabled')); }
+function bot(html, btns, delay=900){ showTyping(); setTimeout(()=>{ removeTyping(); addMsg('bot', html, btns); }, delay); }
+function user(text){ addMsg('user', text); }
+
+function ownerPop(service, area, time){
+  const now = T();
+  document.getElementById('op-t').textContent = now;
+  document.getElementById('op-b').innerHTML =
+    `🏠 <b>Андрей М.</b><br>${area}<br>Тип: <b>${service}</b><br>Замер: <b>${time}</b>`;
+  const p = document.getElementById('op');
+  p.classList.add('show');
+  setTimeout(()=>p.classList.remove('show'), 9000);
+}
+
+function sendText(){
+  const inp = document.getElementById('wi');
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = '';
+  disableAll();
+  user(text);
+  setTimeout(()=>{ bot(aiReply(text), ['🏠 Оставить заявку','← Главное меню']); }, 1000);
+}
+
+function tap(el, val){
+  disableAll();
+  el.classList.add('picked');
+  setTimeout(()=>user(val), 150);
+  const v = val.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}←→✅⬜🟢🔴]/gu,'').trim();
+
+  // НАВИГАЦИЯ
+  if(/главное меню|меню|посмотреть ещё раз/i.test(v))        return setTimeout(()=>welcome(), 600);
+  if(/другой вид|к видам/i.test(v))                           return setTimeout(()=>showServices(), 700);
+  if(/что ещё умеет|умеет система/i.test(v))                  return setTimeout(()=>showOwner(), 800);
+
+  // ОСНОВНЫЕ СЦЕНАРИИ
+  if(/оставить заявку|заявку на замер/i.test(v))              return setTimeout(()=>showServices(), 800);
+  if(/напоминание.*замер|анти.*пуст|выезд замерщика/i.test(v))return setTimeout(()=>showAntiMiss(), 800);
+  if(/возврат.*месяц|пропавший клиент|реактивац/i.test(v))    return setTimeout(()=>showReactivation(), 800);
+  if(/видит владелец|владелец/i.test(v))                      return setTimeout(()=>showOwner(), 800);
+  if(/стоимость системы|стоимость/i.test(v))                  return setTimeout(()=>showPricing(), 800);
+  if(/сбор отзывов|отзыв/i.test(v))                           return setTimeout(()=>showReviews(), 800);
+  if(/предварительный расчёт|расчёт стоимости/i.test(v))      return setTimeout(()=>showCalc(), 800);
+
+  // УСЛУГИ
+  if(/косметический/i.test(v))  { ctx.service='Косметический ремонт';  return setTimeout(()=>showArea(), 800); }
+  if(/под ключ/i.test(v))       { ctx.service='Ремонт под ключ';        return setTimeout(()=>showArea(), 800); }
+  if(/ванная|санузел/i.test(v)) { ctx.service='Ванная и санузел';       return setTimeout(()=>showArea(), 800); }
+  if(/плитк/i.test(v))          { ctx.service='Укладка плитки';         return setTimeout(()=>showArea(), 800); }
+  if(/штукатурк|покраск/i.test(v)){ ctx.service='Штукатурка и покраска'; return setTimeout(()=>showArea(), 800); }
+  if(/гипсокартон/i.test(v))    { ctx.service='Монтаж гипсокартона';    return setTimeout(()=>showArea(), 800); }
+
+  // ПЛОЩАДЬ → ВРЕМЯ
+  if(/20|30|40|50|60|70|80|90|100|кв|м²/i.test(v)){ ctx.area=v.trim(); return setTimeout(()=>showTime(), 800); }
+
+  // ВРЕМЕННЫЕ СЛОТЫ
+  const timeM = val.match(/(\d{1,2}:\d{2})/);
+  if(timeM && !/занято/i.test(v)){ ctx.date = timeM[1]; return setTimeout(()=>confirmBooking(timeM[1]), 800); }
+
+  // AI ВОПРОСЫ
+  if(/сколько стоит|цены|прайс/i.test(v)) return setTimeout(()=>{ bot(aiReply('цена'),  ['🏠 Оставить заявку','← Главное меню']); }, 900);
+  if(/как проехать|адрес|где/i.test(v))   return setTimeout(()=>{ bot(aiReply('адрес'), ['🏠 Оставить заявку','← Главное меню']); }, 900);
+  if(/гарант/i.test(v))                   return setTimeout(()=>{ bot(aiReply('гарантия'),['🏠 Оставить заявку','← Главное меню']); }, 900);
+
+  // FALLBACK
+  setTimeout(()=>bot(aiReply(val), ['🏠 Оставить заявку','← Главное меню']), 900);
+}
+
+// SCREENS
+function welcome(){
+  bot(`👋 Привет! Я <b>AI-помощник бригады по ремонту квартир</b>.<br><br>Что нужно?`,[
+    '🏠 Оставить заявку на замер (24/7)',
+    '🔔 Напоминание перед выездом замерщика',
+    '💬 Возврат пропавшего клиента через 2 мес',
+    '📲 Что видит владелец?',
+    '💡 Стоимость системы'
+  ], 500);
+}
+
+function showServices(){
+  bot('🏠 Выберите тип ремонта:', [
+    '🪣 Косметический ремонт — от 3 000 ₽/м²',
+    '🔑 Ремонт под ключ — от 7 000 ₽/м²',
+    '🚿 Ванная и санузел — от 50 000 ₽',
+    '🟫 Укладка плитки — от 2 000 ₽/м²',
+    '🖌 Штукатурка и покраска — от 1 500 ₽/м²',
+    '📐 Монтаж гипсокартона — от 1 200 ₽/м²',
+    '← Главное меню'
+  ]);
+}
+
+function showArea(){
+  bot(
+    `▓▓▓░░░░░░░ 30%<br><br>`+
+    `📐 <b>${ctx.service}</b><br><br>`+
+    `Укажите примерную площадь помещения:`, [
+    '20 м² — комната',
+    '40 м² — однушка',
+    '60 м² — двушка',
+    '80 м² — трёшка',
+    '100 м² и больше',
+    '← К видам ремонта'
+  ]);
+}
+
+function showTime(){
+  bot(
+    `▓▓▓▓▓▓░░░░ 60%<br><br>`+
+    `📅 <b>${ctx.service}</b> · <b>${ctx.area || 'площадь уточним'}</b><br><br>`+
+    `Выберите удобное время для замера:`, [
+    '🟢 09:00 — утро',
+    '🟢 11:00 — утро',
+    '🔴 13:00 — занято',
+    '🟢 15:00 — после обеда',
+    '🟢 18:00 — вечер',
+    '← К видам ремонта'
+  ]);
+}
+
+function confirmBooking(time){
+  bot(
+    `✅ <b>Готово! Заявка принята.</b><br><br>`+
+    `Услуга: <b>${ctx.service || 'Ремонт квартиры'}</b><br>`+
+    `Площадь: <b>${ctx.area || 'уточним на замере'}</b><br>`+
+    `📅 Замер: завтра в <b>${time}</b><br><br>`+
+    `🔔 Напомним вам за 24ч до приезда замерщика.<br>`+
+    `📩 Расчёт — в течение дня после замера.`,
+    ['📲 Что ещё умеет система?','← Главное меню'], 1200
+  );
+  setTimeout(()=>ownerPop(ctx.service||'Ремонт под ключ', ctx.area||'~60 м²', `завтра ${time}`), 1900);
+}
+
+function showAntiMiss(){
+  bot(
+    `🔔 <b>Напоминание перед выездом замерщика:</b><br><br>`+
+    `<i>Отправляется за 24ч:</i><br><br>──────────────<br>`+
+    `🏠 Андрей М., добрый день!<br><br>`+
+    `Напоминаем: завтра в <b>10:00</b> к вам приедет замерщик.<br><br>`+
+    `✅ Подтвердить &nbsp;&nbsp;&nbsp; 📅 Перенести<br>──────────────<br><br>`+
+    `<i>Клиент нажимает «Подтвердить» — замерщик едет.<br>Нажимает «Перенести» — вы узнаёте заранее, не на пороге.</i><br><br>`+
+    `📊 <b>−60%</b> пустых выездов после внедрения`,
+    ['💬 Возврат пропавшего клиента через 2 мес','← Главное меню']
+  );
+}
+
+function showReactivation(){
+  bot(
+    `💬 <b>Реактивация — клиент пропал после замера:</b><br><br>──────────────<br>`+
+    `🏠 Андрей М., добрый день!<br><br>`+
+    `2 месяца назад вы запрашивали расчёт ремонта.<br><br>`+
+    `Актуально ещё? Могу сделать свежий расчёт — `+
+    `цены на материалы могли измениться.<br>`+
+    `Замер бесплатно.<br><br>`+
+    `✅ Да, интересно &nbsp;&nbsp;&nbsp; ❌ Не актуально<br>──────────────<br><br>`+
+    `<i>По всей базе автоматически раз в 2 месяца.<br>Без вашего участия.</i>`,
+    ['⭐ Сбор отзывов','← Главное меню']
+  );
+}
+
+function showOwner(){
+  bot(
+    `📲 <b>Уведомление владельцу — мгновенно:</b><br><br>──────────────<br>`+
+    `🏠 <b>Новая заявка!</b><br><br>`+
+    `Клиент: Андрей М.<br>`+
+    `Тип: <b>Ремонт под ключ</b><br>`+
+    `Площадь: 2-комн., ~54 м²<br>`+
+    `Замер: завтра <b>10:00</b><br>`+
+    `Тел: +7 916 ••• ••-41<br>──────────────<br><br>`+
+    `<i>Это пришло в 21:03 пока вы отдыхали.<br>Бот принял заявку сам.</i>`,
+    ['🔔 Напоминание перед выездом замерщика','💬 Возврат пропавшего клиента через 2 мес','← Главное меню']
+  );
+}
+
+function showReviews(){
+  bot(
+    `⭐ <b>Автосбор отзывов на Яндекс:</b><br><br>`+
+    `<i>Через день после сдачи объекта:</i><br><br>──────────────<br>`+
+    `🌟 Андрей М., как остались довольны ремонтом?<br><br>`+
+    `Если всё понравилось — оставьте отзыв на Яндексе. Займёт минуту!<br><br>`+
+    `👉 [Оставить отзыв на Яндекс.Картах]<br>──────────────<br><br>`+
+    `<b>+4–8 новых отзывов в месяц</b> без напоминаний вручную`,
+    ['💡 Стоимость системы','← Главное меню']
+  );
+}
+
+function showCalc(){
+  bot(
+    `🧮 <b>Предварительный расчёт стоимости:</b><br><br>`+
+    `<i>Клиент указывает параметры — бот считает сразу:</i><br><br>──────────────<br>`+
+    `📐 Площадь: <b>54 м²</b><br>`+
+    `🔑 Тип: <b>Ремонт под ключ</b><br><br>`+
+    `🧱 Демонтаж: ~16 200 ₽<br>`+
+    `🖌 Стены (штукатурка + покраска): ~91 800 ₽<br>`+
+    `🪟 Потолок: ~37 800 ₽<br>`+
+    `🚿 Санузел: ~54 000 ₽<br>`+
+    `⚡ Электрика + сантехника: ~54 000 ₽<br><br>`+
+    `📊 Итого: <b>от 378 000 ₽</b><br>──────────────<br><br>`+
+    `<i>Точная стоимость — после бесплатного замера</i>`,
+    ['🏠 Оставить заявку на замер (24/7)','← Главное меню']
+  );
+}
+
+function showPricing(){
+  bot(
+    `💡 <b>Стоимость системы для вашей бригады:</b><br><br>`+
+    `──────────────<br>`+
+    `🔹 <b>Старт — 30 000 ₽</b><br>`+
+    `<i>Приём заявок + напоминания</i><br><br>`+
+    `✅ Telegram-бот с заявками 24/7<br>`+
+    `✅ Уведомление владельцу о каждой заявке<br>`+
+    `✅ Напоминание клиенту за 24ч до замера<br>`+
+    `✅ Подтверждение / перенос в 1 клик<br>`+
+    `❌ Нет: реактивации, отзывов, расчётов<br>`+
+    `🕐 Запуск за 7–10 дней<br><br>`+
+    `──────────────<br>`+
+    `🏆 <b>Стандарт — 55 000 ₽</b><br>`+
+    `<b>← всё что вы только что видели</b><br><br>`+
+    `✅ Всё из Старта<br>`+
+    `✅ Реактивация базы каждые 2 месяца<br>`+
+    `✅ Автосбор отзывов на Яндекс<br>`+
+    `✅ Предварительный расчёт по площади<br>`+
+    `✅ CRM: база клиентов, история, статусы<br>`+
+    `🕐 Запуск за 14–18 дней<br>`+
+    `💰 Окупается за 1–2 заказа · 🛡 Гарантия результата<br><br>`+
+    `──────────────<br><br>`+
+    `📩 Данил: <b>@tridavy2000</b>`,
+    ['← Посмотреть ещё раз']
+  );
+}
+
+function aiReply(text){
+  const t = (text||'').toLowerCase();
+  if(/цен|стоит|сколько|прайс|стоимость/.test(t))
+    return `🤖 <b>Примерные цены:</b><br><br>`+
+      `🪣 Косметический ремонт — <b>от 3 000 ₽/м²</b><br>`+
+      `🔑 Под ключ — <b>от 7 000 ₽/м²</b><br>`+
+      `🚿 Ванная и санузел — <b>от 50 000 ₽</b><br>`+
+      `🟫 Укладка плитки — <b>от 2 000 ₽/м²</b><br>`+
+      `🖌 Штукатурка + покраска — <b>от 1 500 ₽/м²</b><br><br>`+
+      `<i>Точная стоимость — после бесплатного замера</i>`;
+  if(/адрес|где|находит|проезд/.test(t))
+    return `🤖 <b>Работаем по Москве и МО.</b><br><br>📍 Замерщик приедет к вам — адрес уточним при записи`;
+  if(/время|часы|работ|расписан/.test(t))
+    return `🤖 <b>Режим работы:</b><br><br>⏰ Пн–Сб: 09:00 — 20:00<br>Вс: по договорённости<br><br><i>Заявки через бота принимаются 24/7</i>`;
+  if(/гарант/.test(t))
+    return `🤖 <b>Гарантия:</b><br><br>✅ На работы — 12 месяцев<br>✅ На скрытые коммуникации — 24 месяца<br>✅ Устраняем за свой счёт в гарантийный период`;
+  if(/сроки|срок|дней|недел/.test(t))
+    return `🤖 <b>Сроки ремонта:</b><br><br>🪣 Косметический — 7–14 дней<br>🔑 Под ключ — 30–60 дней<br>🚿 Ванная — 10–20 дней<br><br><i>Точные сроки — после замера</i>`;
+  return `🤖 Хороший вопрос! В реальной системе AI знает всё о вашей бригаде и отвечает мгновенно.<br><br><i>Попробуй спросить про цены, сроки или гарантии</i>`;
+}
+
+// ROI
+function calc(){
+  const c = +document.getElementById('rC').value;
+  const p = +document.getElementById('rP').value;
+  const s = +document.getElementById('rS').value / 100;
+  document.getElementById('vC').textContent = c;
+  document.getElementById('vP').textContent = fmt(p) + ' ₽';
+  document.getElementById('vS').textContent = Math.round(s*100) + '%';
+  const ret    = Math.round(c * s * 0.10);
+  const noShow = Math.round(c * 0.04);
+  const new_   = Math.round(c * 0.02);
+  const total  = Math.max(ret + noShow + new_, 1);
+  const rev    = total * p;
+  document.getElementById('rN1').textContent = '+' + total;
+  document.getElementById('rN2').textContent = '+' + fmt(rev) + ' ₽';
+  document.getElementById('rN3').textContent = '+' + fmt(rev * 12) + ' ₽';
+  const pay = Math.ceil(55000 / rev);
+  document.getElementById('rN4').textContent = pay <= 1 ? '< 1 мес' : pay + ' мес';
+}
+document.getElementById('rC').oninput = calc;
+document.getElementById('rP').oninput = calc;
+document.getElementById('rS').oninput = calc;
+
+// CARD MODALS
+const cardDetails = {
+  booking: {
+    icon:'📅', title:'Заявка 24/7',
+    body:`Клиент пишет боту в Telegram в любое время. Описывает тип ремонта, площадь, выбирает удобное время для замера. Бот уточняет детали. Вы получаете уведомление сразу.<br><br>Никаких пропущенных заявок вечером или в выходные. Клиент не уходит к конкуренту только потому что вы не ответили в 21:00.<br><br><span class="cmodal-stat">0 пропущенных заявок ночью</span>`
+  },
+  antimiss: {
+    icon:'🔔', title:'Без пустых выездов',
+    body:`За 24 часа до приезда замерщика бот автоматически пишет клиенту напоминание. Клиент нажимает «Подтвердить» или «Перенести».<br><br>Вы узнаёте о переносе заранее, а не на пороге квартиры. Замерщик едет только туда где его ждут — время и бензин не тратятся впустую.<br><br><span class="cmodal-stat">▼ −60% пустых выездов</span>`
+  },
+  reactivation: {
+    icon:'💬', title:'Возврат через 2 месяца',
+    body:`Клиент запросил замер, получил расчёт — и пропал. Через 2 месяца бот сам пишет: <b>«Актуально ещё? Могу сделать свежий расчёт — замер бесплатно.»</b><br><br>По всей базе, автоматически. Без вашего участия. Клиент уже знаком с бригадой — барьер входа низкий. 10–15% «пропавших» возвращаются после такого касания.<br><br><span class="cmodal-stat">▲ +5 возвратов в месяц</span>`
+  },
+  reminder: {
+    icon:'📲', title:'Что видит владелец',
+    body:`На каждую новую заявку мгновенно приходит уведомление: имя клиента, тип ремонта, площадь, время замера, телефон.<br><br>Не нужно проверять мессенджеры или почту — всё само приходит туда, где удобно. Вы всегда знаете что происходит с вашей воронкой в реальном времени.<br><br><span class="cmodal-stat">Всё в одном уведомлении</span>`
+  },
+  reviews: {
+    icon:'⭐', title:'Отзывы на Яндекс',
+    body:`Через день после сдачи объекта бот пишет клиенту: <b>«Как остались довольны ремонтом? Оставьте отзыв — займёт минуту»</b> с прямой ссылкой.<br><br>Довольные клиенты обычно молчат. Автоматический запрос переворачивает эту логику. Рейтинг на Яндекс.Картах растёт без ручных напоминаний — и приносит новых клиентов.<br><br><span class="cmodal-stat">▲ +4–8 отзывов в месяц</span>`
+  },
+  calc: {
+    icon:'🧮', title:'Предварительный расчёт',
+    body:`Клиент указывает площадь и тип ремонта в боте — получает ориентировочную стоимость по позициям: демонтаж, стены, потолок, санузел, коммуникации.<br><br>Клиент приезжает на замер уже с пониманием бюджета — нет неприятного сюрприза. Конверсия из «сколько стоит?» в записанный замер значительно выше.<br><br><span class="cmodal-stat">Из расчёта — сразу в запись</span>`
+  }
+};
+
+function showCardDetail(id){
+  const d = cardDetails[id];
+  if(!d) return;
+  document.getElementById('cm-icon').textContent = d.icon;
+  document.getElementById('cm-title').textContent = d.title;
+  document.getElementById('cm-body').innerHTML = d.body;
+  document.getElementById('card-modal').classList.add('open');
+}
+function closeCard(){
+  document.getElementById('card-modal').classList.remove('open');
+}
+
+window.addEventListener('load', ()=>{ setTimeout(welcome, 600); calc(); });
+</script>
+</body>
+</html>
