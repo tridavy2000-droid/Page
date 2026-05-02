@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЗелДетейлинг — AI-система записи и возврата клиентов</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000810;--bg2:#000f1e;
+  --cyan:#00d4ff;--cyan2:#0099bb;
+  --green:#00ff88;--red:#ff4757;--orange:#ff8c00;
+  --border:rgba(0,212,255,0.18);--border2:rgba(0,212,255,0.35);
+  --glow:0 0 30px rgba(0,212,255,0.12);--glow2:0 0 60px rgba(0,212,255,0.22);
+  --text:#e0f4ff;--muted:rgba(224,244,255,0.45)
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--cyan2)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,212,255,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,212,255,.022) 1px,transparent 1px);
+  background-size:55px 55px}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:13px 44px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,8,16,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--cyan);letter-spacing:3px}
+.nav-tag{font-size:12px;color:var(--muted);letter-spacing:1px}
+.nav-cta{background:rgba(0,212,255,.1);border:1px solid var(--border2);color:var(--cyan);
+  padding:7px 18px;border-radius:3px;font-size:12px;font-weight:600;text-decoration:none;transition:.2s;letter-spacing:1px}
+.nav-cta:hover{background:rgba(0,212,255,.2)}
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 44px 60px;position:relative;z-index:1}
+.hero-inner{max-width:1180px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,.06);border:1px solid var(--border);
+  padding:5px 15px;border-radius:20px;font-size:11px;color:var(--cyan);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 5px var(--cyan);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-family:'Orbitron',sans-serif;font-size:clamp(26px,3.2vw,46px);font-weight:900;
+  line-height:1.1;margin-bottom:18px;
+  background:linear-gradient(145deg,#fff 20%,var(--cyan) 55%,#fff 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:32px;max-width:420px}
+.hero-sub b{color:var(--text)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.pill{background:rgba(0,212,255,.05);border:1px solid var(--border);
+  padding:5px 13px;border-radius:20px;font-size:12px;color:var(--muted)}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{background:var(--cyan);color:#000;font-family:'Orbitron',sans-serif;font-size:12px;
+  font-weight:700;letter-spacing:1px;padding:14px 30px;border-radius:3px;
+  text-decoration:none;transition:.3s;box-shadow:0 0 35px rgba(0,212,255,.3)}
+.btn-p:hover{background:#fff;box-shadow:0 0 55px rgba(0,212,255,.5);transform:translateY(-2px)}
+.btn-o{border:1px solid var(--border2);color:var(--cyan);font-size:13px;font-weight:600;
+  padding:13px 24px;border-radius:3px;text-decoration:none;transition:.2s}
+.btn-o:hover{background:rgba(0,212,255,.08)}
+.stats{display:flex;gap:28px;margin-top:44px;flex-wrap:wrap}
+.st{border-left:2px solid var(--cyan);padding-left:12px}
+.st-n{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--cyan)}
+.st-l{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+.widget-col{position:sticky;top:90px}
+.widget{background:#0a1624;border:1px solid var(--border2);border-radius:18px;
+  overflow:hidden;box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.5);
+  max-width:400px;margin:0 auto;position:relative}
+.wbar{background:#070f1c;padding:12px 16px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border)}
+.wdots{display:flex;gap:5px;flex-shrink:0}
+.wd{width:9px;height:9px;border-radius:50%}
+.wd:nth-child(1){background:#ff5f57}.wd:nth-child(2){background:#febc2e}.wd:nth-child(3){background:#28c840}
+.wava{width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),#0060a0);
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.wname{font-weight:700;font-size:13px}
+.wonline{font-size:10px;color:var(--green);display:flex;align-items:center;gap:3px;margin-top:1px}
+.wdot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green)}
+.wmsgs{padding:14px;display:flex;flex-direction:column;gap:7px;
+  height:460px;overflow-y:auto;scroll-behavior:smooth}
+.wmsgs::-webkit-scrollbar{width:2px}
+.wmsgs::-webkit-scrollbar-thumb{background:var(--border2)}
+.wm{max-width:92%;padding:9px 13px;border-radius:13px;font-size:13px;line-height:1.55;
+  opacity:0;transform:translateY(5px) scale(.98);transition:opacity .3s,transform .3s;flex-shrink:0}
+.wm.show{opacity:1;transform:none}
+.wm.bot{background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.16);
+  align-self:flex-start;border-bottom-left-radius:3px}
+.wm.user{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(0,130,180,.2));
+  align-self:flex-end;border-bottom-right-radius:3px}
+.wm b{color:var(--cyan)}
+.wm-t{font-size:10px;color:var(--muted);margin-top:3px;text-align:right}
+.wbtns{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.wbtn{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);
+  color:var(--text);font-size:12px;padding:8px 11px;border-radius:7px;
+  cursor:pointer;transition:.18s;text-align:left;font-family:'Rajdhani',sans-serif;font-weight:500}
+.wbtn:hover{background:rgba(0,212,255,.18);border-color:var(--cyan);color:var(--cyan)}
+.wbtn.picked{background:rgba(0,212,255,.22);border-color:var(--cyan);color:var(--cyan);pointer-events:none}
+.wbtn.busy{background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.3);
+  color:rgba(255,71,87,.7);pointer-events:none}
+.wbtn.disabled{opacity:.35;pointer-events:none}
+.wtyping{display:flex;gap:4px;align-items:center;padding:9px 13px;
+  background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.14);
+  border-radius:13px;border-bottom-left-radius:3px;align-self:flex-start;
+  opacity:0;transition:.25s;flex-shrink:0}
+.wtyping.show{opacity:1}
+.td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:td 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
+.winput-bar{padding:9px 12px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;background:#070f1c}
+.winput{flex:1;background:rgba(0,212,255,.05);border:1px solid var(--border);
+  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;
+  padding:8px 12px;border-radius:18px;outline:none;transition:.2s}
+.winput:focus{border-color:var(--cyan2);background:rgba(0,212,255,.08)}
+.winput::placeholder{color:var(--muted)}
+.wsend{width:30px;height:30px;border-radius:50%;background:var(--cyan);border:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.wsend:hover{background:#fff;box-shadow:0 0 12px var(--cyan)}
+.wsend svg{width:13px;height:13px;fill:#000}
+.owner-popup{position:absolute;top:8px;right:-8px;
+  background:#041018;border:1px solid rgba(0,255,136,.28);border-radius:10px;
+  padding:12px 15px;width:220px;box-shadow:0 0 25px rgba(0,255,136,.12);
+  opacity:0;transform:translateX(10px) scale(.95);
+  transition:opacity .5s,transform .5s;pointer-events:none;z-index:10}
+.owner-popup.show{opacity:1;transform:none}
+.op-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.op-blink{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);animation:blnk 1.5s infinite;flex-shrink:0}
+@keyframes blnk{0%,100%{opacity:1}50%{opacity:.15}}
+.op-title{font-size:11px;font-weight:700;color:var(--green)}
+.op-time{font-size:10px;color:var(--muted);margin-left:auto}
+.op-body{font-size:11px;line-height:1.7;color:var(--text)}
+.op-body b{color:var(--cyan)}
+.op-badge{display:inline-block;margin-top:7px;background:rgba(0,255,136,.08);
+  border:1px solid rgba(0,255,136,.2);color:var(--green);
+  font-size:9px;padding:2px 7px;border-radius:8px;letter-spacing:1px;text-transform:uppercase}
+.widget-hint{text-align:center;margin-top:10px;font-size:12px;color:var(--muted)}
+.widget-hint b{color:var(--cyan)}
+section{position:relative;z-index:1}
+.sp{padding:80px 44px}.bg2{background:var(--bg2)}
+.sec-h{font-family:'Orbitron',sans-serif;font-size:clamp(18px,2.5vw,28px);
+  font-weight:700;text-align:center;margin-bottom:8px}
+.sec-s{text-align:center;color:var(--muted);margin-bottom:48px;font-size:15px;
+  max-width:500px;margin-left:auto;margin-right:auto}
+.qa-list{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.qa{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:24px 28px}
+.qa-q{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--cyan);
+  letter-spacing:1px;margin-bottom:12px}
+.qa-a{color:rgba(224,244,255,0.7);font-size:15px;line-height:1.7}
+.qa-a b{color:var(--text)}
+.qa-badge{display:inline-block;margin-top:10px;padding:4px 12px;
+  background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);
+  border-radius:20px;color:var(--green);font-size:12px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;max-width:1100px;margin:0 auto}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:7px;
+  padding:24px 20px;transition:.25s;position:relative;overflow:hidden;cursor:pointer}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:.25s}
+.card:hover{border-color:var(--border2);box-shadow:var(--glow);transform:translateY(-3px)}
+.card:hover::after{opacity:1}
+.ci{font-size:28px;margin-bottom:12px}
+.ct{font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;
+  color:var(--cyan);letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+.cx{color:rgba(224,244,255,0.62);font-size:13px;line-height:1.7}
+.cr{margin-top:14px;font-size:13px;font-weight:700;color:var(--green)}
+.card-hint{margin-top:10px;font-size:11px;color:rgba(0,212,255,0.4)}
+.card:hover .card-hint{color:var(--cyan)}
+.cmodal{position:fixed;inset:0;z-index:999;background:rgba(0,8,16,.88);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(10px)}
+.cmodal.open{opacity:1;pointer-events:all}
+.cmodal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;
+  padding:36px;max-width:480px;width:100%;position:relative;
+  box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.6);
+  transform:translateY(12px) scale(.97);transition:.3s}
+.cmodal.open .cmodal-box{transform:none}
+.cmodal-close{position:absolute;top:14px;right:16px;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:18px;transition:.2s;padding:4px 8px;font-family:'Rajdhani',sans-serif}
+.cmodal-close:hover{color:var(--cyan)}
+.cmodal-icon{font-size:44px;margin-bottom:14px}
+.cmodal-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;
+  color:rgba(0,212,255,0.6);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px}
+.cmodal-body{color:rgba(224,244,255,0.65);font-size:15px;line-height:1.8}
+.cmodal-body b{color:rgba(0,212,255,0.75)}
+.cmodal-stat{display:inline-block;margin-top:18px;padding:7px 16px;
+  background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);
+  border-radius:20px;color:rgba(0,255,136,0.65);font-size:13px;font-weight:700}
+.roi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:36px;max-width:680px;margin:0 auto;box-shadow:var(--glow)}
+.rl{display:flex;justify-content:space-between;margin-bottom:7px;font-size:14px;font-weight:600}
+.rl span:last-child{color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:12px}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;outline:none;
+  cursor:pointer;border-radius:2px;margin-bottom:20px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan)}
+.rdiv{height:1px;background:var(--border);margin:20px 0}
+.rres{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rbox{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:16px;text-align:center}
+.rn{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--green)}
+.rl2{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:1px}
+.rnote{text-align:center;margin-top:14px;font-size:11px;color:var(--muted)}
+.cta-s{padding:90px 44px;text-align:center}
+.cta-h{font-family:'Orbitron',sans-serif;font-size:clamp(22px,3.5vw,40px);font-weight:900;margin-bottom:14px}
+.cta-h span{color:var(--cyan)}
+.cta-sub{color:var(--muted);font-size:17px;margin-bottom:44px;line-height:1.6}
+.btn-tg{display:inline-flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan2));color:#000;
+  font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;
+  padding:18px 44px;border-radius:3px;text-decoration:none;transition:.3s;
+  box-shadow:0 0 45px rgba(0,212,255,.35);margin-bottom:20px}
+.btn-tg:hover{transform:translateY(-3px);box-shadow:0 0 65px rgba(0,212,255,.55)}
+.contact{font-size:13px;color:var(--muted)}
+.contact a{color:var(--cyan);text-decoration:none}
+footer{padding:24px 44px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+footer .fl{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--cyan);letter-spacing:2px}
+footer p{font-size:11px;color:var(--muted)}
+@media(max-width:920px){
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+  .widget-col{position:static}
+  nav{padding:11px 18px}
+  .sp{padding:60px 18px}
+  .cta-s{padding:60px 18px}
+  footer{flex-direction:column;text-align:center;padding:18px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ЗЕЛ ДЕТЕЙЛИНГ</div>
+  <div class="nav-tag">✨ Химки · AI-автоматизация</div>
+  <a href="https://t.me/tridavy2000" target="_blank" class="nav-cta">Связаться →</a>
+</nav>
+
+<section class="hero">
+ <div class="hero-inner">
+  <div>
+    <div class="eyebrow">Персональное демо для ЗелДетейлинг</div>
+    <h1>Запись.<br>Марка авто.<br>Любая услуга.<br>Клиент возвращается.</h1>
+    <p class="hero-sub">Четыре сценария конкретно под ЗелДетейлинг: <b>запись с маркой и моделью авто</b>, <b>напоминание за 24ч</b>, <b>весь прайс в боте</b> и <b>реактивация через 60 дней</b>.</p>
+    <div class="pills">
+      <div class="pill">✨ Детейлинг</div>
+      <div class="pill">🚗 Автомойка</div>
+      <div class="pill">🔬 Керамика</div>
+      <div class="pill">🧴 Химчистка</div>
+      <div class="pill">📍 Химки, д. Елино</div>
+    </div>
+    <div class="btns">
+      <a href="#qa" class="btn-p">Ответы на 3 вопроса</a>
+      <a href="#how" class="btn-o">Сценарии →</a>
+    </div>
+    <div class="stats">
+      <div class="st"><div class="st-n">24/7</div><div class="st-l">Приём записей</div></div>
+      <div class="st"><div class="st-n">Авто</div><div class="st-l">Марка + модель</div></div>
+      <div class="st"><div class="st-n">60д</div><div class="st-l">Реактивация</div></div>
+      <div class="st"><div class="st-n">5</div><div class="st-l">Дней до запуска</div></div>
+    </div>
+  </div>
+
+  <div class="widget-col">
+    <div class="widget">
+      <div class="wbar">
+        <div class="wdots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
+        <div class="wava">✨</div>
+        <div>
+          <div class="wname">ЗелДетейлинг · Химки</div>
+          <div class="wonline"><div class="wdot"></div>онлайн — отвечает мгновенно</div>
+        </div>
+      </div>
+      <div class="wmsgs" id="wm"></div>
+      <div class="winput-bar">
+        <input class="winput" id="wi" placeholder="Напишите сообщение..." onkeydown="if(event.key==='Enter')sendText()">
+        <button class="wsend" onclick="sendText()">
+          <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="widget-hint">👆 <b>Кликайте кнопки</b> — четыре живых сценария</div>
+    <div class="owner-popup" id="op">
+      <div class="op-hdr">
+        <div class="op-blink"></div>
+        <div class="op-title">🔔 НОВАЯ ЗАПИСЬ</div>
+        <div class="op-time" id="op-t">21:07</div>
+      </div>
+      <div class="op-body" id="op-b">
+        ✨ <b>Михаил С.</b><br>BMW 3-series, 2021<br>Услуга: <b>Керамика 9H</b><br>Завтра: <b>10:00</b>
+      </div>
+      <div class="op-badge">ПРИШЛО ПОКА ВЫ СПАЛИ</div>
+    </div>
+  </div>
+ </div>
+</section>
+
+<!-- Q&A SECTION — отвечаем на три конкретных вопроса из переписки -->
+<section class="sp bg2" id="qa">
+  <h2 class="sec-h">Ответы на ваши три вопроса</h2>
+  <p class="sec-s">Вы спросили — отвечаю конкретно, без воды</p>
+  <div class="qa-list">
+    <div class="qa">
+      <div class="qa-q">1 / Как бот понимает какое время свободно, а какое занято?</div>
+      <div class="qa-a">
+        Бот показывает только те слоты, которые <b>вы сами открыли</b>. Никакой магии — вы управляете расписанием через простую Telegram-команду или панель:<br><br>
+        <code style="background:rgba(0,212,255,.08);padding:3px 8px;border-radius:4px;font-size:13px">/open 12:00 14:00 16:00</code> — открыть три окна на сегодня<br>
+        <code style="background:rgba(0,212,255,.08);padding:3px 8px;border-radius:4px;font-size:13px">/close 14:00</code> — закрыть одно<br><br>
+        Клиент видит только открытые слоты. Занятые — не показываются вообще.
+        <div class="qa-badge">✅ Полный контроль расписания</div>
+      </div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">2 / Как я буду понимать какую именно машину ждать?</div>
+      <div class="qa-a">
+        При записи бот <b>обязательно спрашивает</b> марку, модель и год авто — это шаг который нельзя пропустить. Вы получаете уведомление вида:<br><br>
+        <span style="background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);padding:10px 14px;border-radius:8px;display:block;font-size:13px;line-height:1.7">
+          ✨ <b>Михаил С.</b><br>
+          Авто: <b>BMW 3-series 2021, серебристый</b><br>
+          Услуга: Керамика 9H · Завтра 10:00<br>
+          Тел: +7 916 ••• ••-07
+        </span><br>
+        Можно задать и дополнительные вопросы — цвет, пробег, конкретные пожелания.
+        <div class="qa-badge">✅ Марка, модель, год — обязательные поля</div>
+      </div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">3 / Если клиент хочет не комплексную мойку, а другую услугу — их много</div>
+      <div class="qa-a">
+        Бот показывает <b>полный прайс</b> по категориям — клиент выбирает нужное сам. Нажмите «Записаться» в чате справа и попробуйте выбрать услугу — там весь список ЗелДетейлинг.<br><br>
+        Если добавите новую услугу — один раз пишете мне, я обновляю бота за 10 минут.
+        <div class="qa-badge">✅ Весь прайс доступен в боте</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sp" id="how">
+  <h2 class="sec-h">Четыре сценария в одной системе</h2>
+  <p class="sec-s">Кликните на карточку — подробнее о каждом</p>
+  <div class="cards">
+    <div class="card" onclick="showCardDetail('booking')">
+      <div class="ci">📅</div>
+      <div class="ct">Запись с авто</div>
+      <p class="cx">Клиент записывается сам: выбирает услугу из полного прайса, вводит марку и модель, выбирает слот из открытых вами окон. Вы получаете полное уведомление.</p>
+      <div class="cr">0 пропущенных заявок вечером</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('reminder')">
+      <div class="ci">🔔</div>
+      <div class="ct">Напоминание за 24ч</div>
+      <p class="cx">За сутки до визита бот пишет клиенту с деталями записи — марка авто, услуга, время. Он подтверждает или переносит. Вы узнаёте заранее.</p>
+      <div class="cr">▼ −40% неявок</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('reactivation')">
+      <div class="ci">💬</div>
+      <div class="ct">Возврат через 60 дней</div>
+      <p class="cx">Детейлинг делают раз в 1–2 месяца. Клиент из Химок уехал — через 60 дней бот пишет: «Как машина? Пора на полировку или керамику?» По всей базе, без вашего участия.</p>
+      <div class="cr">▲ +8 возвратов / мес</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('owner')">
+      <div class="ci">📲</div>
+      <div class="ct">Уведомление владельцу</div>
+      <p class="cx">На каждую запись — мгновенное уведомление: кто, какое авто (марка + модель), какая услуга, когда. Полная информация до приезда клиента.</p>
+      <div class="cr">Знаете что ждать до открытия</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('reviews')">
+      <div class="ci">⭐</div>
+      <div class="ct">Отзывы на Яндекс</div>
+      <p class="cx">После завершения работы бот пишет клиенту: «Как авто? Оставьте отзыв — займёт минуту». Клиенты из Химок и Зеленограда находят вас по рейтингу.</p>
+      <div class="cr">▲ +5–8 отзывов / мес</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+    <div class="card" onclick="showCardDetail('schedule')">
+      <div class="ci">🗓</div>
+      <div class="ct">Управление слотами</div>
+      <p class="cx">Одна Telegram-команда открывает или закрывает окна в расписании. Бот сразу обновляет доступное время для клиентов. Никаких таблиц и звонков.</p>
+      <div class="cr">Расписание — одной командой</div>
+      <div class="card-hint">Нажмите → подробнее</div>
+    </div>
+  </div>
+</section>
+
+<section class="sp bg2" id="roi">
+  <h2 class="sec-h">Посчитайте выгоду для ЗелДетейлинг</h2>
+  <p class="sec-s">Расчёт на основе реальных показателей детейлинг-центров Подмосковья</p>
+  <div class="roi-card">
+    <div class="rl"><span>Клиентов в базе</span><span id="vC">80</span></div>
+    <input type="range" id="rC" min="20" max="400" value="80" step="5" oninput="calc()">
+    <div class="rl"><span>Средний чек, ₽</span><span id="vP">8 000 ₽</span></div>
+    <input type="range" id="rP" min="1500" max="30000" value="8000" step="500" oninput="calc()">
+    <div class="rl"><span>Неявок / пропусков в месяц</span><span id="vS">6</span></div>
+    <input type="range" id="rS" min="1" max="20" value="6" step="1" oninput="calc()">
+    <div class="rdiv"></div>
+    <div class="rres">
+      <div class="rbox"><div class="rn" id="rN1">+11</div><div class="rl2">Доп. визитов/мес</div></div>
+      <div class="rbox"><div class="rn" id="rN2">+88 000 ₽</div><div class="rl2">Доп. выручка/мес</div></div>
+      <div class="rbox"><div class="rn" id="rN3">+1 056 000 ₽</div><div class="rl2">Потенциал за год</div></div>
+      <div class="rbox"><div class="rn" id="rN4">1 мес</div><div class="rl2">Окупаемость</div></div>
+    </div>
+    <p class="rnote">Расчёт: реактивация 10% базы + возврат 40% неявок + новые заявки 24/7</p>
+  </div>
+</section>
+
+<section class="cta-s">
+  <h2 class="cta-h">Запустить для <span>ЗелДетейлинг</span> за <span>5</span> дней</h2>
+  <p class="cta-sub">Клиенты из Химок и Зеленограда уедут к конкурентам — если их не удержать напоминанием.<br>Система делает это автоматически.</p>
+  <div>
+    <a href="https://t.me/tridavy2000" target="_blank" class="btn-tg">💬 Написать Данилу</a>
+  </div>
+  <p class="contact">
+    <a href="https://t.me/tridavy2000">@tridavy2000</a> ·
+    <a href="mailto:tridavy2000@gmail.com">tridavy2000@gmail.com</a>
+  </p>
+</section>
+
+<footer>
+  <div class="fl">ДАНИЛ · AI АВТОМАТИЗАЦИЯ</div>
+  <p>Персональное демо · ЗелДетейлинг · Химки, д. Елино</p>
+</footer>
+
+<div id="card-modal" class="cmodal" onclick="if(event.target===this)closeCard()">
+  <div class="cmodal-box">
+    <button class="cmodal-close" onclick="closeCard()">✕ закрыть</button>
+    <div class="cmodal-icon" id="cm-icon"></div>
+    <div class="cmodal-title" id="cm-title"></div>
+    <div class="cmodal-body" id="cm-body"></div>
+  </div>
+</div>
+
+<script>
+const wm = document.getElementById('wm');
+let typing = null;
+let ctx = { service:'', car:'' };
+
+function T(){ const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
+function scroll(){ wm.scrollTop = wm.scrollHeight; }
+function fmt(n){ return n.toLocaleString('ru-RU'); }
+
+function addMsg(side, html, btns){
+  const d = document.createElement('div');
+  d.className = `wm ${side}`;
+  let inner = html;
+  if(btns && btns.length){
+    inner += '<div class="wbtns">' + btns.map(b=>{
+      const busy = b.includes('занято');
+      const cls  = busy ? 'wbtn busy' : 'wbtn';
+      const act  = busy ? '' : `onclick="tap(this,'${esc(b)}')"`;
+      return `<div class="${cls}" ${act}>${b}</div>`;
+    }).join('') + '</div>';
+  }
+  inner += `<div class="wm-t">${T()}</div>`;
+  d.innerHTML = inner;
+  wm.appendChild(d);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('show')));
+  scroll();
+}
+
+function esc(s){ return s.replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function showTyping(){ removeTyping(); const t=document.createElement('div'); t.className='wtyping'; t.innerHTML='<span class="td"></span><span class="td"></span><span class="td"></span>'; wm.appendChild(t); requestAnimationFrame(()=>requestAnimationFrame(()=>t.classList.add('show'))); typing=t; scroll(); }
+function removeTyping(){ if(typing){ typing.remove(); typing=null; } }
+function disableAll(){ wm.querySelectorAll('.wbtn:not(.busy)').forEach(b=>b.classList.add('disabled')); }
+function bot(html,btns,delay=900){ showTyping(); setTimeout(()=>{ removeTyping(); addMsg('bot',html,btns); },delay); }
+function user(text){ addMsg('user',text); }
+
+function ownerPop(service, car, time){
+  document.getElementById('op-t').textContent = T();
+  document.getElementById('op-b').innerHTML =
+    `✨ <b>Михаил С.</b><br>${car}<br>Услуга: <b>${service}</b><br>Завтра: <b>${time}</b>`;
+  const p = document.getElementById('op');
+  p.classList.add('show');
+  setTimeout(()=>p.classList.remove('show'), 9000);
+}
+
+function sendText(){
+  const inp = document.getElementById('wi');
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = '';
+  disableAll();
+  user(text);
+  setTimeout(()=>{ bot(aiReply(text), ['✨ Записаться','← Главное меню']); }, 1000);
+}
+
+function tap(el, val){
+  disableAll();
+  el.classList.add('picked');
+  setTimeout(()=>user(val), 150);
+  const v = val.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}←→✅⬜🟢🔴⭐]/gu,'').trim();
+
+  if(/главное меню|меню|посмотреть ещё раз/i.test(v))        return setTimeout(()=>welcome(), 600);
+  if(/другую услугу|к услугам|полный прайс/i.test(v))        return setTimeout(()=>showServices(), 700);
+  if(/что ещё умеет|умеет система/i.test(v))                 return setTimeout(()=>showOwner(), 800);
+
+  if(/записаться/i.test(v))                                  return setTimeout(()=>showServices(), 800);
+  if(/напоминани|перед визитом/i.test(v))                    return setTimeout(()=>showReminder(), 800);
+  if(/возврат.*60|реактивац|60.*дн/i.test(v))                return setTimeout(()=>showReactivation(), 800);
+  if(/видит владелец|владелец|уведомлени/i.test(v))          return setTimeout(()=>showOwner(), 800);
+  if(/отзыв|рейтинг/i.test(v))                               return setTimeout(()=>showReviews(), 800);
+  if(/расписани|слот|управлени/i.test(v))                    return setTimeout(()=>showSchedule(), 800);
+  if(/стоимость системы|стоимость/i.test(v))                 return setTimeout(()=>showPricing(), 800);
+
+  // МОЙКА
+  if(/стандарт.*1200|экспресс.*мойк/i.test(v))  { ctx.service='Мойка Стандарт — 1 200 ₽';   return setTimeout(()=>showCar(), 800); }
+  if(/премиум.*1600/i.test(v))                  { ctx.service='Мойка Премиум — 1 600 ₽';    return setTimeout(()=>showCar(), 800); }
+  if(/премиум.*2200/i.test(v))                  { ctx.service='Мойка Премиум+ — 2 200 ₽';   return setTimeout(()=>showCar(), 800); }
+  // ДЕТЕЙЛИНГ
+  if(/керамик/i.test(v))    { ctx.service='Керамика 9H — 12 800 ₽ (−20%)';    return setTimeout(()=>showCar(), 800); }
+  if(/полировк/i.test(v))   { ctx.service='Восстановительная полировка — 14 400 ₽ (−20%)'; return setTimeout(()=>showCar(), 800); }
+  if(/химчистк/i.test(v))   { ctx.service='Детейлинг химчистка — 12 000 ₽ (−20%)';         return setTimeout(()=>showCar(), 800); }
+  if(/полировк.*фар/i.test(v)){ ctx.service='Полировка фар — от 2 500 ₽';     return setTimeout(()=>showCar(), 800); }
+
+  // МАРКИ АВТО
+  if(/toyota|тойот/i.test(v))   { ctx.car='Toyota Camry 2020';    return setTimeout(()=>showTime(), 800); }
+  if(/bmw|бмв/i.test(v))        { ctx.car='BMW 3-series 2021';     return setTimeout(()=>showTime(), 800); }
+  if(/kia|киа/i.test(v))        { ctx.car='KIA Sportage 2022';     return setTimeout(()=>showTime(), 800); }
+  if(/другой|другую|иную/i.test(v)){ ctx.car='[марку уточнили]';  return setTimeout(()=>showTime(), 800); }
+
+  // ВРЕМЯ
+  const timeM = val.match(/(\d{1,2}:\d{2})/);
+  if(timeM && !/занято/i.test(v)){ return setTimeout(()=>confirmBooking(timeM[1]), 800); }
+
+  if(/цен|стоит|сколько|прайс/i.test(v)) return setTimeout(()=>{ bot(aiReply('цена'), ['✨ Записаться','← Главное меню']); }, 900);
+  if(/адрес|где|елино|химк/i.test(v))    return setTimeout(()=>{ bot(aiReply('адрес'),['✨ Записаться','← Главное меню']); }, 900);
+
+  setTimeout(()=>bot(aiReply(val), ['✨ Записаться','← Главное меню']), 900);
+}
+
+function welcome(){
+  bot(`👋 Привет! Я <b>AI-помощник ЗелДетейлинг</b>.<br>Химки, д. Елино — без выходных.<br><br>Что нужно?`,[
+    '✨ Записаться (выбрать из всех услуг)',
+    '🔔 Напоминание перед визитом — как работает',
+    '💬 Возврат клиента через 60 дней',
+    '📲 Что видит владелец?',
+    '🗓 Управление расписанием',
+    '💡 Стоимость системы'
+  ], 500);
+}
+
+function showServices(){
+  bot('✨ Выберите категорию:', [
+    '── 🚗 МОЙКА ──',
+    '🟢 Стандарт — 1 200 ₽',
+    '🟢 Премиум — 1 600 ₽',
+    '🟢 Премиум+ — 2 200 ₽',
+    '── ✨ ДЕТЕЙЛИНГ ──',
+    '🔬 Керамика 9H — 12 800 ₽ (−20%)',
+    '💎 Полировка восстановительная — 14 400 ₽ (−20%)',
+    '🧴 Детейлинг химчистка — 12 000 ₽ (−20%)',
+    '💡 Полировка фар — от 2 500 ₽',
+    '← Главное меню'
+  ]);
+}
+
+function showCar(){
+  bot(
+    `▓▓▓░░░░░░░ 30%<br><br>`+
+    `✨ <b>${ctx.service}</b><br><br>`+
+    `Укажите марку и модель авто:`, [
+    '🚗 Toyota (Camry, Corolla, RAV4...)',
+    '🚗 BMW (3, 5 series, X5...)',
+    '🚗 KIA (Sportage, Optima...)',
+    '🚗 Другой автомобиль',
+    '← К услугам'
+  ]);
+}
+
+function showTime(){
+  bot(
+    `▓▓▓▓▓▓░░░░ 60%<br><br>`+
+    `✨ <b>${ctx.service}</b><br>`+
+    `🚗 <b>${ctx.car}</b><br><br>`+
+    `Выберите удобное время:`, [
+    '🟢 10:00 — открытие детейлинга',
+    '🟢 12:00 — день',
+    '🔴 14:00 — занято',
+    '🟢 16:00 — день',
+    '🟢 18:00 — последний слот',
+    '← К другой услуге'
+  ]);
+}
+
+function confirmBooking(time){
+  bot(
+    `✅ <b>Готово! Записал вас.</b><br><br>`+
+    `Услуга: <b>${ctx.service || 'Керамика 9H'}</b><br>`+
+    `Авто: <b>${ctx.car || 'уточним при подтверждении'}</b><br>`+
+    `📅 Завтра в <b>${time}</b><br>`+
+    `📍 Химки, д. Елино, ул. Рабочая 3с1<br><br>`+
+    `🔔 Напомню за 24ч до визита с деталями.`,
+    ['📲 Что ещё умеет система?','← Главное меню'], 1300
+  );
+  setTimeout(()=>ownerPop(ctx.service||'Керамика 9H', ctx.car||'BMW 3-series 2021', time), 2000);
+}
+
+function showReminder(){
+  bot(
+    `🔔 <b>Напоминание за 24ч до визита:</b><br><br>──────────────<br>`+
+    `✨ Михаил С., добрый день!<br><br>`+
+    `Напоминаем: завтра в <b>10:00</b> вас ждём<br>`+
+    `Авто: <b>BMW 3-series 2021</b><br>`+
+    `Услуга: <b>Керамика 9H</b><br><br>`+
+    `📍 д. Елино, ул. Рабочая 3с1<br><br>`+
+    `✅ Буду &nbsp;&nbsp;&nbsp; 📅 Перенести<br>──────────────<br><br>`+
+    `<i>Если переносит — вы узнаёте заранее.<br>Знаете авто и услугу — готовитесь до приезда.</i>`,
+    ['💬 Возврат клиента через 60 дней','← Главное меню']
+  );
+}
+
+function showReactivation(){
+  bot(
+    `💬 <b>Реактивация — 60 дней без визита:</b><br><br>──────────────<br>`+
+    `✨ Михаил С., привет!<br><br>`+
+    `2 месяца назад делали керамику на BMW — как авто?<br><br>`+
+    `Скоро лето — самое время освежить покрытие или сделать полировку после зимы.<br>`+
+    `Есть окошки на этой неделе.<br><br>`+
+    `✅ Записать меня &nbsp;&nbsp;&nbsp; 📅 Позже<br>──────────────<br><br>`+
+    `<i>Клиенты из Химок едут в Москву на разовые услуги.<br>Это напоминание удерживает их у вас.<br>По всей базе — автоматически.</i>`,
+    ['⭐ Отзывы на Яндекс','← Главное меню']
+  );
+}
+
+function showOwner(){
+  bot(
+    `📲 <b>Уведомление владельцу — мгновенно:</b><br><br>──────────────<br>`+
+    `✨ <b>Новая запись!</b><br><br>`+
+    `Клиент: Михаил С.<br>`+
+    `Авто: <b>BMW 3-series 2021, серебристый</b><br>`+
+    `Услуга: <b>Керамика 9H</b><br>`+
+    `Дата: завтра <b>10:00</b><br>`+
+    `Тел: +7 916 ••• ••-07<br>──────────────<br><br>`+
+    `<i>Это пришло в 21:07 пока вы отдыхали.<br>Марка и модель — вы знаете что готовить до приезда.</i>`,
+    ['🔔 Напоминание за 24ч','💬 Возврат через 60 дней','← Главное меню']
+  );
+}
+
+function showReviews(){
+  bot(
+    `⭐ <b>Автосбор отзывов после визита:</b><br><br>`+
+    `<i>Через 2 часа после завершения работы:</i><br><br>──────────────<br>`+
+    `🌟 Михаил С., BMW сверкает?<br><br>`+
+    `Если всё понравилось — оставьте отзыв.<br>Клиенты из Зеленограда и Химок ищут детейлинг по рейтингу.<br><br>`+
+    `👉 [Оставить отзыв на Яндекс.Картах]<br>──────────────`,
+    ['💡 Стоимость системы','← Главное меню']
+  );
+}
+
+function showSchedule(){
+  bot(
+    `🗓 <b>Управление расписанием — одной командой:</b><br><br>──────────────<br>`+
+    `Открыть слоты на сегодня:<br>`+
+    `<code style="background:rgba(0,212,255,.1);padding:2px 7px;border-radius:4px">/open 10:00 12:00 16:00</code><br><br>`+
+    `Закрыть одно окно:<br>`+
+    `<code style="background:rgba(0,212,255,.1);padding:2px 7px;border-radius:4px">/close 12:00</code><br><br>`+
+    `Посмотреть все записи на сегодня:<br>`+
+    `<code style="background:rgba(0,212,255,.1);padding:2px 7px;border-radius:4px">/today</code><br>──────────────<br><br>`+
+    `<i>Клиенты видят только открытые вами окна.<br>Занятые — не показываются вообще.</i>`,
+    ['📲 Что видит владелец?','← Главное меню']
+  );
+}
+
+function showPricing(){
+  bot(
+    `💡 <b>Стоимость системы для ЗелДетейлинг:</b><br><br>`+
+    `──────────────<br>`+
+    `🔹 <b>Старт — 30 000 ₽</b><br>`+
+    `<i>Запись + напоминания + управление слотами</i><br><br>`+
+    `✅ Telegram-бот, полный прайс, марка авто<br>`+
+    `✅ Управление расписанием командами<br>`+
+    `✅ Уведомление владельцу на каждую запись<br>`+
+    `✅ Напоминание клиенту за 24ч<br>`+
+    `❌ Нет: реактивации, отзывов<br>`+
+    `🕐 Запуск за 3–5 дней<br><br>`+
+    `──────────────<br>`+
+    `🏆 <b>Стандарт — 55 000 ₽</b><br>`+
+    `<b>← всё что вы только что видели</b><br><br>`+
+    `✅ Всё из Старта<br>`+
+    `✅ Реактивация через 60 дней по всей базе<br>`+
+    `✅ Автосбор отзывов после завершения<br>`+
+    `✅ CRM: история авто, услуги, даты<br>`+
+    `🕐 Запуск за 5–7 дней<br>`+
+    `💰 Окупается за 1–2 месяца · 🛡 Гарантия результата<br><br>`+
+    `──────────────<br><br>`+
+    `📩 Данил: <b>@tridavy2000</b>`,
+    ['← Посмотреть ещё раз']
+  );
+}
+
+function aiReply(text){
+  const t = (text||'').toLowerCase();
+  if(/цен|стоит|сколько|прайс/.test(t))
+    return `🤖 <b>Прайс ЗелДетейлинг:</b><br><br>`+
+      `🚗 Мойка Стандарт — <b>1 200 ₽</b><br>`+
+      `🚗 Мойка Премиум — <b>1 600 ₽</b><br>`+
+      `🚗 Мойка Премиум+ — <b>2 200 ₽</b><br><br>`+
+      `✨ Керамика 9H — <b>12 800 ₽</b> (−20%)<br>`+
+      `💎 Полировка — <b>14 400 ₽</b> (−20%)<br>`+
+      `🧴 Химчистка — <b>12 000 ₽</b> (−20%)<br>`+
+      `💡 Полировка фар — <b>от 2 500 ₽</b>`;
+  if(/адрес|где|елино|химк/.test(t))
+    return `🤖 <b>Адрес:</b><br><br>📍 Химки, д. Елино, ул. Рабочая 3с1<br>⏰ Мойка: 09:00–21:00<br>⏰ Детейлинг: 10:00–20:00<br>Без выходных<br><br>📞 +7 915 107 56 04`;
+  if(/время|часы|работ/.test(t))
+    return `🤖 <b>Режим работы:</b><br><br>🚗 Мойка: 09:00 — 21:00<br>✨ Детейлинг: 10:00 — 20:00<br>Без выходных`;
+  if(/гарант/.test(t))
+    return `🤖 <b>Гарантия на работы:</b><br><br>✅ Керамическое покрытие — 12 мес<br>✅ Полировка — 6 мес<br>✅ Химчистка — 7 дней`;
+  return `🤖 Хороший вопрос! В реальной системе AI знает весь прайс ЗелДетейлинг и отвечает мгновенно.<br><br><i>Попробуй спросить про цены, адрес или услуги</i>`;
+}
+
+function calc(){
+  const c  = +document.getElementById('rC').value;
+  const p  = +document.getElementById('rP').value;
+  const ms = +document.getElementById('rS').value;
+  document.getElementById('vC').textContent = c;
+  document.getElementById('vP').textContent = fmt(p) + ' ₽';
+  document.getElementById('vS').textContent = ms;
+  const react = Math.round(c * 0.10);
+  const saved = Math.round(ms * 0.40);
+  const new_  = Math.round(c * 0.02);
+  const total = Math.max(react + saved + new_, 1);
+  const rev   = total * p;
+  document.getElementById('rN1').textContent = '+' + total;
+  document.getElementById('rN2').textContent = '+' + fmt(rev) + ' ₽';
+  document.getElementById('rN3').textContent = '+' + fmt(rev * 12) + ' ₽';
+  const pay = Math.ceil(55000 / rev);
+  document.getElementById('rN4').textContent = pay <= 1 ? '< 1 мес' : pay + ' мес';
+}
+document.getElementById('rC').oninput = calc;
+document.getElementById('rP').oninput = calc;
+document.getElementById('rS').oninput = calc;
+
+const cardDetails = {
+  booking:{icon:'📅',title:'Запись с маркой авто',
+    body:`Клиент выбирает услугу из полного прайса, потом обязательно вводит марку и модель авто. Это поле нельзя пропустить — бот не пустит дальше без него.<br><br>Вы получаете уведомление сразу: кто, какое авто, какая услуга, когда. Знаете что готовить до приезда клиента.<br><br><span class="cmodal-stat">Марка + модель — обязательные поля</span>`},
+  reminder:{icon:'🔔',title:'Напоминание за 24ч',
+    body:`За сутки до визита бот пишет клиенту: марка его авто, услуга, время, адрес. Клиент нажимает «Буду» или «Перенести».<br><br>Вы узнаёте о переносе за 24 часа, а не в день записи. Закрываете освободившееся окно другому клиенту из базы.<br><br><span class="cmodal-stat">▼ −40% неявок</span>`},
+  reactivation:{icon:'💬',title:'Возврат через 60 дней',
+    body:`Детейлинг — не еженедельная услуга. Клиент из Химок легко уходит в Москву через 2 месяца, если его не вернуть раньше.<br><br>Бот пишет через 60 дней: <b>«Как авто? Пора освежить покрытие?»</b> По всей базе, автоматически. Без вашего участия.<br><br><span class="cmodal-stat">▲ +8 возвратов / мес</span>`},
+  owner:{icon:'📲',title:'Уведомление владельцу',
+    body:`На каждую запись — мгновенное уведомление с полной информацией: имя клиента, марка и модель авто, услуга, дата и время, телефон.<br><br>Вы знаете всё до открытия — можете подготовить материалы, расставить приоритеты дня.<br><br><span class="cmodal-stat">Всё в одном уведомлении</span>`},
+  reviews:{icon:'⭐',title:'Отзывы на Яндекс',
+    body:`Через 2 часа после завершения работы бот пишет: <b>«BMW сверкает? Оставьте отзыв — помогает другим клиентам из Зеленограда найти нас.»</b><br><br>Клиенты Подмосковья активно используют Яндекс.Карты при поиске детейлинга — рейтинг прямо влияет на входящий поток.<br><br><span class="cmodal-stat">▲ +5–8 отзывов / мес</span>`},
+  schedule:{icon:'🗓',title:'Управление расписанием',
+    body:`Одна Telegram-команда <code>/open 10:00 12:00</code> — и эти слоты появляются у клиентов. Команда <code>/close 12:00</code> — слот исчезает.<br><br>Никаких таблиц, звонков, ручного обновления сайта. Расписание всегда актуально — клиенты видят только реальные свободные окна.<br><br><span class="cmodal-stat">Расписание — одной командой</span>`}
+};
+
+function showCardDetail(id){
+  const d = cardDetails[id]; if(!d) return;
+  document.getElementById('cm-icon').textContent = d.icon;
+  document.getElementById('cm-title').textContent = d.title;
+  document.getElementById('cm-body').innerHTML = d.body;
+  document.getElementById('card-modal').classList.add('open');
+}
+function closeCard(){ document.getElementById('card-modal').classList.remove('open'); }
+
+window.addEventListener('load', ()=>{ setTimeout(welcome, 600); calc(); });
+</script>
+</body>
+</html>
