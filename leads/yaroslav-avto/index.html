@@ -458,37 +458,43 @@ function tap(el, val){
   disableAll();
   el.classList.add('picked');
   setTimeout(()=>user(val), 150);
-  const v = val.replace(/[🚗🔧🎨🔩🛠📅🔍📸🔔💬⭐💡🤖👁←→✅🔴🟢⬜]/g,'').trim();
+  // Универсальный strip: убираем все эмодзи и спецсимволы, оставляем текст
+  const v = val.replace(/[\u{1F000}-\u{1FFFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}←→✅⬜🟢🔴]/gu,'').trim();
 
-  if(v.includes('Записаться на ремонт') && !v.includes('Назад')) return setTimeout(()=>showServices(), 800);
-  if(v.includes('Статус ремонта') || v.includes('статус'))       return setTimeout(()=>showStatus(), 800);
-  if(v.includes('Оценить повреждение') || v.includes('по фото')) return setTimeout(()=>showPhotoDemo(), 800);
-  if(v.includes('видит владелец') || v.includes('Владелец'))     return setTimeout(()=>showOwner(), 800);
-  if(v.includes('Стоимость') || v.includes('стоимость'))         return setTimeout(()=>showPricing(), 800);
-  if(v.includes('Реактивация') || v.includes('реактивац'))       return setTimeout(()=>showReactivation(), 800);
-  if(v.includes('Отзывы'))                                       return setTimeout(()=>showReviews(), 800);
-  if(v.includes('Уведомлени') || v.includes('Напоминани'))       return setTimeout(()=>showReminder(), 800);
-  if(v.includes('Главное меню') || v.includes('меню') || v.includes('Посмотреть ещё раз')) return setTimeout(()=>welcome(), 600);
+  // ── НАВИГАЦИЯ ─────────────────────────────────────────────
+  if(/главное меню|меню|посмотреть ещё раз/i.test(v))           return setTimeout(()=>welcome(), 600);
+  if(/другая услуга|к услугам/i.test(v))                        return setTimeout(()=>showServices(), 700);
+  if(/что ещё умеет|умеет система/i.test(v))                    return setTimeout(()=>showOwner(), 800);
 
-  // SERVICES
-  const services = [
-    'Диагностика и оценка','Рихтовка кузова','Покраска элемента',
-    'Слесарный ремонт','Ремонт бампера','Комплекс кузов + покраска'
-  ];
-  for(const svc of services){
-    if(v.includes(svc.split(' ')[0]) || v.includes(svc)){
-      ctx.service = svc;
-      return setTimeout(()=>showTime(), 800);
-    }
-  }
+  // ── ОСНОВНЫЕ СЦЕНАРИИ ─────────────────────────────────────
+  if(/записаться на ремонт|записаться на осмотр/i.test(v))      return setTimeout(()=>showServices(), 800);
+  if(/статус.*ремонт|узнать статус|мой ремонт/i.test(v))        return setTimeout(()=>showStatus(), 800);
+  if(/оценить повреждение|по фото/i.test(v))                    return setTimeout(()=>showPhotoDemo(), 800);
+  if(/видит владелец|владелец/i.test(v))                        return setTimeout(()=>showOwner(), 800);
+  if(/стоимость системы|стоимость/i.test(v))                    return setTimeout(()=>showPricing(), 800);
+  if(/возврат через полгода|реактивац/i.test(v))                 return setTimeout(()=>showReactivation(), 800);
+  if(/сбор отзывов|отзыв/i.test(v))                             return setTimeout(()=>showReviews(), 800);
+  if(/уведомлен|напоминан|готовности/i.test(v))                 return setTimeout(()=>showReminder(), 800);
 
-  // TIME SLOTS
+  // ── УСЛУГИ ────────────────────────────────────────────────
+  if(/диагностика/i.test(v)){ ctx.service='Диагностика и оценка';  return setTimeout(()=>showTime(), 800); }
+  if(/рихтовка/i.test(v))   { ctx.service='Рихтовка кузова';       return setTimeout(()=>showTime(), 800); }
+  if(/покраска/i.test(v))   { ctx.service='Покраска элемента';      return setTimeout(()=>showTime(), 800); }
+  if(/слесарный/i.test(v))  { ctx.service='Слесарный ремонт';       return setTimeout(()=>showTime(), 800); }
+  if(/бампер/i.test(v))     { ctx.service='Ремонт бампера';         return setTimeout(()=>showTime(), 800); }
+  if(/комплекс/i.test(v))   { ctx.service='Комплекс кузов+покраска';return setTimeout(()=>showTime(), 800); }
+
+  // ── ВРЕМЕННЫЕ СЛОТЫ ───────────────────────────────────────
   const timeM = val.match(/(\d{2}:\d{2})/);
-  if(timeM && !v.includes('занято')){ ctx.date = timeM[1]; return setTimeout(()=>confirmBooking(timeM[1]), 800); }
-  if(v.includes('09:00') || v.includes('11:00') || v.includes('14:00')) return setTimeout(()=>confirmBooking(v.match(/\d{2}:\d{2}/)?.[0]||'09:00'), 800);
+  if(timeM && !/занято/i.test(v)){ ctx.date = timeM[1]; return setTimeout(()=>confirmBooking(timeM[1]), 800); }
 
-  if(v.includes('Сколько стоит') || v.includes('Цены'))  return setTimeout(()=>{ bot(aiReply('цена'), ['🚗 Записаться на ремонт','← Главное меню']); }, 900);
-  if(v.includes('Как проехать') || v.includes('адрес'))  return setTimeout(()=>{ bot(aiReply('адрес'), ['🚗 Записаться на ремонт','← Главное меню']); }, 900);
+  // ── AI ВОПРОСЫ ────────────────────────────────────────────
+  if(/сколько стоит|цены|прайс/i.test(v)) return setTimeout(()=>{ bot(aiReply('цена'),  ['🚗 Записаться на ремонт','← Главное меню']); }, 900);
+  if(/как проехать|адрес|где/i.test(v))   return setTimeout(()=>{ bot(aiReply('адрес'), ['🚗 Записаться на ремонт','← Главное меню']); }, 900);
+  if(/гарант/i.test(v))                   return setTimeout(()=>{ bot(aiReply('гарантия'),['🚗 Записаться на ремонт','← Главное меню']); }, 900);
+
+  // ── FALLBACK ──────────────────────────────────────────────
+  setTimeout(()=>bot(aiReply(val), ['🚗 Записаться на ремонт','← Главное меню']), 900);
 }
 
 // ── SCREENS ───────────────────────────────────────────────────
