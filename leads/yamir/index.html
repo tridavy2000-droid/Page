@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ЯМир — система напоминаний и отзывов</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000810;--bg2:#000f1e;
+  --cyan:#00d4ff;--cyan2:#0099bb;
+  --green:#00ff88;--red:#ff4757;
+  --border:rgba(0,212,255,0.18);--border2:rgba(0,212,255,0.35);
+  --glow:0 0 30px rgba(0,212,255,0.12);--glow2:0 0 60px rgba(0,212,255,0.22);
+  --text:#e0f4ff;--muted:rgba(224,244,255,0.45)
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:var(--cyan2)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(0,212,255,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(0,212,255,.022) 1px,transparent 1px);
+  background-size:55px 55px}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:13px 44px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(0,8,16,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--cyan);letter-spacing:3px}
+.nav-tag{font-size:12px;color:var(--muted);letter-spacing:1px}
+.nav-cta{background:rgba(0,212,255,.1);border:1px solid var(--border2);color:var(--cyan);
+  padding:7px 18px;border-radius:3px;font-size:12px;font-weight:600;text-decoration:none;transition:.2s;letter-spacing:1px}
+.nav-cta:hover{background:rgba(0,212,255,.2)}
+@media(max-width:600px){nav{padding:12px 18px}.nav-tag{display:none}}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:100px 44px 60px;position:relative;z-index:1}
+.hero-inner{max-width:1180px;margin:0 auto;width:100%;
+  display:grid;grid-template-columns:1fr 1.05fr;gap:64px;align-items:start}
+@media(max-width:860px){.hero-inner{grid-template-columns:1fr}.hero{padding:100px 20px 60px}}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,212,255,.06);border:1px solid var(--border);
+  padding:5px 15px;border-radius:20px;font-size:11px;color:var(--cyan);
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.eyebrow::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 5px var(--cyan);animation:pls 2s infinite}
+@keyframes pls{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-family:'Orbitron',sans-serif;font-size:clamp(26px,3.2vw,46px);font-weight:900;
+  line-height:1.1;margin-bottom:18px;
+  background:linear-gradient(145deg,#fff 20%,var(--cyan) 55%,#fff 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{color:var(--muted);font-size:16px;line-height:1.7;margin-bottom:32px;max-width:420px}
+.hero-sub b{color:var(--text)}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px}
+.pill{background:rgba(0,212,255,.05);border:1px solid var(--border);
+  padding:5px 13px;border-radius:20px;font-size:12px;color:var(--muted)}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-p{background:var(--cyan);color:#000;font-family:'Orbitron',sans-serif;font-size:12px;
+  font-weight:700;letter-spacing:1px;padding:14px 30px;border-radius:3px;
+  text-decoration:none;transition:.3s;box-shadow:0 0 35px rgba(0,212,255,.3)}
+.btn-p:hover{background:#fff;box-shadow:0 0 55px rgba(0,212,255,.5);transform:translateY(-2px)}
+.btn-o{border:1px solid var(--border2);color:var(--cyan);font-size:13px;font-weight:600;
+  padding:13px 24px;border-radius:3px;text-decoration:none;transition:.2s}
+.btn-o:hover{background:rgba(0,212,255,.08)}
+.stats{display:flex;gap:28px;margin-top:44px;flex-wrap:wrap}
+.st{border-left:2px solid var(--cyan);padding-left:12px}
+.st-n{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;color:var(--cyan)}
+.st-l{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:1px;text-transform:uppercase}
+
+/* WIDGET */
+.widget-col{position:sticky;top:90px}
+.widget{background:#0a1624;border:1px solid var(--border2);border-radius:18px;
+  overflow:hidden;box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.5);
+  max-width:400px;margin:0 auto;position:relative}
+.wbar{background:#070f1c;padding:12px 16px;display:flex;align-items:center;gap:10px;
+  border-bottom:1px solid var(--border)}
+.wdots{display:flex;gap:5px;flex-shrink:0}
+.wd{width:9px;height:9px;border-radius:50%}
+.wd:nth-child(1){background:#ff5f57}.wd:nth-child(2){background:#febc2e}.wd:nth-child(3){background:#28c840}
+.wava{width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,#f59e0b,#ef4444);
+  display:flex;align-items:center;justify-content:center;font-size:17px}
+.wname{font-weight:700;font-size:13px}
+.wonline{font-size:10px;color:var(--green);display:flex;align-items:center;gap:3px;margin-top:1px}
+.wdot{width:4px;height:4px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green)}
+.wmsgs{padding:14px;display:flex;flex-direction:column;gap:7px;
+  height:460px;overflow-y:auto;scroll-behavior:smooth}
+.wmsgs::-webkit-scrollbar{width:2px}
+.wmsgs::-webkit-scrollbar-thumb{background:var(--border2)}
+.wm{max-width:92%;padding:9px 13px;border-radius:13px;font-size:13px;line-height:1.55;
+  opacity:0;transform:translateY(5px) scale(.98);transition:opacity .3s,transform .3s;flex-shrink:0}
+.wm.show{opacity:1;transform:none}
+.wm.bot{background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.16);
+  align-self:flex-start;border-bottom-left-radius:3px}
+.wm.user{background:linear-gradient(135deg,rgba(0,212,255,.2),rgba(0,130,180,.2));
+  align-self:flex-end;border-bottom-right-radius:3px}
+.wm.sys{align-self:center;background:rgba(0,212,255,.05);border:1px solid var(--border);
+  font-size:11px;color:var(--muted);letter-spacing:.5px;border-radius:8px;padding:5px 12px}
+.wm b{color:var(--cyan)}
+.wbtns{display:flex;flex-direction:column;gap:5px;margin-top:7px}
+.wbtn{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.22);
+  color:var(--text);font-size:12px;padding:8px 11px;border-radius:7px;
+  cursor:pointer;transition:.18s;text-align:left;font-family:'Rajdhani',sans-serif;font-weight:500}
+.wbtn:hover,.wbtn.picked{background:rgba(0,212,255,.22);border-color:var(--cyan);color:var(--cyan);pointer-events:none}
+.wtyping{display:flex;gap:4px;align-items:center;padding:9px 13px;
+  background:rgba(10,35,65,.95);border:1px solid rgba(0,212,255,.14);
+  border-radius:13px;border-bottom-left-radius:3px;align-self:flex-start;
+  opacity:0;transition:.25s;flex-shrink:0}
+.wtyping.show{opacity:1}
+.td{width:5px;height:5px;border-radius:50%;background:var(--cyan);animation:td 1.2s infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-5px);opacity:1}}
+.winput-bar{padding:9px 12px;border-top:1px solid var(--border);
+  display:flex;gap:8px;align-items:center;background:#070f1c}
+.winput{flex:1;background:rgba(0,212,255,.05);border:1px solid var(--border);
+  color:var(--text);font-family:'Rajdhani',sans-serif;font-size:13px;
+  padding:8px 12px;border-radius:18px;outline:none}
+.winput::placeholder{color:var(--muted)}
+.wsend{width:30px;height:30px;border-radius:50%;background:var(--cyan);border:none;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wsend svg{width:13px;height:13px;fill:#000}
+.owner-popup{position:absolute;top:8px;right:-8px;
+  background:#041018;border:1px solid rgba(0,255,136,.28);border-radius:10px;
+  padding:12px 15px;width:220px;box-shadow:0 0 25px rgba(0,255,136,.12);
+  opacity:0;transform:translateX(10px) scale(.95);
+  transition:opacity .5s,transform .5s;pointer-events:none;z-index:10}
+.owner-popup.show{opacity:1;transform:none}
+.op-hdr{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.op-blink{width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 6px var(--green);animation:blnk 1.5s infinite;flex-shrink:0}
+@keyframes blnk{0%,100%{opacity:1}50%{opacity:.15}}
+.op-title{font-size:11px;font-weight:700;color:var(--green)}
+.op-time{font-size:10px;color:var(--muted);margin-left:auto}
+.op-body{font-size:11px;line-height:1.7;color:var(--text)}
+.op-body b{color:var(--cyan)}
+.op-badge{display:inline-block;margin-top:7px;background:rgba(0,255,136,.08);
+  border:1px solid rgba(0,255,136,.2);color:var(--green);
+  font-size:9px;padding:2px 7px;border-radius:8px;letter-spacing:1px}
+.widget-hint{text-align:center;margin-top:10px;font-size:12px;color:var(--muted)}
+.widget-hint b{color:var(--cyan)}
+
+/* SECTIONS */
+section{position:relative;z-index:1}
+.sp{padding:80px 44px}
+@media(max-width:600px){.sp{padding:60px 20px}}
+.bg2{background:var(--bg2)}
+.sec-h{font-family:'Orbitron',sans-serif;font-size:clamp(18px,2.5vw,28px);
+  font-weight:700;text-align:center;margin-bottom:8px}
+.sec-s{text-align:center;color:var(--muted);margin-bottom:48px;font-size:15px;
+  max-width:500px;margin-left:auto;margin-right:auto}
+
+/* CARDS */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;max-width:1100px;margin:0 auto}
+.card{background:var(--bg);border:1px solid var(--border);border-radius:7px;
+  padding:24px 20px;transition:.25s;position:relative;overflow:hidden;cursor:pointer}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:.25s}
+.card:hover{border-color:var(--border2);box-shadow:var(--glow);transform:translateY(-3px)}
+.card:hover::after{opacity:1}
+.ci{font-size:28px;margin-bottom:12px}
+.ct{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;
+  color:var(--cyan);letter-spacing:1px;margin-bottom:10px}
+.cx{color:rgba(224,244,255,0.62);font-size:13px;line-height:1.7}
+.cr{margin-top:14px;font-size:13px;font-weight:700;color:var(--green)}
+.card-hint{margin-top:8px;font-size:11px;color:rgba(0,212,255,0.35)}
+.card:hover .card-hint{color:var(--cyan)}
+
+/* MODAL */
+.cmodal{position:fixed;inset:0;z-index:999;background:rgba(0,8,16,.88);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(10px)}
+.cmodal.open{opacity:1;pointer-events:all}
+.cmodal-box{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;
+  padding:36px;max-width:480px;width:100%;position:relative;
+  box-shadow:var(--glow2),0 40px 80px rgba(0,0,0,.6);
+  transform:translateY(12px) scale(.97);transition:.3s}
+.cmodal.open .cmodal-box{transform:none}
+.cmodal-close{position:absolute;top:14px;right:16px;background:none;border:none;
+  color:var(--muted);cursor:pointer;font-size:18px;padding:4px 8px;font-family:'Rajdhani',sans-serif}
+.cmodal-close:hover{color:var(--cyan)}
+.cmodal-icon{font-size:44px;margin-bottom:14px}
+.cmodal-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;
+  color:rgba(0,212,255,0.6);letter-spacing:2px;margin-bottom:18px}
+.cmodal-body{color:rgba(224,244,255,0.65);font-size:15px;line-height:1.8}
+.cmodal-body b{color:rgba(0,212,255,0.75)}
+.cmodal-stat{display:inline-block;margin-top:18px;padding:7px 16px;
+  background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);
+  border-radius:20px;color:rgba(0,255,136,0.65);font-size:13px;font-weight:700}
+
+/* ROI */
+.roi-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:36px;max-width:680px;margin:0 auto;box-shadow:var(--glow)}
+.rl{display:flex;justify-content:space-between;margin-bottom:7px;font-size:14px;font-weight:600}
+.rl span:last-child{color:var(--cyan);font-family:'Orbitron',sans-serif;font-size:12px}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:var(--border2);
+  outline:none;cursor:pointer;border-radius:2px;margin-bottom:20px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:var(--cyan);box-shadow:0 0 7px var(--cyan)}
+.rdiv{height:1px;background:var(--border);margin:20px 0}
+.rres{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:460px){.rres{grid-template-columns:1fr 1fr}}
+.rbox{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:16px;text-align:center}
+.rn{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--green)}
+.rl2{font-size:11px;color:var(--muted);margin-top:4px;letter-spacing:1px}
+.roi-note{text-align:center;margin-top:18px;font-size:13px;color:var(--muted);line-height:1.6}
+.roi-note b{color:var(--cyan)}
+
+/* Q&A */
+.qa-list{max-width:800px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.qa{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:24px 28px}
+.qa-q{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--cyan);
+  letter-spacing:1px;margin-bottom:12px}
+.qa-a{color:rgba(224,244,255,0.7);font-size:15px;line-height:1.7}
+.qa-a b{color:var(--text)}
+.qa-badge{display:inline-block;margin-top:10px;padding:4px 12px;
+  background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.15);
+  border-radius:20px;color:var(--green);font-size:12px;font-weight:700}
+
+/* FINAL CTA */
+.fcta{text-align:center;padding:100px 20px;position:relative;z-index:1}
+.fcta h2{font-family:'Orbitron',sans-serif;font-size:clamp(22px,4vw,40px);margin-bottom:14px;
+  background:linear-gradient(135deg,#fff,var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.fcta p{color:var(--muted);font-size:17px;max-width:480px;margin:0 auto 40px}
+.wa-btn{display:inline-flex;align-items:center;gap:10px;
+  background:#25d366;color:#000;font-family:'Orbitron',sans-serif;font-size:12px;
+  font-weight:700;padding:16px 40px;border-radius:4px;text-decoration:none;
+  letter-spacing:1.2px;transition:.25s}
+.wa-btn:hover{transform:translateY(-3px);box-shadow:0 10px 35px rgba(37,211,102,.35)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">ЯМир ☀️</div>
+  <div class="nav-tag">НАПОМИНАНИЯ И ОТЗЫВЫ — АВТОМАТИЧЕСКИ</div>
+  <a href="#cta" class="nav-cta">ОБСУДИТЬ</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="eyebrow">Персонально для ЯМир · Москва, ЮАО</div>
+      <h1>Родители не забывают.<br>Отзывы растут.<br>Сами.</h1>
+      <p class="hero-sub">
+        У вас уже есть запись и хорошие занятия. Осталось два шага:
+        <b>напоминать родителям до занятия</b> и <b>собирать отзывы после</b>.
+        Оба — автоматически, без участия администратора.
+      </p>
+      <div class="pills">
+        <span class="pill">🔔 Напоминание за день до занятия</span>
+        <span class="pill">⭐ Автосбор отзывов после</span>
+        <span class="pill">📊 2 адреса, один бот</span>
+      </div>
+      <div class="btns">
+        <a href="#roi" class="btn-p">ПОСЧИТАТЬ ВЫГОДУ</a>
+        <a href="#how" class="btn-o">КАК ЭТО РАБОТАЕТ</a>
+      </div>
+      <div class="stats">
+        <div class="st"><div class="st-n">1 из 7</div><div class="st-l">не приходит без напоминания</div></div>
+        <div class="st"><div class="st-n">3–5 дней</div><div class="st-l">до запуска</div></div>
+        <div class="st"><div class="st-n">0 руб.</div><div class="st-l">доп. затрат на рекламу</div></div>
+      </div>
+    </div>
+
+    <div class="widget-col">
+      <div class="widget">
+        <div class="wbar">
+          <div class="wdots"><div class="wd"></div><div class="wd"></div><div class="wd"></div></div>
+          <div class="wava">☀️</div>
+          <div>
+            <div class="wname">ЯМир — речевой клуб</div>
+            <div class="wonline"><div class="wdot"></div> бот активен</div>
+          </div>
+        </div>
+        <div class="wmsgs" id="wmsgs">
+          <div class="wtyping" id="wtyping"><div class="td"></div><div class="td"></div><div class="td"></div></div>
+        </div>
+        <div class="winput-bar">
+          <input class="winput" placeholder="Написать..." readonly>
+          <button class="wsend"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></button>
+        </div>
+        <div class="owner-popup" id="ownerPop">
+          <div class="op-hdr"><div class="op-blink"></div><div class="op-title">Новый отзыв</div><div class="op-time">сейчас</div></div>
+          <div class="op-body">⭐⭐⭐⭐⭐<br><b>Мария К.</b> оставила отзыв на Яндекс.Картах<br>«Отличный клуб, Лёша обожает занятия!»</div>
+          <div class="op-badge">ОПУБЛИКОВАН НА КАРТАХ</div>
+        </div>
+      </div>
+      <div class="widget-hint">← живая демонстрация | <b>перезапускается автоматически</b></div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="sp bg2" id="how">
+  <div class="sec-h">Что делает система для ЯМир</div>
+  <p class="sec-s">Два модуля — работают без участия администратора</p>
+  <div class="cards">
+    <div class="card" onclick="openModal(0)">
+      <div class="ci">🔔</div>
+      <div class="ct">НАПОМИНАНИЯ ДО ЗАНЯТИЯ</div>
+      <div class="cx">За день до занятия родитель получает сообщение: «Мария, напоминаем — завтра Лёша в 10:00 в ЯМир на Варшавской». Ни один слот не пустует.</div>
+      <div class="cr">→ пропуски сокращаются в 3 раза</div>
+      <div class="card-hint">нажмите подробнее</div>
+    </div>
+    <div class="card" onclick="openModal(1)">
+      <div class="ci">⭐</div>
+      <div class="ct">АВТОСБОР ОТЗЫВОВ</div>
+      <div class="cx">После занятия бот пишет родителю: «Как прошло?» Поставил 5 — получает ссылку на Яндекс.Карты. Поставил ниже — отзыв приходит вам. Рейтинг растёт без усилий.</div>
+      <div class="cr">→ рейтинг на картах растёт</div>
+      <div class="card-hint">нажмите подробнее</div>
+    </div>
+    <div class="card" onclick="openModal(2)">
+      <div class="ci">📋</div>
+      <div class="ct">ОБА АДРЕСА — ОДИН БОТ</div>
+      <div class="cx">Варшавская и второй адрес — единый бот, единое расписание. Родитель пишет один раз — система знает в каком филиале его ребёнок и когда занятие.</div>
+      <div class="cr">→ единое управление</div>
+      <div class="card-hint">нажмите подробнее</div>
+    </div>
+    <div class="card" onclick="openModal(3)">
+      <div class="ci">💬</div>
+      <div class="ct">ВОЗВРАТ ПОСЛЕ ПЕРЕРЫВА</div>
+      <div class="cx">Если родитель не продлил абонемент — через 3 недели система мягко напоминает о себе. Без навязчивости. Часть возвращается сама, без звонков от администратора.</div>
+      <div class="cr">→ меньше потерь базы</div>
+      <div class="card-hint">нажмите подробнее</div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="sp" id="roi">
+  <div class="sec-h">Считаем конкретно для ЯМир</div>
+  <p class="sec-s">Введите данные — увидите разницу в рублях</p>
+  <div class="roi-card">
+    <div class="rl"><span>Занятий в неделю (оба адреса)</span><span id="vLbl">60</span></div>
+    <input type="range" min="10" max="200" value="60" id="vRange" oninput="calcROI()">
+    <div class="rl"><span>Абонемент в месяц (₽)</span><span id="cLbl">4 500</span></div>
+    <input type="range" min="1000" max="15000" step="500" value="4500" id="cRange" oninput="calcROI()">
+    <div class="rdiv"></div>
+    <div class="rres">
+      <div class="rbox">
+        <div class="rn" id="r1">–</div>
+        <div class="rl2">пропусков меньше в мес.</div>
+      </div>
+      <div class="rbox">
+        <div class="rn" id="r2">–</div>
+        <div class="rl2">доп. выручка в мес.</div>
+      </div>
+      <div class="rbox">
+        <div class="rn" id="r3">–</div>
+        <div class="rl2">окупаемость</div>
+      </div>
+    </div>
+    <div class="roi-note" id="roiNote"></div>
+  </div>
+</section>
+
+<!-- Q&A -->
+<section class="sp bg2">
+  <div class="sec-h">Частые вопросы</div>
+  <p class="sec-s"></p>
+  <div class="qa-list">
+    <div class="qa">
+      <div class="qa-q">У НАС УЖЕ ЕСТЬ ЗАПИСЬ — ЭТО ДУБЛИРУЕТ?</div>
+      <div class="qa-a">Нет. Ваша форма записи остаётся как есть. Система подключается <b>поверх</b> — она берёт данные о записи и автоматически отправляет напоминания и запрос отзыва. Ничего не меняется для родителей и администратора.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">КАК РОДИТЕЛИ ПОЛУЧАЮТ НАПОМИНАНИЕ?</div>
+      <div class="qa-a">В Telegram или WhatsApp — куда удобнее. Сообщение приходит накануне занятия: «Мария, напоминаем — завтра Лёша в ЯМир в 10:00. Адрес: Варшавская 9». <b>Выглядит как личное сообщение от клуба.</b>
+        <div class="qa-badge">✓ Без ощущения спама</div>
+      </div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">ЧТО ЕСЛИ РОДИТЕЛЬ НЕ ПОЛЬЗУЕТСЯ TELEGRAM?</div>
+      <div class="qa-a">Подключаем WhatsApp — охват 98% аудитории. На практике почти все московские родители есть в обоих мессенджерах. Выбор канала настраивается под каждого клиента.</div>
+    </div>
+    <div class="qa">
+      <div class="qa-q">КАК ОТЗЫВЫ ПОПАДАЮТ НА ЯНДЕКС.КАРТЫ?</div>
+      <div class="qa-a">После занятия бот спрашивает оценку. Поставил 4–5 — получает прямую ссылку на форму отзыва в Яндекс.Картах. Один клик — и он уже пишет. <b>Конверсия в реальный отзыв выше в 4–5 раз</b> по сравнению с просьбой устно.
+        <div class="qa-badge">✓ Рейтинг растёт органически</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="fcta" id="cta">
+  <h2>Запустим за 3–5 дней</h2>
+  <p>Настрою под оба ваших адреса, расписание и педагогов. Объясню за 10 минут в переписке — без созвонов.</p>
+  <a href="https://t.me/tridavy2000" class="wa-btn" style="background:var(--cyan);box-shadow:0 0 35px rgba(0,212,255,.3)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.016 9.504c-.148.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.06 14.895l-2.954-.924c-.642-.2-.655-.642.136-.949l11.54-4.448c.535-.194 1.003.13.78.674z"/>
+    </svg>
+    НАПИСАТЬ В TELEGRAM
+  </a>
+</div>
+
+<!-- MODALS -->
+<div class="cmodal" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="cmodal-box">
+    <button class="cmodal-close" onclick="closeModal()">✕</button>
+    <div class="cmodal-icon" id="m-icon"></div>
+    <div class="cmodal-title" id="m-title"></div>
+    <div class="cmodal-body" id="m-body"></div>
+    <div class="cmodal-stat" id="m-stat"></div>
+  </div>
+</div>
+
+<script>
+const modals=[
+  {icon:'🔔',title:'Напоминания до занятия',
+   body:'За 20–24 часа до занятия родитель получает сообщение:\n\n<b>«Мария, напоминаем — завтра Лёша в ЯМир в 10:00 на Варшавской. До встречи! ☀️»</b>\n\nЕсли не может прийти — отвечает боту, вы получаете уведомление. Слот можно передать другому. Пустых занятий становится значительно меньше.',
+   stat:'✓ Пропуски −60−70%'},
+  {icon:'⭐',title:'Автосбор отзывов',
+   body:'Через 2 часа после занятия родитель получает:\n\n<b>«Как прошло занятие сегодня? Оцените от 1 до 5 ⭐»</b>\n\nОценка 4–5 → бот присылает ссылку на Яндекс.Карты → родитель в 1 клик пишет отзыв.\nОценка 1–3 → отзыв приходит лично вам. Публично ничего не появляется.',
+   stat:'✓ Рейтинг растёт без усилий'},
+  {icon:'📋',title:'Оба адреса — один бот',
+   body:'Система знает про оба ваших адреса и все направления. Родитель пишет боту — система автоматически определяет:\n\n• в каком филиале занятие\n• какой педагог\n• в какое время напомнить\n\n<b>Администратор не тратит время на это вручную.</b>',
+   stat:'✓ Единая система управления'},
+  {icon:'💬',title:'Возврат после перерыва',
+   body:'Если абонемент закончился и родитель не продлил — система ждёт 3 недели, потом мягко пишет:\n\n<b>«Мария, давно не виделись! Лёша готов вернуться? Ближайшие места есть на следующей неделе ☀️»</b>\n\nБез давления. Часть семей возвращается сама — без звонков администратора.',
+   stat:'✓ Меньше потерь базы'}
+];
+function openModal(i){
+  document.getElementById('m-icon').textContent=modals[i].icon;
+  document.getElementById('m-title').textContent=modals[i].title;
+  document.getElementById('m-body').innerHTML=modals[i].body.replace(/\n/g,'<br>');
+  document.getElementById('m-stat').textContent=modals[i].stat;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open')}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+// ROI
+function calcROI(){
+  const v=+document.getElementById('vRange').value;
+  const c=+document.getElementById('cRange').value;
+  document.getElementById('vLbl').textContent=v;
+  document.getElementById('cLbl').textContent=c.toLocaleString('ru');
+  // 1 из 7 не приходит без напоминания = ~14%, с напоминанием снижается до ~4%
+  const missedNow=Math.round(v*4/7/7); // ~14% * занятий в неделю * 4 недели / кол-во чел на занятии (упрощение)
+  const savedPerMonth=Math.max(1,Math.round(v*0.10)); // 10% занятий спасаем
+  const monthly=savedPerMonth*(c/8); // 1 занятие ≈ 1/8 абонемента
+  const payback=Math.max(1,Math.ceil(25000/monthly));
+  document.getElementById('r1').textContent='+'+savedPerMonth;
+  document.getElementById('r2').textContent='+'+Math.round(monthly).toLocaleString('ru')+' ₽';
+  document.getElementById('r3').textContent=payback+' мес.';
+  document.getElementById('roiNote').innerHTML=
+    'При <b>'+v+'</b> занятиях в неделю система сохраняет около <b>'+savedPerMonth+
+    ' занятий в месяц</b>, которые иначе были бы пропущены без предупреждения.';
+}
+calcROI();
+
+// BOT CHAT
+const script=[
+  {t:'sys', msg:'— запись на занятие —'},
+  {t:'user',msg:'Здравствуйте! Хотим записаться на пробное, ребёнок 4 года'},
+  {t:'bot', msg:'Привет! ☀️ Рады вас видеть в ЯМир!\n\nВыберите удобный адрес:', btns:['Варшавская 9','Нагорная 18']},
+  {t:'pick',msg:'Варшавская 9', idx:0},
+  {t:'bot', msg:'Отлично! Пробное на Варшавской.\n\nВыберите время:',btns:['Вт 10:00','Чт 11:00','Сб 10:00']},
+  {t:'pick',msg:'Суббота 10:00',idx:2},
+  {t:'bot', msg:'Записали! ✅\n📍 ЯМир, Варшавская 9\n📅 Суббота, 10:00\n\nКак зовут ребёнка?'},
+  {t:'user',msg:'Лёша'},
+  {t:'bot', msg:'Лёша ждём в субботу! 🎓\nНакануне пришлю напоминание — чтобы не забыли ☀️'},
+  {t:'sys', msg:'— пятница, 20:00 —'},
+  {t:'bot', msg:'Мария, напоминаем 🔔\nЗавтра Лёша в ЯМир в 10:00\n📍 Варшавская 9\n\nДо встречи!'},
+  {t:'sys', msg:'— после занятия —'},
+  {t:'bot', msg:'Как прошло первое занятие Лёши? ⭐\nОцените от 1 до 5:',btns:['⭐⭐⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐']},
+  {t:'pick',msg:'⭐⭐⭐⭐⭐',idx:0},
+  {t:'bot', msg:'Спасибо! Рады стараться 😊\nЕсли не сложно — оставьте отзыв на Яндекс.Картах:\nyandex.ru/maps/... 👉'},
+];
+
+const wmsgs=document.getElementById('wmsgs');
+const wtyping=document.getElementById('wtyping');
+const ownerPop=document.getElementById('ownerPop');
+let ci=0,activeBtns=null;
+
+function addMsg(item){
+  const wrap=document.createElement('div');
+  if(item.t==='sys'){
+    wrap.className='wm sys';
+    wrap.textContent=item.msg;
+    wmsgs.insertBefore(wrap,wtyping);
+    setTimeout(()=>wrap.classList.add('show'),30);
+    wmsgs.scrollTop=wmsgs.scrollHeight;
+    return;
+  }
+  wrap.className='wm '+(item.t==='bot'?'bot':'user');
+  wrap.style.whiteSpace='pre-line';
+  wrap.textContent=item.msg;
+  if(item.btns){
+    const bd=document.createElement('div');
+    bd.className='wbtns';
+    item.btns.forEach((b,i)=>{
+      const btn=document.createElement('button');
+      btn.className='wbtn';
+      btn.textContent=b;
+      btn.onclick=()=>{};
+      bd.appendChild(btn);
+    });
+    wrap.appendChild(bd);
+    activeBtns=bd;
+  }
+  wmsgs.insertBefore(wrap,wtyping);
+  setTimeout(()=>wrap.classList.add('show'),30);
+  wmsgs.scrollTop=wmsgs.scrollHeight;
+}
+
+function nextMsg(){
+  if(ci>=script.length){
+    setTimeout(()=>{
+      Array.from(wmsgs.querySelectorAll('.wm')).forEach(e=>e.remove());
+      ownerPop.classList.remove('show');
+      activeBtns=null;ci=0;
+      setTimeout(nextMsg,1000);
+    },5000);
+    return;
+  }
+  const item=script[ci];
+  if(item.t==='pick'){
+    if(activeBtns){
+      const btns=activeBtns.querySelectorAll('.wbtn');
+      btns.forEach((b,i)=>{ if(i===item.idx)b.classList.add('picked'); else b.classList.add('picked'); });
+      activeBtns=null;
+    }
+    const wrap=document.createElement('div');
+    wrap.className='wm user';
+    wrap.textContent=item.msg;
+    wmsgs.insertBefore(wrap,wtyping);
+    setTimeout(()=>wrap.classList.add('show'),30);
+    wmsgs.scrollTop=wmsgs.scrollHeight;
+    ci++;setTimeout(nextMsg,800);
+  } else if(item.t==='bot'){
+    wtyping.classList.add('show');
+    wmsgs.scrollTop=wmsgs.scrollHeight;
+    setTimeout(()=>{
+      wtyping.classList.remove('show');
+      addMsg(item);
+      // show owner popup on review
+      if(item.msg.includes('Яндекс')){
+        setTimeout(()=>{ownerPop.classList.add('show');setTimeout(()=>ownerPop.classList.remove('show'),3500);},600);
+      }
+      ci++;
+      setTimeout(nextMsg,item.msg.length>80?1800:1200);
+    },900);
+  } else {
+    addMsg(item);
+    ci++;
+    setTimeout(nextMsg,item.t==='sys'?700:900);
+  }
+}
+setTimeout(nextMsg,700);
+</script>
+</body>
+</html>
