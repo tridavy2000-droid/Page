@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Adoption in Business — Global Trends 2019–2025</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #080e1a;
+    --surface: #0d1526;
+    --surface2: #111d35;
+    --border: rgba(99,179,237,0.12);
+    --accent: #63b3ed;
+    --accent2: #7ee8a2;
+    --accent3: #f6ad55;
+    --accent4: #fc8181;
+    --accent5: #b794f4;
+    --text: #e2e8f0;
+    --muted: #718096;
+    --glow: 0 0 24px rgba(99,179,237,0.15);
+  }
+
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+  body { padding: 0; }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 40px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(99,179,237,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(18px, 2.8vw, 28px); font-weight: 700; color: #fff; letter-spacing: -0.02em; line-height: 1.2; }
+  .header h1 span { color: var(--accent); }
+  .header p { margin-top: 6px; color: var(--muted); font-size: 13px; font-weight: 400; max-width: 560px; }
+  .badge { background: rgba(99,179,237,0.12); border: 1px solid rgba(99,179,237,0.3); color: var(--accent); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+  .sources { margin-top: 10px; font-size: 11px; color: var(--muted); }
+  .sources span { color: rgba(99,179,237,0.6); }
+
+  /* KPI row */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .kpi { background: var(--surface); padding: 20px 24px; position: relative; overflow: hidden; transition: background 0.2s; cursor: default; }
+  .kpi:hover { background: var(--surface2); }
+  .kpi::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--kpi-color, var(--accent)); opacity: 0.6; }
+  .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+  .kpi-value { font-family: 'Space Grotesk', sans-serif; font-size: clamp(22px, 3vw, 32px); font-weight: 700; color: var(--kpi-color, var(--accent)); line-height: 1; }
+  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .kpi-delta { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+  .up { background: rgba(126,232,162,0.12); color: var(--accent2); }
+  .down { background: rgba(252,129,129,0.12); color: var(--accent4); }
+
+  /* Grid */
+  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
+  .col-8 { grid-column: span 8; }
+  .col-4 { grid-column: span 4; }
+  .col-6 { grid-column: span 6; }
+  .col-12 { grid-column: span 12; }
+
+  @media (max-width: 1100px) { .col-8, .col-4, .col-6 { grid-column: span 12; } }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    box-shadow: var(--glow);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { border-color: rgba(99,179,237,0.25); box-shadow: 0 0 32px rgba(99,179,237,0.1); }
+
+  .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
+  .card-subtitle { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 16px; }
+  .chart-wrap { position: relative; }
+
+  /* Insight callout */
+  .insight {
+    background: rgba(99,179,237,0.06);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 14px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #a0b8d0;
+    line-height: 1.5;
+  }
+  .insight strong { color: var(--accent); }
+
+  /* Bar list */
+  .bar-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .bar-item { display: flex; flex-direction: column; gap: 4px; }
+  .bar-header { display: flex; justify-content: space-between; font-size: 12px; }
+  .bar-label { color: var(--text); font-weight: 500; }
+  .bar-pct { color: var(--muted); }
+  .bar-track { height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+
+  /* Donut legend */
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-label { color: var(--text); flex: 1; }
+  .legend-val { color: var(--muted); font-weight: 600; }
+
+  /* Timeline dots */
+  .timeline { display: flex; flex-direction: column; gap: 12px; padding-left: 4px; }
+  .tl-item { display: flex; gap: 14px; align-items: flex-start; }
+  .tl-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 3px; flex-shrink: 0; border: 2px solid; }
+  .tl-content { font-size: 12px; line-height: 1.5; }
+  .tl-year { font-weight: 700; font-size: 11px; }
+  .tl-text { color: var(--muted); }
+
+  /* Footer */
+  .footer { text-align: center; padding: 20px 32px; border-top: 1px solid var(--border); color: var(--muted); font-size: 11px; }
+  .footer a { color: rgba(99,179,237,0.5); text-decoration: none; }
+
+  /* Pulse anim for KPI */
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+  .live { animation: pulse 2.5s infinite; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>AI Adoption in Business<br><span>Global Trends 2019–2025</span></h1>
+      <p>A data-driven analysis of how artificial intelligence reshaped global enterprise — sector by sector, year by year.</p>
+      <div class="sources">Data sources: <span>McKinsey Global AI Survey 2019–2024 · IBM Global AI Adoption Index 2023–2024 · IDC AI Spending Guide 2024 · Stanford HAI Index 2025</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+      <span class="badge">DataConnect 2026</span>
+      <span class="badge live" style="background:rgba(126,232,162,0.1);border-color:rgba(126,232,162,0.3);color:#7ee8a2;">● Live data</span>
+    </div>
+  </div>
+</div>
+
+<!-- KPI Row -->
+<div class="kpi-row">
+  <div class="kpi" style="--kpi-color:#63b3ed">
+    <div class="kpi-label">AI Adoption Rate 2025</div>
+    <div class="kpi-value">78%</div>
+    <div class="kpi-sub">of enterprises globally</div>
+    <span class="kpi-delta up">↑ +20pp vs 2023</span>
+  </div>
+  <div class="kpi" style="--kpi-color:#7ee8a2">
+    <div class="kpi-label">AI Spending 2025</div>
+    <div class="kpi-value">$632B</div>
+    <div class="kpi-sub">global enterprise AI spend</div>
+    <span class="kpi-delta up">↑ +29% YoY</span>
+  </div>
+  <div class="kpi" style="--kpi-color:#f6ad55">
+    <div class="kpi-label">GenAI Adoption</div>
+    <div class="kpi-value">65%</div>
+    <div class="kpi-sub">of firms using GenAI tools</div>
+    <span class="kpi-delta up">↑ from 33% in 2023</span>
+  </div>
+  <div class="kpi" style="--kpi-color:#b794f4">
+    <div class="kpi-label">Avg. ROI on AI</div>
+    <div class="kpi-value">3.5×</div>
+    <div class="kpi-sub">return on AI investment</div>
+    <span class="kpi-delta up">↑ top quartile: 8×</span>
+  </div>
+  <div class="kpi" style="--kpi-color:#fc8181">
+    <div class="kpi-label">Workforce Affected</div>
+    <div class="kpi-value">40%</div>
+    <div class="kpi-sub">of roles transformed by AI</div>
+    <span class="kpi-delta up">↑ IMF estimate 2025</span>
+  </div>
+</div>
+
+<!-- Charts Grid -->
+<div class="grid">
+
+  <!-- Main trend line — col 8 -->
+  <div class="card col-8">
+    <div class="card-title">Adoption Trajectory</div>
+    <div class="card-subtitle">% of enterprises reporting AI deployment · 2019–2025</div>
+    <div class="chart-wrap"><canvas id="trendChart" height="220"></canvas></div>
+    <div class="insight"><strong>Inflection point 2023:</strong> The release of large language models triggered a +17pp surge in adoption — the steepest single-year jump since AI tracking began. Financial services led; healthcare followed within 6 months.</div>
+  </div>
+
+  <!-- Milestone timeline — col 4 -->
+  <div class="card col-4">
+    <div class="card-title">Key Inflection Points</div>
+    <div class="card-subtitle">Events that reshaped adoption curves</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#63b3ed;border-color:#63b3ed"></div>
+        <div class="tl-content"><div class="tl-year" style="color:#63b3ed">2019</div><div class="tl-text">Cloud AI platforms mature. Adoption reaches 58%; dominated by IT & finance.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#fc8181;border-color:#fc8181"></div>
+        <div class="tl-content"><div class="tl-year" style="color:#fc8181">2020</div><div class="tl-text">COVID-19 disrupts deployment cycles. Adoption dips to 50%; remote automation accelerates.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#f6ad55;border-color:#f6ad55"></div>
+        <div class="tl-content"><div class="tl-year" style="color:#f6ad55">2022</div><div class="tl-text">MLOps maturity. Firms move from PoC to production. Stable 56% adoption base.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#7ee8a2;border-color:#7ee8a2"></div>
+        <div class="tl-content"><div class="tl-year" style="color:#7ee8a2">2023 ★</div><div class="tl-text">GenAI explosion. ChatGPT, GPT-4, Claude. Adoption surges to 72% in 12 months.</div></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:#b794f4;border-color:#b794f4"></div>
+        <div class="tl-content"><div class="tl-year" style="color:#b794f4">2025</div><div class="tl-text">AI agents & agentic workflows. 78% adoption. ROI realization at scale.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sector comparison — col 6 -->
+  <div class="card col-6">
+    <div class="card-title">Sector Breakdown</div>
+    <div class="card-subtitle">AI adoption rate by industry · 2025</div>
+    <div class="chart-wrap"><canvas id="sectorChart" height="260"></canvas></div>
+  </div>
+
+  <!-- Use cases donut + legend — col 6 -->
+  <div class="card col-6" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+    <div style="flex:0 0 180px">
+      <div class="card-title">Top Use Cases</div>
+      <div class="card-subtitle">Share of AI deployments</div>
+      <div class="chart-wrap" style="width:180px"><canvas id="donutChart" width="180" height="180"></canvas></div>
+    </div>
+    <div style="flex:1;min-width:160px">
+      <div class="donut-legend" id="donutLegend"></div>
+      <div class="insight" style="margin-top:16px"><strong>Process automation</strong> remains #1 despite GenAI hype — enterprises prioritize reliability over novelty when production stakes are high.</div>
+    </div>
+  </div>
+
+  <!-- Spending bar chart — col 6 -->
+  <div class="card col-6">
+    <div class="card-title">Investment Growth</div>
+    <div class="card-subtitle">Global enterprise AI spending · $B · 2019–2025</div>
+    <div class="chart-wrap"><canvas id="spendChart" height="220"></canvas></div>
+  </div>
+
+  <!-- Barrier horizontal bars — col 6 -->
+  <div class="card col-6">
+    <div class="card-title">Adoption Barriers</div>
+    <div class="card-subtitle">% of firms citing as top obstacle · 2024</div>
+    <div style="margin-top:8px">
+      <ul class="bar-list" id="barrierList"></ul>
+    </div>
+    <div class="insight" style="margin-top:14px"><strong>Talent gap</strong> overtook data quality as the #1 barrier in 2024 — a structural shift signalling that the bottleneck moved from infrastructure to people.</div>
+  </div>
+
+</div>
+
+<div class="footer">
+  Built for DataConnect 2026 Data Visualization Competition · Danil Trifonov &nbsp;·&nbsp;
+  Sources: <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank">McKinsey</a>,
+  <a href="https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/ai-adoption-index" target="_blank">IBM</a>,
+  <a href="https://aiindex.stanford.edu/" target="_blank">Stanford HAI</a>,
+  <a href="https://www.idc.com/" target="_blank">IDC</a>
+</div>
+
+<script>
+const COLORS = {
+  blue:   '#63b3ed',
+  green:  '#7ee8a2',
+  orange: '#f6ad55',
+  red:    '#fc8181',
+  purple: '#b794f4',
+  teal:   '#4fd1c5',
+  pink:   '#f687b3',
+  bg:     '#0d1526',
+  muted:  '#718096',
+};
+
+const defaults = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false }, tooltip: {
+    backgroundColor: '#1a2744',
+    borderColor: 'rgba(99,179,237,0.3)',
+    borderWidth: 1,
+    titleColor: '#e2e8f0',
+    bodyColor: '#a0aec0',
+    padding: 10,
+    cornerRadius: 6,
+  }},
+  scales: {
+    x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#718096', font: { size: 11 } }, border: { color: 'rgba(255,255,255,0.06)' } },
+    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#718096', font: { size: 11 } }, border: { color: 'rgba(255,255,255,0.06)' } },
+  }
+};
+
+// — TREND LINE CHART —
+const years = ['2019','2020','2021','2022','2023','2024','2025'];
+const adoptionAll  = [58, 50, 56, 56, 72, 75, 78];
+const adoptionGen  = [0,   0,  0,  5, 33, 55, 65];
+const adoptionProd = [14, 12, 16, 20, 32, 46, 55];
+
+const trendCtx = document.getElementById('trendChart').getContext('2d');
+const gradBlue = trendCtx.createLinearGradient(0,0,0,220);
+gradBlue.addColorStop(0,'rgba(99,179,237,0.25)'); gradBlue.addColorStop(1,'rgba(99,179,237,0)');
+const gradGreen = trendCtx.createLinearGradient(0,0,0,220);
+gradGreen.addColorStop(0,'rgba(126,232,162,0.2)'); gradGreen.addColorStop(1,'rgba(126,232,162,0)');
+
+new Chart(trendCtx, {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Overall AI Adoption', data: adoptionAll, borderColor: COLORS.blue, backgroundColor: gradBlue, borderWidth: 2.5, pointBackgroundColor: COLORS.blue, pointRadius: 4, pointHoverRadius: 7, tension: 0.35, fill: true },
+      { label: 'GenAI Adoption', data: adoptionGen, borderColor: COLORS.green, backgroundColor: gradGreen, borderWidth: 2, pointBackgroundColor: COLORS.green, pointRadius: 4, pointHoverRadius: 7, tension: 0.35, fill: true, borderDash:[4,3] },
+      { label: 'AI in Production', data: adoptionProd, borderColor: COLORS.orange, borderWidth: 2, pointBackgroundColor: COLORS.orange, pointRadius: 4, pointHoverRadius: 7, tension: 0.35, fill: false, borderDash:[6,3] },
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins,
+      legend: { display: true, position: 'top', labels: { color: '#a0aec0', font: { size: 11 }, boxWidth: 14, padding: 16, usePointStyle: true } },
+      tooltip: { ...defaults.plugins.tooltip,
+        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` }
+      },
+      annotation: { annotations: { line1: {
+        type: 'line', xMin: '2023', xMax: '2023',
+        borderColor: 'rgba(126,232,162,0.4)', borderWidth: 1.5, borderDash: [4,4],
+        label: { content: 'GenAI surge', display: true, position: 'start', color: '#7ee8a2', font: { size: 10 }, backgroundColor: 'rgba(13,21,38,0.8)', padding: { x: 6, y: 3 } }
+      }}}
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 100, ticks: { ...defaults.scales.y.ticks, callback: v => v + '%' } } }
+  }
+});
+
+// — SECTOR HORIZONTAL BAR —
+const sectorCtx = document.getElementById('sectorChart').getContext('2d');
+const sectors = ['Financial Services','Technology','Retail & Commerce','Healthcare','Manufacturing','Energy & Utilities','Education','Government'];
+const sectorVals = [89, 87, 74, 68, 65, 58, 45, 38];
+const sectorColors = [COLORS.blue,COLORS.green,COLORS.orange,COLORS.purple,COLORS.teal,COLORS.pink,COLORS.red,'#d69e2e'];
+
+new Chart(sectorCtx, {
+  type: 'bar',
+  data: {
+    labels: sectors,
+    datasets: [{ data: sectorVals, backgroundColor: sectorColors.map(c => c+'33'), borderColor: sectorColors, borderWidth: 1.5, borderRadius: 4, borderSkipped: false }]
+  },
+  options: {
+    ...defaults,
+    indexAxis: 'y',
+    plugins: { ...defaults.plugins, tooltip: { ...defaults.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.parsed.x}% adoption` } } },
+    scales: {
+      x: { ...defaults.scales.x, min: 0, max: 100, ticks: { ...defaults.scales.x.ticks, callback: v => v+'%' } },
+      y: { grid: { display: false }, ticks: { color: '#a0aec0', font: { size: 11 } }, border: { display: false } }
+    }
+  }
+});
+
+// — USE CASE DONUT —
+const useCases = ['Process Automation','Customer Service AI','Marketing & Analytics','Product Development','Risk & Compliance','HR & Talent'];
+const useCaseVals = [38, 27, 19, 8, 5, 3];
+const donutColors = [COLORS.blue, COLORS.green, COLORS.orange, COLORS.purple, COLORS.teal, COLORS.red];
+
+const donutCtx = document.getElementById('donutChart').getContext('2d');
+new Chart(donutCtx, {
+  type: 'doughnut',
+  data: {
+    labels: useCases,
+    datasets: [{ data: useCaseVals, backgroundColor: donutColors.map(c => c+'cc'), borderColor: '#0d1526', borderWidth: 2, hoverOffset: 6 }]
+  },
+  options: {
+    responsive: false,
+    cutout: '62%',
+    plugins: { legend: { display: false }, tooltip: { ...defaults.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } } }
+  }
+});
+
+// Build donut legend
+const legendEl = document.getElementById('donutLegend');
+useCases.forEach((uc, i) => {
+  legendEl.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${donutColors[i]}"></div><div class="legend-label">${uc}</div><div class="legend-val">${useCaseVals[i]}%</div></div>`;
+});
+
+// — SPENDING BAR —
+const spendCtx = document.getElementById('spendChart').getContext('2d');
+const spending = [37.5, 40.2, 52.1, 81.4, 142.3, 489.9, 632.0];
+const spendGrad = spendCtx.createLinearGradient(0, 0, 0, 220);
+spendGrad.addColorStop(0, 'rgba(99,179,237,0.7)'); spendGrad.addColorStop(1, 'rgba(99,179,237,0.15)');
+
+new Chart(spendCtx, {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [{ label: 'AI Spending $B', data: spending, backgroundColor: spendGrad, borderColor: COLORS.blue, borderWidth: 1, borderRadius: 5, borderSkipped: false }]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, tooltip: { ...defaults.plugins.tooltip, callbacks: { label: ctx => ` $${ctx.parsed.y}B global spend` } } },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, ticks: { ...defaults.scales.y.ticks, callback: v => '$'+v+'B' } } }
+  }
+});
+
+// — BARRIER BARS (animated) —
+const barriers = [
+  { label: 'AI Skills & Talent Gap', pct: 64, color: COLORS.red },
+  { label: 'Data Quality & Access', pct: 57, color: COLORS.orange },
+  { label: 'Unclear ROI / Business Case', pct: 48, color: COLORS.blue },
+  { label: 'Data Privacy & Security', pct: 44, color: COLORS.purple },
+  { label: 'Integration Complexity', pct: 38, color: COLORS.teal },
+  { label: 'Regulatory / Compliance', pct: 31, color: COLORS.green },
+  { label: 'Change Management', pct: 26, color: COLORS.pink },
+];
+
+const barrierList = document.getElementById('barrierList');
+barriers.forEach(b => {
+  barrierList.innerHTML += `
+    <li class="bar-item">
+      <div class="bar-header"><span class="bar-label">${b.label}</span><span class="bar-pct">${b.pct}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:0%;background:${b.color}" data-width="${b.pct}%"></div></div>
+    </li>`;
+});
+
+// Animate bars on load
+requestAnimationFrame(() => setTimeout(() => {
+  document.querySelectorAll('.bar-fill').forEach(el => { el.style.width = el.dataset.width; });
+}, 400));
+</script>
+</body>
+</html>
