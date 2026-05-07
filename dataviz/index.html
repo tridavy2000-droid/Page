@@ -38,6 +38,16 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:
 /* ── PROGRESS ──────── */
 #pb{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--green));z-index:200;width:0;transition:width .07s linear}
 
+/* ── STORY THREAD ────── */
+#story-thread{position:fixed;left:16px;top:50%;transform:translateY(-50%);z-index:50;pointer-events:none;width:16px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:space-between}
+#st-line-wrap{position:absolute;top:8px;bottom:8px;left:50%;width:1px;transform:translateX(-50%);background:rgba(56,189,248,.1);overflow:hidden}
+#st-fill{width:100%;height:0%;background:linear-gradient(180deg,var(--blue),var(--green));transition:height .12s linear}
+.st-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid rgba(56,189,248,.22);background:var(--bg);position:relative;z-index:2;pointer-events:all;cursor:pointer;transition:all .3s;flex-shrink:0}
+.st-dot::after{content:attr(data-label);position:absolute;left:calc(100% + 12px);top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:9px;letter-spacing:.09em;color:var(--dim);white-space:nowrap;opacity:0;transition:opacity .2s;text-transform:uppercase;pointer-events:none}
+.st-dot:hover::after,.st-dot.active::after{opacity:1;color:var(--blue)}
+.st-dot.active{background:var(--blue);border-color:var(--blue);box-shadow:0 0 0 3px rgba(56,189,248,.15),0 0 8px rgba(56,189,248,.35)}
+@media(max-width:1100px){#story-thread{display:none}}
+
 /* ── NAV ───────────── */
 #nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 52px;background:rgba(3,8,16,.75);backdrop-filter:blur(20px);border-bottom:1px solid rgba(56,189,248,.06)}
 #nav-logo{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase}
@@ -78,10 +88,11 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 @keyframes af{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
 /* DOT GRID */
-.hero-right{display:flex;flex-direction:column;align-items:center;gap:20px}
+.hero-right{display:flex;flex-direction:column;align-items:center;gap:16px}
 .dot-frame{background:rgba(56,189,248,.025);border:1px solid rgba(56,189,248,.09);border-radius:14px;padding:24px 28px 32px;position:relative}
 .dot-frame-lbl{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.12em;white-space:nowrap}
 .dot-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;width:310px}
+@media(max-width:640px){.dot-grid{width:260px}}
 .dot{width:26px;height:26px;border-radius:50%;background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.08);transition:background .3s,border-color .3s,box-shadow .3s;cursor:default}
 .dot.lit{background:var(--blue);border-color:var(--blue);box-shadow:0 0 10px var(--gb)}
 .dot.lit.green{background:var(--green);border-color:var(--green);box-shadow:0 0 10px var(--gg)}
@@ -90,6 +101,9 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 .dot-pct sup{font-size:.5em;vertical-align:super;font-weight:300}
 .dot-year{font-family:var(--mono);font-size:12px;color:var(--mid);letter-spacing:.06em}
 .dot-cap{font-size:11px;color:var(--dim);margin-top:3px}
+
+/* HERO ARC */
+#hero-arc{display:block;overflow:visible}
 
 /* ── KPI BAR ───────── */
 .kpi-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:1200px;margin:0 auto;padding:0 64px 0}
@@ -120,18 +134,21 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 /* ── SECTIONS ──────── */
 .section{min-height:90vh;display:flex;flex-direction:column;justify-content:center;padding:90px 64px 72px;max-width:1200px;margin:0 auto;position:relative;overflow:hidden}
 @media(max-width:900px){.section{padding:80px 36px 60px}}
+@media(max-width:640px){.section{padding:72px 24px 56px}}
 
 /* Ghost number watermark */
 .ghost{position:absolute;right:-3%;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:min(40vw,420px);font-weight:700;color:rgba(56,189,248,.012);line-height:.85;letter-spacing:-.05em;pointer-events:none;user-select:none;z-index:0}
+@media(max-width:640px){.ghost{display:none}}
 
 /* Section dec number */
 .sec-num{position:absolute;right:64px;top:90px;font-family:var(--mono);font-size:120px;font-weight:700;color:rgba(56,189,248,.04);line-height:1;letter-spacing:-.04em;pointer-events:none}
+@media(max-width:640px){.sec-num{right:24px;font-size:80px}}
 
 .stag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--blue);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:10px;position:relative;z-index:1;opacity:0;transform:translateY(10px);transition:opacity .55s,transform .55s}
 .stag::before{content:'';width:20px;height:1px;background:currentColor}
-.shed{font-size:clamp(34px,5vw,62px);font-weight:700;line-height:1.04;letter-spacing:-.035em;color:#fff;position:relative;z-index:1;opacity:0;transform:translateY(14px);transition:opacity .55s .08s,transform .55s .08s}
+.shed{font-size:clamp(34px,5vw,60px);font-weight:700;line-height:1.04;letter-spacing:-.035em;color:#fff;position:relative;z-index:1;opacity:0;transform:translateY(14px);transition:opacity .55s .08s,transform .55s .08s}
 .shed em{font-style:normal;color:var(--blue)}.shed .gr{color:var(--green)}
-.spull{font-size:clamp(14px,1.25vw,17px);color:var(--mid);font-weight:300;line-height:1.65;max-width:620px;margin:14px 0 32px;position:relative;z-index:1;opacity:0;transform:translateY(10px);transition:opacity .55s .16s,transform .55s .16s}
+.spull{font-size:clamp(14px,1.25vw,16px);color:var(--mid);font-weight:300;line-height:1.65;max-width:620px;margin:16px 0 32px;position:relative;z-index:1;opacity:0;transform:translateY(10px);transition:opacity .55s .16s,transform .55s .16s}
 .spull strong{color:var(--text);font-weight:500}
 .clabel{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.13em;text-transform:uppercase;margin-bottom:14px;position:relative;z-index:1;opacity:0;transition:opacity .55s .22s}
 .fade-in .stag,.fade-in .shed,.fade-in .spull,.fade-in .clabel{opacity:1;transform:none}
@@ -147,6 +164,9 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 .sl-line{width:22px;height:2px;border-radius:1px;flex-shrink:0}
 
 /* ── S2 ────────────── */
+.tier-legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;position:relative;z-index:1;opacity:0;transition:opacity .55s .28s}
+.fade-in .tier-legend{opacity:1}
+.tl-pill{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:4px 13px;border-radius:20px;border:1px solid;text-transform:uppercase}
 .scards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;position:relative;z-index:1}
 @media(max-width:900px){.scards{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.scards{grid-template-columns:1fr}}
@@ -173,16 +193,39 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 .uc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;position:relative;z-index:1}
 @media(max-width:900px){.uc-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:480px){.uc-grid{grid-template-columns:1fr}}
-.uc-tile{padding:18px 20px;border-radius:8px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:16px;cursor:default;opacity:0;transform:translateY(10px) scale(.97);transition:opacity .4s,transform .4s,background .22s,border-color .22s}
+.uc-tile{padding:18px 20px;border-radius:8px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;cursor:pointer;opacity:0;transform:translateY(10px) scale(.97);transition:opacity .4s,transform .4s,background .22s,border-color .22s}
 .uc-tile:hover{background:rgba(56,189,248,.04);border-color:rgba(56,189,248,.15);transform:translateY(-2px) scale(1)!important}
+.uc-tile-main{display:flex;align-items:center;gap:16px;flex:1;min-width:0}
 .uc-ring{width:52px;height:52px;flex-shrink:0}
 .uc-rank{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em}
 .uc-name{font-size:13px;font-weight:500;color:var(--text);margin:3px 0}
 .uc-pct{font-family:var(--mono);font-size:20px;font-weight:400}
+.uc-ctx{flex-basis:100%;font-size:11px;color:var(--mid);line-height:1.6;overflow:hidden;max-height:0;transition:max-height .4s ease,padding-top .4s;font-style:italic;padding-top:0}
+.uc-ctx.open{max-height:80px;padding-top:8px}
+.uc-hint{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.1em;flex-basis:100%;text-align:right;opacity:.5}
+
+/* ── S6 OUTRO ──────── */
+.outro-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:44px;position:relative;z-index:1}
+@media(max-width:900px){.outro-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.outro-grid{grid-template-columns:1fr}}
+.outro-card{padding:28px 22px;border-radius:10px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);text-align:center;opacity:0;transform:translateY(16px);transition:opacity .5s,transform .5s,border-color .25s,background .25s}
+.outro-card:hover{border-color:rgba(56,189,248,.2);background:rgba(56,189,248,.04)}
+.oc-num{font-family:var(--mono);font-size:clamp(38px,4.5vw,54px);font-weight:400;line-height:1;margin-bottom:10px}
+.oc-label{font-size:12px;color:var(--text);font-weight:500}
+.oc-sub{font-size:10px;color:var(--dim);margin-top:4px;line-height:1.5}
+.outro-quote{max-width:720px;display:flex;flex-direction:column;gap:16px;position:relative;z-index:1;opacity:0;transform:translateY(10px);transition:opacity .6s .4s,transform .6s .4s}
+.fade-in .outro-quote{opacity:1;transform:none}
+.oq-line{width:48px;height:2px;background:linear-gradient(90deg,var(--blue),var(--green))}
+.oq-text{font-size:clamp(15px,1.4vw,19px);color:var(--text);font-weight:300;line-height:1.7;font-style:italic}
+.oq-attr{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em}
 
 /* ── FOOTER ────────── */
+.ft-stats{display:flex;gap:32px;margin-bottom:28px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid rgba(56,189,248,.06)}
+.ft-stat{display:flex;flex-direction:column;gap:3px}
+.fts-n{font-family:var(--mono);font-size:22px;font-weight:400;color:var(--blue)}
+.fts-l{font-size:10px;color:var(--dim);letter-spacing:.06em}
 footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px solid rgba(56,189,248,.06);display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}
-@media(max-width:640px){footer{grid-template-columns:1fr;padding:40px 36px 56px}}
+@media(max-width:640px){footer{grid-template-columns:1fr;padding:40px 24px 56px}}
 .ft-title{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
 .ft-src{font-size:11px;color:var(--dim);line-height:2}
 .ft-src a{color:rgba(56,189,248,.45);text-decoration:none;transition:color .2s}
@@ -197,6 +240,17 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 </style>
 </head>
 <body>
+
+<!-- Story Thread -->
+<div id="story-thread">
+  <div id="st-line-wrap"><div id="st-fill"></div></div>
+  <div class="st-dot" data-s="s1" data-label="01 Surge"></div>
+  <div class="st-dot" data-s="s2" data-label="02 Leaders"></div>
+  <div class="st-dot" data-s="s3" data-label="03 Capital"></div>
+  <div class="st-dot" data-s="s4" data-label="04 Barriers"></div>
+  <div class="st-dot" data-s="s5" data-label="05 Use Cases"></div>
+  <div class="st-dot" data-s="s6" data-label="06 Bottom Line"></div>
+</div>
 
 <canvas id="hero-canvas"></canvas>
 <div class="blob blob1"></div>
@@ -214,6 +268,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <div class="ni" data-s="s3">03 Capital</div>
     <div class="ni" data-s="s4">04 Barriers</div>
     <div class="ni" data-s="s5">05 Use Cases</div>
+    <div class="ni" data-s="s6">06 Outro</div>
   </div>
   <div id="nav-right">DataConnect 2026</div>
 </nav>
@@ -250,6 +305,28 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
       <div class="dot-pct"><span id="dpct">0</span><sup>%</sup></div>
       <div><div class="dot-year" id="dyr">2019</div><div class="dot-cap">have deployed AI</div></div>
     </div>
+    <!-- Hero arc gauge -->
+    <svg id="hero-arc" viewBox="0 0 220 122" width="220" height="122">
+      <defs>
+        <linearGradient id="arc-grad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#38bdf8"/>
+          <stop offset="100%" stop-color="#34d399"/>
+        </linearGradient>
+        <filter id="arc-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <!-- track -->
+      <path d="M 22 108 A 88 88 0 0 1 198 108" fill="none" stroke="rgba(56,189,248,.08)" stroke-width="5" stroke-linecap="round"/>
+      <!-- 2019 segment (0→58%) -->
+      <path id="arc-2019" d="M 22 108 A 88 88 0 0 1 198 108" fill="none" stroke="rgba(56,189,248,.22)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 276.5"/>
+      <!-- progress (0→78%) -->
+      <path id="arc-prog" d="M 22 108 A 88 88 0 0 1 198 108" fill="none" stroke="url(#arc-grad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 276.5" filter="url(#arc-glow)"/>
+      <!-- axis labels -->
+      <text x="14" y="120" font-family="'DM Mono',monospace" font-size="8" fill="rgba(56,189,248,.3)" text-anchor="middle">0%</text>
+      <text x="206" y="120" font-family="'DM Mono',monospace" font-size="8" fill="rgba(56,189,248,.3)" text-anchor="middle">100%</text>
+    </svg>
   </div>
 </section>
 
@@ -260,7 +337,6 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 </div>
 
 <div class="ticker-wrap"><div class="ticker-track" id="ticker"></div></div>
-
 <div class="vdiv" style="margin-top:40px"></div>
 
 <!-- S1 -->
@@ -289,6 +365,11 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <h2 class="shed">Not all industries<br>move at <em>one pace.</em></h2>
   <p class="spull">Financial services leads at <strong>89%</strong> — more than double government at 38%. Where trust, regulation, and talent converge, adoption accelerates.</p>
   <div class="clabel">AI adoption rate by industry · 2025</div>
+  <div class="tier-legend">
+    <span class="tl-pill" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#fbbf24">Leaders 80%+</span>
+    <span class="tl-pill" style="background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.3);color:#38bdf8">Mid-Tier 55–79%</span>
+    <span class="tl-pill" style="background:rgba(167,139,250,.08);border-color:rgba(167,139,250,.3);color:#a78bfa">Emerging &lt;55%</span>
+  </div>
   <div class="scards" id="scards"></div>
 </section>
 <div class="vdiv"></div>
@@ -317,7 +398,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="stag">04 · The Bottleneck</div>
   <h2 class="shed">Technology is ready.<br><em>People aren't.</em></h2>
   <p class="spull">In 2022, data quality was the #1 AI barrier. By 2024, <strong>the talent gap had taken over</strong> — for the first time, people are the primary constraint.</p>
-  <div class="clabel">% citing as primary obstacle · 2024 vs 2022 ranking</div>
+  <div class="clabel">Rank shift 2022 → 2024 · % citing as primary obstacle</div>
   <div class="barrier-panel"><svg id="barrier-svg"></svg></div>
 </section>
 <div class="vdiv"></div>
@@ -328,13 +409,35 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">05</div>
   <div class="stag">05 · What AI Actually Does</div>
   <h2 class="shed">Reliability beats<br><em>novelty</em> at scale.</h2>
-  <p class="spull">Despite the GenAI hype, process automation leads. Enterprises deploy AI most where returns are <strong>predictable and measurable</strong>.</p>
+  <p class="spull">Despite the GenAI hype, process automation leads. Enterprises deploy AI most where returns are <strong>predictable and measurable</strong>. Click any tile to learn more.</p>
   <div class="clabel">Share of enterprise AI deployments · 2025</div>
   <div class="uc-grid" id="ucg"></div>
+</section>
+<div class="vdiv"></div>
+
+<!-- S6 -->
+<section class="section" id="s6">
+  <div class="ghost" style="color:rgba(56,189,248,.01)">→</div>
+  <div class="sec-num">06</div>
+  <div class="stag">06 · The Bottom Line</div>
+  <h2 class="shed">The AI era is<br>already <em>here.</em></h2>
+  <p class="spull">The data is unambiguous: AI adoption has crossed the mainstream threshold. The question is no longer <strong>if</strong> enterprises will adopt AI — it is how fast and how deep.</p>
+  <div class="outro-grid" id="outro-grid"></div>
+  <div class="outro-quote">
+    <div class="oq-line"></div>
+    <div class="oq-text">"The organisations deploying AI at scale today are not experimenting — they are compounding advantage. Every year others wait, the gap widens."</div>
+    <div class="oq-attr">— Global Enterprise AI Study · 2025 · DataConnect 2026</div>
+  </div>
 </section>
 
 <footer>
   <div>
+    <div class="ft-stats">
+      <div class="ft-stat"><span class="fts-n">5,000+</span><span class="fts-l">Enterprises Surveyed</span></div>
+      <div class="ft-stat"><span class="fts-n">12</span><span class="fts-l">Industries Tracked</span></div>
+      <div class="ft-stat"><span class="fts-n">6</span><span class="fts-l">Years of Data</span></div>
+      <div class="ft-stat"><span class="fts-n">15+</span><span class="fts-l">Countries</span></div>
+    </div>
     <div class="ft-title">Data Sources</div>
     <div class="ft-src">
       <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank">McKinsey Global AI Survey</a> · 2019–2024 ·
@@ -370,21 +473,21 @@ const sectors=[
   {n:'Government',         v:38,d:'+11',c:'#f87171'},
 ];
 const barriers=[
-  {n:'AI Skills & Talent Gap',     v24:64,v22:52,r22:2,r24:1},
-  {n:'Data Quality & Governance',  v24:57,v22:61,r22:1,r24:2},
-  {n:'Unclear ROI / Business Case',v24:48,v22:44,r22:3,r24:3},
-  {n:'Data Privacy & Security',    v24:44,v22:38,r22:5,r24:4},
-  {n:'Integration Complexity',     v24:38,v22:41,r22:4,r24:5},
-  {n:'Regulatory & Compliance',    v24:31,v22:28,r22:6,r24:6},
-  {n:'Change Management',          v24:26,v22:22,r22:7,r24:7},
+  {n:'AI Skills & Talent Gap',     short:'AI Talent',   v24:64,v22:52,r22:2,r24:1},
+  {n:'Data Quality & Governance',  short:'Data Quality',v24:57,v22:61,r22:1,r24:2},
+  {n:'Unclear ROI / Business Case',short:'Unclear ROI', v24:48,v22:44,r22:3,r24:3},
+  {n:'Data Privacy & Security',    short:'Data Privacy',v24:44,v22:38,r22:5,r24:4},
+  {n:'Integration Complexity',     short:'Integration', v24:38,v22:41,r22:4,r24:5},
+  {n:'Regulatory & Compliance',    short:'Regulatory',  v24:31,v22:28,r22:6,r24:6},
+  {n:'Change Management',          short:'Change Mgmt', v24:26,v22:22,r22:7,r24:7},
 ];
 const usecases=[
-  {n:'Process Automation',    v:38,c:'#38bdf8'},
-  {n:'Customer Experience AI',v:27,c:'#34d399'},
-  {n:'Marketing & Analytics', v:19,c:'#a78bfa'},
-  {n:'Product & R&D',         v:8, c:'#fbbf24'},
-  {n:'Risk & Compliance',     v:5, c:'#2dd4bf'},
-  {n:'HR & Talent',           v:3, c:'#f472b6'},
+  {n:'Process Automation',    v:38,c:'#38bdf8',ctx:'Manufacturing & Finance lead. Typical 40% cost reduction. Avg. implementation: 8–12 weeks.'},
+  {n:'Customer Experience AI',v:27,c:'#34d399',ctx:'Chatbots, recommendation engines. +27% CSAT improvement on average across deployments.'},
+  {n:'Marketing & Analytics', v:19,c:'#a78bfa',ctx:'Personalisation, predictive analytics, A/B testing at scale. 2.3× campaign ROI typical.'},
+  {n:'Product & R&D',         v:8, c:'#fbbf24',ctx:'Drug discovery, chip design, materials science. Fastest-growing segment at +47% YoY.'},
+  {n:'Risk & Compliance',     v:5, c:'#2dd4bf',ctx:'Fraud detection, credit scoring, AML. 92% false-positive reduction in top deployments.'},
+  {n:'HR & Talent',           v:3, c:'#f472b6',ctx:'Screening & retention prediction. Earliest stage — significant untapped upside ahead.'},
 ];
 
 /* UTILS */
@@ -427,10 +530,7 @@ document.addEventListener('mousemove',e=>{
   const ctx=canvas.getContext('2d');
   let W,H,mx=null,my=null;
   const pts=[];
-  function resize(){
-    W=canvas.width=innerWidth;
-    H=canvas.height=innerHeight;
-  }
+  function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight}
   resize();window.addEventListener('resize',resize);
   for(let i=0;i<65;i++){
     pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,
@@ -446,8 +546,7 @@ document.addEventListener('mousemove',e=>{
         const dx=p.x-mx,dy=p.y-my,d=Math.sqrt(dx*dx+dy*dy);
         if(d<130){const f=(130-d)/130*.018;p.vx+=dx/d*f;p.vy+=dy/d*f}
       }
-      p.vx*=.985;p.vy*=.985;
-      p.x+=p.vx;p.y+=p.vy;
+      p.vx*=.985;p.vy*=.985;p.x+=p.vx;p.y+=p.vy;
       if(p.x<0)p.x=W;if(p.x>W)p.x=0;
       if(p.y<0)p.y=H;if(p.y>H)p.y=0;
     });
@@ -461,7 +560,6 @@ document.addEventListener('mousemove',e=>{
     ctx.globalAlpha=1;requestAnimationFrame(frame);
   }
   frame();
-  // Fade canvas on scroll
   window.addEventListener('scroll',()=>{
     const hero=document.getElementById('hero');
     canvas.style.opacity=Math.max(0,1-scrollY/(hero.offsetHeight*.8));
@@ -469,7 +567,7 @@ document.addEventListener('mousemove',e=>{
 })();
 
 /* PROGRESS + NAV */
-const sids=['hero','s1','s2','s3','s4','s5'];
+const sids=['hero','s1','s2','s3','s4','s5','s6'];
 const nis=document.querySelectorAll('.ni');
 window.addEventListener('scroll',()=>{
   $('pb').style.width=(scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';
@@ -477,6 +575,29 @@ window.addEventListener('scroll',()=>{
     if(r.top<=110&&r.bottom>110){nis.forEach(n=>n.classList.remove('active'));if(nis[i])nis[i].classList.add('active')}});
 },{passive:true});
 nis.forEach(n=>n.addEventListener('click',()=>document.getElementById(n.dataset.s)?.scrollIntoView({behavior:'smooth'})));
+
+/* STORY THREAD */
+(function(){
+  const stDots=document.querySelectorAll('.st-dot');
+  const fill=$('st-fill');
+  const stSids=['s1','s2','s3','s4','s5','s6'];
+  stDots.forEach((d,i)=>d.addEventListener('click',()=>document.getElementById(stSids[i])?.scrollIntoView({behavior:'smooth'})));
+  function update(){
+    const s1el=$('s1'),s6el=$('s6');
+    if(!s1el||!s6el)return;
+    const start=s1el.offsetTop;
+    const end=s6el.offsetTop+s6el.offsetHeight;
+    const pct=Math.max(0,Math.min(100,(scrollY-start)/(end-start)*100));
+    fill.style.height=pct+'%';
+    stSids.forEach((id,i)=>{
+      const el=document.getElementById(id);if(!el||!stDots[i])return;
+      const r=el.getBoundingClientRect();
+      stDots[i].classList.toggle('active',r.top<innerHeight*.6&&r.bottom>0);
+    });
+  }
+  window.addEventListener('scroll',update,{passive:true});
+  setTimeout(update,120);
+})();
 
 /* DOT GRID */
 const dg=$('dot-grid');
@@ -494,6 +615,52 @@ function setDots(pct,yr,dur){
 let ph=0;
 function cyc(){if(ph>=aby.length){setDots(78,2025,800);return}const{y,v}=aby[ph++];setDots(v,y,600);setTimeout(cyc,ph===aby.length?1200:880)}
 setTimeout(cyc,500);
+
+/* HERO ARC */
+function buildHeroArc(){
+  const cx=110,cy=108,R=88;
+  const totalLen=Math.PI*R;
+  const len58=totalLen*0.58;
+  const len78=totalLen*0.78;
+  const arc2019=document.getElementById('arc-2019');
+  const arcProg=document.getElementById('arc-prog');
+  // Animate 2019 segment
+  setTimeout(()=>{
+    arc2019.style.transition='stroke-dasharray 1.1s ease';
+    arc2019.setAttribute('stroke-dasharray',len58+' '+totalLen);
+  },600);
+  // Animate progress to 78%
+  setTimeout(()=>{
+    arcProg.style.transition='stroke-dasharray 1.8s cubic-bezier(.4,0,.2,1)';
+    arcProg.setAttribute('stroke-dasharray',len78+' '+totalLen);
+  },900);
+  // Add markers after animation
+  const ns='http://www.w3.org/2000/svg';
+  const svg=document.getElementById('hero-arc');
+  setTimeout(()=>{
+    const a58=Math.PI*(1-0.58);
+    const x58=cx+R*Math.cos(a58),y58=cy-R*Math.sin(a58);
+    const c58=document.createElementNS(ns,'circle');
+    c58.setAttribute('cx',x58);c58.setAttribute('cy',y58);c58.setAttribute('r','4');
+    c58.setAttribute('fill','rgba(56,189,248,.45)');svg.appendChild(c58);
+    const t58=document.createElementNS(ns,'text');
+    t58.setAttribute('x',x58+2);t58.setAttribute('y',y58-9);
+    t58.setAttribute('text-anchor','middle');t58.setAttribute('font-family',"'DM Mono',monospace");
+    t58.setAttribute('font-size','8');t58.setAttribute('fill','rgba(56,189,248,.5)');
+    t58.textContent='2019 · 58%';svg.appendChild(t58);
+    const a78=Math.PI*(1-0.78);
+    const x78=cx+R*Math.cos(a78),y78=cy-R*Math.sin(a78);
+    const c78=document.createElementNS(ns,'circle');
+    c78.setAttribute('cx',x78);c78.setAttribute('cy',y78);c78.setAttribute('r','5');
+    c78.setAttribute('fill','#34d399');c78.setAttribute('filter','url(#arc-glow)');svg.appendChild(c78);
+    const t78=document.createElementNS(ns,'text');
+    t78.setAttribute('x',x78+2);t78.setAttribute('y',y78-11);
+    t78.setAttribute('text-anchor','middle');t78.setAttribute('font-family',"'DM Mono',monospace");
+    t78.setAttribute('font-size','9');t78.setAttribute('fill','#34d399');t78.setAttribute('font-weight','500');
+    t78.textContent='2025 · 78%';svg.appendChild(t78);
+  },2600);
+}
+buildHeroArc();
 
 /* HERO ANIMS */
 setTimeout(()=>{
@@ -530,11 +697,12 @@ const io=new IntersectionObserver(en=>{en.forEach(e=>{
   if(id==='s1')buildSurge();
   if(id==='s2')buildSectors();
   if(id==='s3'){buildSpend();scramble($('capc'),632,0,'','',2200,300)}
-  if(id==='s4')buildBarriers();
+  if(id==='s4')buildBumpChart();
   if(id==='s5')buildUseCases();
+  if(id==='s6')buildOutro();
   io.unobserve(e.target);
 })},{threshold:.1});
-['s1','s2','s3','s4','s5'].forEach(id=>{const el=$(id);if(el)io.observe(el)});
+['s1','s2','s3','s4','s5','s6'].forEach(id=>{const el=$(id);if(el)io.observe(el)});
 
 /* S1 — SURGE CHART */
 function buildSurge(){
@@ -577,7 +745,6 @@ function buildSurge(){
     const TL=3000;
     const lp=g.append('path').attr('d',lFn(d.data)).attr('stroke',d.stroke).attr('stroke-width',d.sw).attr('fill','none').attr('stroke-dasharray',d.dash||'none').style('stroke-dashoffset',TL).style('stroke-dasharray',TL+' '+TL).style('transition','stroke-dashoffset 2s cubic-bezier(.4,0,.2,1)');
     setTimeout(()=>lp.style('stroke-dashoffset','0'),180);
-    // Traveling glow dot on main adopt line only
     if(d.label==='Overall Adoption'){
       const gDot=g.append('circle').attr('r',5).attr('fill','#38bdf8').attr('filter','url(#sglow)').style('opacity',0);
       setTimeout(()=>{
@@ -652,6 +819,13 @@ function buildSpend(){
     g.append('line').attr('x1',0).attr('x2',iW).attr('y1',y(v)).attr('y2',y(v)).attr('stroke','rgba(255,255,255,.04)').attr('stroke-width',1);
     g.append('text').attr('x',-6).attr('y',y(v)+4).attr('text-anchor','end').attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a').text(v?`$${v}B`:'$0');
   });
+  // Reference line at $600B
+  const ry=y(600);
+  g.append('line').attr('x1',0).attr('x2',iW).attr('y1',ry).attr('y2',ry)
+    .attr('stroke','rgba(251,191,36,.32)').attr('stroke-width',1.2).attr('stroke-dasharray','6,4');
+  g.append('text').attr('x',iW).attr('y',ry-5).attr('text-anchor','end')
+    .attr('font-family',"'DM Mono',monospace").attr('font-size',8).attr('fill','rgba(251,191,36,.52)')
+    .attr('letter-spacing','.04em').text('≈ Global cloud market 2024');
   years.forEach(yr=>g.append('text').attr('x',(x(String(yr))||0)+x.bandwidth()/2).attr('y',iH+22).attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a').text(yr));
   spend.forEach((v,i)=>{
     const big=v>=200;const bx=x(String(years[i]))||0;
@@ -663,51 +837,143 @@ function buildSpend(){
   });
 }
 
-/* S4 — BARRIERS */
-function buildBarriers(){
+/* S4 — BUMP CHART (rank shift 2022→2024) */
+function buildBumpChart(){
   const el=$('barrier-svg');if(el.children.length)return;
-  const W=el.parentElement.clientWidth||820;const rowH=46,gap=6;
-  const H=barriers.length*(rowH+gap)+gap+56;const M={t:48,r:56,b:12,l:210};const iW=W-M.l-M.r;
+  const W=el.parentElement.clientWidth||820;
+  const nR=7,rowH=52;
+  const H=nR*rowH+72;
+  const mL=Math.min(185,W*.22),mR=Math.min(80,W*.12);
+  const M={t:46,r:mR,b:12,l:mL};
+  const iW=W-M.l-M.r;
   const svg=d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
-  const g=svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
-  const x=d3.scaleLinear().domain([0,80]).range([0,iW]);
-  const yI=i=>i*(rowH+gap);
-  svg.append('text').attr('x',M.l).attr('y',22).attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a').attr('letter-spacing','.1em').text('LESS BLOCKING');
-  svg.append('text').attr('x',W-M.r).attr('y',22).attr('text-anchor','end').attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a').attr('letter-spacing','.1em').text('MORE BLOCKING');
-  [{l:'2022',c:'rgba(56,189,248,.22)'},{l:'2024',c:'#38bdf8'}].forEach(({l,c},idx)=>{
-    const lx=M.l+idx*56;svg.append('rect').attr('x',lx).attr('y',32).attr('width',14).attr('height',3).attr('fill',c).attr('rx',1);
-    svg.append('text').attr('x',lx+18).attr('y',37).attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#4d6680').text(l);
-  });
-  const defs=svg.append('defs');const bgf=defs.append('filter').attr('id','bgf2');
-  bgf.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','3').attr('result','b');
-  const bfm=bgf.append('feMerge');bfm.append('feMergeNode').attr('in','b');bfm.append('feMergeNode').attr('in','SourceGraphic');
+  const yR=r=>M.t+(r-1)*rowH+rowH/2;
+  const xL=M.l,xR=W-M.r,midX=(xL+xR)/2;
+
+  const defs=svg.append('defs');
+  const bumpGlow=defs.append('filter').attr('id','bumpGlow').attr('x','-20%').attr('y','-20%').attr('width','140%').attr('height','140%');
+  bumpGlow.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','2.5').attr('result','b');
+  const bfm2=bumpGlow.append('feMerge');bfm2.append('feMergeNode').attr('in','b');bfm2.append('feMergeNode').attr('in','SourceGraphic');
+
+  // Column headers
+  svg.append('text').attr('x',xL).attr('y',20).attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace").attr('font-size',10).attr('fill','#38bdf8').attr('letter-spacing','.14em').text('2022');
+  svg.append('text').attr('x',xR).attr('y',20).attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace").attr('font-size',10).attr('fill','#34d399').attr('letter-spacing','.14em').text('2024');
+  svg.append('text').attr('x',xL).attr('y',33).attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace").attr('font-size',8).attr('fill','#2a405a').attr('letter-spacing','.1em').text('RANK');
+  svg.append('text').attr('x',xR).attr('y',33).attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace").attr('font-size',8).attr('fill','#2a405a').attr('letter-spacing','.1em').text('RANK');
+
+  // Horizontal rank guides
+  for(let r=1;r<=nR;r++){
+    svg.append('line').attr('x1',xL).attr('x2',xR).attr('y1',yR(r)).attr('y2',yR(r))
+      .attr('stroke','rgba(255,255,255,.025)').attr('stroke-width',1);
+  }
+
+  const bColor=b=>{
+    const chg=b.r22-b.r24;
+    if(chg>0)return '#f87171'; // rose to higher rank = worse
+    if(chg<0)return '#34d399'; // dropped rank = improved
+    return '#38bdf8';
+  };
+
   barriers.forEach((b,i)=>{
-    const gy=yI(i);const top=i===0;const clr=top?'#38bdf8':'rgba(56,189,248,.55)';
-    g.append('text').attr('x',-8).attr('y',gy+rowH/2+5).attr('text-anchor','end').attr('font-family',"'DM Sans',sans-serif").attr('font-size',12.5).attr('fill',top?'#e2eeff':'#7a9cbf').attr('font-weight',top?'500':'400').text(b.n);
-    g.append('rect').attr('x',0).attr('y',gy+rowH/2-1).attr('width',iW).attr('height',1).attr('fill','rgba(255,255,255,.03)');
-    const b22=g.append('rect').attr('x',0).attr('y',gy+rowH/2-6).attr('width',0).attr('height',6).attr('fill','rgba(56,189,248,.18)').attr('rx',2);
-    setTimeout(()=>b22.transition().duration(700).delay(i*70).attr('width',x(b.v22)),200);
-    const b24b=g.append('rect').attr('x',0).attr('y',gy+rowH/2-3).attr('width',0).attr('height',9).attr('fill',clr).attr('rx',2);
-    if(top)b24b.attr('filter','url(#bgf2)');
-    setTimeout(()=>b24b.transition().duration(900).ease(d3.easeBackOut.overshoot(.6)).delay(i*70+80).attr('width',x(b.v24)),200);
-    const vl=g.append('text').attr('x',x(b.v24)+7).attr('y',gy+rowH/2+5).attr('font-family',"'DM Mono',monospace").attr('font-size',11).attr('fill',clr).style('opacity',0).text(b.v24+'%');
-    setTimeout(()=>vl.style('opacity','1').style('transition','opacity .4s'),900+i*70);
-    if(b.r22!==b.r24){const chg=b.r22-b.r24;g.append('text').attr('x',iW+8).attr('y',gy+rowH/2+5).attr('font-family',"'DM Mono',monospace").attr('font-size',10).attr('fill',chg>0?'#f87171':'#34d399').text((chg>0?'▲':'▼')+Math.abs(chg))}
-    g.append('rect').attr('x',0).attr('y',gy).attr('width',iW+50).attr('height',rowH).attr('fill','transparent').style('cursor','crosshair').on('mouseover',e=>tip(e,`<span style="color:#38bdf8">${b.n}</span><br>2022: <b>${b.v22}%</b>  →  2024: <b>${b.v24}%</b><br>Rank: #${b.r22} → #${b.r24}`)).on('mouseout',hide);
+    const c=bColor(b);
+    const y22=yR(b.r22),y24=yR(b.r24);
+    const pathD=`M ${xL} ${y22} C ${midX} ${y22} ${midX} ${y24} ${xR} ${y24}`;
+
+    // Glow layer
+    svg.append('path').attr('d',pathD).attr('fill','none')
+      .attr('stroke',c).attr('stroke-width',5).attr('stroke-opacity',0)
+      .attr('filter','url(#bumpGlow)').attr('class','bp-glow')
+      .transition().delay(280+i*70).duration(500).attr('stroke-opacity',.18);
+
+    // Main curve
+    const curve=svg.append('path').attr('d',pathD).attr('fill','none')
+      .attr('stroke',c).attr('stroke-width',2.2).attr('stroke-opacity',0)
+      .attr('stroke-linecap','round');
+    curve.transition().delay(300+i*70).duration(550).attr('stroke-opacity',b.r24===1||b.r24===2?.9:.6);
+
+    // Dots
+    const dot22=svg.append('circle').attr('cx',xL).attr('cy',y22).attr('r',7)
+      .attr('fill','rgba(10,20,40,.9)').attr('stroke','#38bdf8').attr('stroke-width',1.5).style('opacity',0);
+    const dot24=svg.append('circle').attr('cx',xR).attr('cy',y24).attr('r',7)
+      .attr('fill','rgba(10,20,40,.9)').attr('stroke',c).attr('stroke-width',1.5).style('opacity',0);
+    [dot22,dot24].forEach(d=>d.transition().delay(350+i*70).duration(300).style('opacity','1'));
+
+    // Rank numbers in dots
+    svg.append('text').attr('x',xL).attr('y',y22+4).attr('text-anchor','middle')
+      .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#38bdf8').attr('font-weight','500')
+      .text(b.r22).style('opacity',0).transition().delay(420+i*70).duration(250).style('opacity','1');
+    svg.append('text').attr('x',xR).attr('y',y24+4).attr('text-anchor','middle')
+      .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill',c).attr('font-weight','500')
+      .text(b.r24).style('opacity',0).transition().delay(420+i*70).duration(250).style('opacity','1');
+
+    // Left label
+    svg.append('text').attr('x',xL-14).attr('y',y22+4).attr('text-anchor','end')
+      .attr('font-family',"'DM Sans',sans-serif").attr('font-size',b.r22<=2?12.5:11)
+      .attr('fill',b.r22<=2?'#e2eeff':'#7a9cbf').attr('font-weight',b.r22<=2?'500':'400')
+      .text(b.short).style('opacity',0).transition().delay(360+i*70).duration(300).style('opacity','1');
+
+    // Right value
+    svg.append('text').attr('x',xR+14).attr('y',y24+4).attr('text-anchor','start')
+      .attr('font-family',"'DM Mono',monospace").attr('font-size',10).attr('fill',c)
+      .text(b.v24+'%').style('opacity',0).transition().delay(440+i*70).duration(250).style('opacity','1');
+
+    // Rank change badge
+    if(b.r22!==b.r24){
+      const chg=b.r22-b.r24;
+      const midY=(y22+y24)/2;
+      const badge=svg.append('g').attr('transform',`translate(${midX},${midY})`).style('opacity',0);
+      badge.append('rect').attr('x',-18).attr('y',-9).attr('width',36).attr('height',16)
+        .attr('rx',4).attr('fill','rgba(3,8,16,.9)').attr('stroke',c).attr('stroke-width',1);
+      badge.append('text').attr('text-anchor','middle').attr('y',4)
+        .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill',c).attr('font-weight','500')
+        .text((chg>0?'▲':'▼')+Math.abs(chg));
+      badge.transition().delay(650+i*70).duration(300).style('opacity','1');
+    }
   });
+
+  // Annotation
+  svg.append('text').attr('x',midX).attr('y',H-4).attr('text-anchor','middle')
+    .attr('font-family',"'DM Mono',monospace").attr('font-size',8).attr('fill','rgba(56,189,248,.3)').attr('letter-spacing','.1em')
+    .text('TALENT SURPASSED DATA AS #1 BARRIER — FIRST TIME IN SURVEY HISTORY');
 }
 
-/* S5 — USE CASES */
+/* S5 — USE CASES WITH CLICK EXPAND */
 function buildUseCases(){
   const wrap=$('ucg');if(wrap.children.length)return;
   const C=2*Math.PI*20;
   usecases.forEach((u,i)=>{
     const tile=document.createElement('div');tile.className='uc-tile';
-    tile.innerHTML=`<svg class="uc-ring" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="3.5"/><circle class="ra" cx="24" cy="24" r="20" fill="none" stroke="${u.c}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0 ${C}" transform="rotate(-90 24 24)" style="transition:stroke-dasharray 1.4s cubic-bezier(.4,0,.2,1) ${i*110}ms"/><text x="24" y="28" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="${u.c}">${u.v}%</text></svg><div><div class="uc-rank">#${i+1}</div><div class="uc-name">${u.n}</div><div class="uc-pct" style="color:${u.c}">${u.v}%</div></div>`;
+    tile.innerHTML=`<div class="uc-tile-main"><svg class="uc-ring" viewBox="0 0 48 48"><circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="3.5"/><circle class="ra" cx="24" cy="24" r="20" fill="none" stroke="${u.c}" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0 ${C}" transform="rotate(-90 24 24)" style="transition:stroke-dasharray 1.4s cubic-bezier(.4,0,.2,1) ${i*110}ms"/><text x="24" y="28" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="${u.c}">${u.v}%</text></svg><div><div class="uc-rank">#${i+1}</div><div class="uc-name">${u.n}</div><div class="uc-pct" style="color:${u.c}">${u.v}%</div></div></div><div class="uc-ctx" id="uctx${i}">${u.ctx}</div><div class="uc-hint">TAP FOR INSIGHT</div>`;
+    // Click expand
+    let open=false;
+    tile.addEventListener('click',()=>{
+      open=!open;
+      tile.querySelector('.uc-ctx').classList.toggle('open',open);
+      tile.querySelector('.uc-hint').style.opacity=open?'0':'';
+      tile.style.borderColor=open?u.c+'55':'';
+      tile.style.background=open?'rgba(56,189,248,.05)':'';
+    });
     tile.addEventListener('mouseover',e=>tip(e,`<span style="color:${u.c}">${u.n}</span><br><b>${u.v}%</b> of deployments`));
     tile.addEventListener('mouseout',hide);
     wrap.appendChild(tile);
     setTimeout(()=>{tile.style.opacity='1';tile.style.transform='none';tile.querySelector('.ra').setAttribute('stroke-dasharray',`${(u.v/38)*C} ${C}`)},i*100+300);
+  });
+}
+
+/* S6 — OUTRO */
+function buildOutro(){
+  const wrap=$('outro-grid');if(wrap.children.length)return;
+  const cards=[
+    {num:'78%',  label:'Enterprise Adoption',    sub:'Crossed mainstream in 2023',   c:'var(--blue)'},
+    {num:'#1',   label:'AI Talent as Top Barrier',sub:'Surpassed data quality 2024',  c:'var(--red)'},
+    {num:'58%',  label:'Investment CAGR',         sub:'$37B → $632B in 6 years',      c:'var(--green)'},
+    {num:'3.5×', label:'Average ROI',             sub:'Top quartile achieves 8×',     c:'var(--gold)'},
+  ];
+  cards.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='outro-card';
+    el.innerHTML=`<div class="oc-num" style="color:${c.c}">${c.num}</div><div class="oc-label">${c.label}</div><div class="oc-sub">${c.sub}</div>`;
+    wrap.appendChild(el);
+    setTimeout(()=>{el.style.opacity='1';el.style.transform='none'},i*110+200);
   });
 }
 </script>
