@@ -3,437 +3,940 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Adoption in Business — Global Trends 2019–2025</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<title>The AI Revolution · Global Business Transformation 2019–2025</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;500;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#06080f;
+  --s1:#090e1a;
+  --s2:#0b1220;
+  --accent:#00cfff;
+  --green:#00ff9d;
+  --orange:#ffb347;
+  --red:#ff6b9d;
+  --purple:#c77dff;
+  --yellow:#ffd93d;
+  --text:#e2eaf7;
+  --muted:#5a7a9a;
+  --border:rgba(0,207,255,0.1);
+  --glow:rgba(0,207,255,0.15);
+}
+html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;line-height:1.6}
+::selection{background:rgba(0,207,255,0.3)}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#06080f}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:14px 40px;
+  backdrop-filter:blur(20px);
+  background:rgba(6,8,15,0.85);
+  border-bottom:1px solid var(--border);
+  transition:all .3s;
+}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase}
+.nav-dots{display:flex;gap:8px;align-items:center}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);cursor:pointer;transition:all .3s}
+.nav-dot.active,.nav-dot:hover{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-badge{font-size:10px;color:var(--muted);letter-spacing:.05em;border:1px solid var(--border);padding:3px 10px;border-radius:20px}
 
-  :root {
-    --bg: #080e1a;
-    --surface: #0d1526;
-    --surface2: #111d35;
-    --border: rgba(99,179,237,0.12);
-    --accent: #63b3ed;
-    --accent2: #7ee8a2;
-    --accent3: #f6ad55;
-    --accent4: #fc8181;
-    --accent5: #b794f4;
-    --text: #e2e8f0;
-    --muted: #718096;
-    --glow: 0 0 24px rgba(99,179,237,0.15);
-  }
+/* ── PROGRESS BAR ── */
+#progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--green));z-index:200;width:0%;transition:width .1s linear}
 
-  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+/* ── SECTIONS ── */
+section{
+  min-height:100vh;
+  scroll-snap-align:start;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+  padding:80px 40px 60px;
+  max-width:1400px;margin:0 auto;
+}
+section.full{max-width:none;padding:0}
 
-  body { padding: 0; }
+/* ── HERO ── */
+#hero{
+  max-width:none;
+  padding:0;
+  background:var(--bg);
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+#hero-canvas{position:absolute;inset:0;z-index:0}
+.hero-content{position:relative;z-index:2;padding:40px 20px}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;
+  border:1px solid rgba(0,207,255,0.3);
+  padding:6px 16px;border-radius:30px;
+  margin-bottom:28px;
+  background:rgba(0,207,255,0.05);
+}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hero-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(36px,6vw,80px);
+  font-weight:700;
+  line-height:1.05;
+  letter-spacing:-.03em;
+  color:#fff;
+  margin-bottom:16px;
+}
+.hero-title .grad{
+  background:linear-gradient(135deg,var(--accent) 0%,var(--green) 60%,var(--purple) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero-sub{color:var(--muted);font-size:clamp(14px,1.5vw,18px);max-width:600px;margin:0 auto 48px;font-weight:300}
+.hero-kpis{display:flex;justify-content:center;gap:clamp(20px,5vw,80px);flex-wrap:wrap;margin-bottom:40px}
+.hero-kpi{text-align:center}
+.hero-kpi-num{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(40px,7vw,88px);
+  font-weight:700;
+  line-height:1;
+  color:var(--accent);
+  text-shadow:0 0 40px rgba(0,207,255,0.4);
+  display:block;
+}
+.hero-kpi-num.green{color:var(--green);text-shadow:0 0 40px rgba(0,255,157,0.3)}
+.hero-kpi-num.orange{color:var(--orange);text-shadow:0 0 40px rgba(255,179,71,0.3)}
+.hero-kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.hero-kpi-delta{font-size:11px;color:var(--green);font-weight:600;margin-top:2px}
+.scroll-hint{
+  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  animation:bounce 2s infinite;
+}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.scroll-hint::after{content:'↓';font-size:16px;color:var(--accent)}
 
-  /* Header */
-  .header {
-    background: linear-gradient(135deg, #0a1628 0%, #0d1f3c 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 28px 40px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(99,179,237,0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
-  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(18px, 2.8vw, 28px); font-weight: 700; color: #fff; letter-spacing: -0.02em; line-height: 1.2; }
-  .header h1 span { color: var(--accent); }
-  .header p { margin-top: 6px; color: var(--muted); font-size: 13px; font-weight: 400; max-width: 560px; }
-  .badge { background: rgba(99,179,237,0.12); border: 1px solid rgba(99,179,237,0.3); color: var(--accent); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
-  .sources { margin-top: 10px; font-size: 11px; color: var(--muted); }
-  .sources span { color: rgba(99,179,237,0.6); }
+/* ── SECTION HEADER ── */
+.section-label{
+  font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:8px;
+  opacity:0;transform:translateY(16px);transition:all .7s ease;
+}
+.section-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(24px,3.5vw,44px);
+  font-weight:700;letter-spacing:-.02em;
+  color:#fff;line-height:1.15;margin-bottom:12px;
+  opacity:0;transform:translateY(16px);transition:all .7s ease .1s;
+}
+.section-desc{
+  font-size:14px;color:var(--muted);max-width:640px;margin-bottom:36px;
+  opacity:0;transform:translateY(16px);transition:all .7s ease .2s;
+}
+section.in-view .section-label,
+section.in-view .section-title,
+section.in-view .section-desc{opacity:1;transform:none}
 
-  /* KPI row */
-  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-  .kpi { background: var(--surface); padding: 20px 24px; position: relative; overflow: hidden; transition: background 0.2s; cursor: default; }
-  .kpi:hover { background: var(--surface2); }
-  .kpi::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--kpi-color, var(--accent)); opacity: 0.6; }
-  .kpi-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
-  .kpi-value { font-family: 'Space Grotesk', sans-serif; font-size: clamp(22px, 3vw, 32px); font-weight: 700; color: var(--kpi-color, var(--accent)); line-height: 1; }
-  .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
-  .kpi-delta { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
-  .up { background: rgba(126,232,162,0.12); color: var(--accent2); }
-  .down { background: rgba(252,129,129,0.12); color: var(--accent4); }
+/* ── GLASS CARD ── */
+.glass{
+  background:rgba(11,18,32,0.7);
+  border:1px solid var(--border);
+  border-radius:16px;
+  backdrop-filter:blur(20px);
+  position:relative;overflow:hidden;
+  transition:border-color .3s,box-shadow .3s;
+}
+.glass::before{
+  content:'';position:absolute;inset:0;border-radius:16px;
+  background:linear-gradient(135deg,rgba(0,207,255,0.04),transparent 50%);
+  pointer-events:none;
+}
+.glass:hover{border-color:rgba(0,207,255,0.25);box-shadow:0 0 40px rgba(0,207,255,0.08)}
 
-  /* Grid */
-  .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
-  .col-8 { grid-column: span 8; }
-  .col-4 { grid-column: span 4; }
-  .col-6 { grid-column: span 6; }
-  .col-12 { grid-column: span 12; }
+/* ── LAYOUT ── */
+.row{display:grid;grid-template-columns:repeat(12,1fr);gap:16px;width:100%}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c4{grid-column:span 4}.c6{grid-column:span 6}.c5{grid-column:span 5}.c7{grid-column:span 7}
+@media(max-width:900px){.c8,.c4,.c6,.c5,.c7{grid-column:span 12}}
 
-  @media (max-width: 1100px) { .col-8, .col-4, .col-6 { grid-column: span 12; } }
+.card-pad{padding:24px 28px}
+.card-inner-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.card-inner-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;color:#fff;margin-bottom:18px}
 
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    box-shadow: var(--glow);
-    position: relative;
-    overflow: hidden;
-    transition: border-color 0.2s, box-shadow 0.2s;
-  }
-  .card:hover { border-color: rgba(99,179,237,0.25); box-shadow: 0 0 32px rgba(99,179,237,0.1); }
+/* ── SVG CHARTS ── */
+.d3-wrap svg{overflow:visible}
+.tick text{fill:var(--muted);font-size:11px;font-family:'Inter',sans-serif}
+.tick line,.domain{stroke:rgba(255,255,255,0.05)}
+.grid line{stroke:rgba(255,255,255,0.03)}
+.grid .domain{stroke:none}
+.tooltip-d3{
+  position:fixed;pointer-events:none;
+  background:rgba(9,14,26,0.95);
+  border:1px solid rgba(0,207,255,0.3);
+  border-radius:10px;padding:10px 14px;
+  font-size:12px;line-height:1.6;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  z-index:500;opacity:0;transition:opacity .15s;
+  min-width:140px;
+}
+.tooltip-d3.show{opacity:1}
 
-  .card-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 4px; }
-  .card-subtitle { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 16px; }
-  .chart-wrap { position: relative; }
+/* ── ANIMATED LINE PATH ── */
+.line-path{
+  fill:none;stroke-width:2.5;
+  stroke-dasharray:3000;stroke-dashoffset:3000;
+  transition:stroke-dashoffset 2.2s ease;
+}
+.line-path.drawn{stroke-dashoffset:0}
+.area-path{opacity:0;transition:opacity 1s ease .5s}
+.area-path.shown{opacity:1}
 
-  /* Insight callout */
-  .insight {
-    background: rgba(99,179,237,0.06);
-    border-left: 3px solid var(--accent);
-    border-radius: 0 6px 6px 0;
-    padding: 10px 14px;
-    margin-top: 14px;
-    font-size: 12px;
-    color: #a0b8d0;
-    line-height: 1.5;
-  }
-  .insight strong { color: var(--accent); }
+/* ── SECTOR BARS ── */
+.sector-bar-row{
+  display:flex;align-items:center;gap:12px;margin-bottom:10px;
+  opacity:0;transform:translateX(-20px);transition:all .6s ease;
+}
+.sector-bar-row.in{opacity:1;transform:none}
+.sb-label{font-size:12px;color:var(--text);width:160px;flex-shrink:0;font-weight:500}
+.sb-track{flex:1;height:8px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden}
+.sb-fill{height:100%;border-radius:6px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.sb-pct{font-size:12px;color:var(--muted);width:40px;text-align:right;font-weight:600}
 
-  /* Bar list */
-  .bar-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-  .bar-item { display: flex; flex-direction: column; gap: 4px; }
-  .bar-header { display: flex; justify-content: space-between; font-size: 12px; }
-  .bar-label { color: var(--text); font-weight: 500; }
-  .bar-pct { color: var(--muted); }
-  .bar-track { height: 6px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
-  .bar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.4,0,.2,1); }
+/* ── INSIGHT BOX ── */
+.insight{
+  border-left:2px solid var(--accent);
+  padding:10px 16px;
+  background:rgba(0,207,255,0.05);
+  border-radius:0 8px 8px 0;
+  font-size:12px;line-height:1.6;color:#9ab;
+  margin-top:16px;
+}
+.insight strong{color:var(--accent)}
 
-  /* Donut legend */
-  .donut-legend { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-  .legend-label { color: var(--text); flex: 1; }
-  .legend-val { color: var(--muted); font-weight: 600; }
+/* ── SPENDING ── */
+.spend-bars{display:flex;align-items:flex-end;gap:8px;height:200px;padding-top:20px;position:relative}
+.spend-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%}
+.spend-bar{
+  width:100%;border-radius:6px 6px 0 0;
+  background:linear-gradient(180deg,rgba(0,207,255,.8),rgba(0,207,255,.2));
+  border:1px solid rgba(0,207,255,.3);
+  height:0;transition:height 1.4s cubic-bezier(.4,0,.2,1);
+  cursor:pointer;position:relative;
+}
+.spend-bar:hover{background:linear-gradient(180deg,rgba(0,207,255,1),rgba(0,207,255,.4));box-shadow:0 0 20px rgba(0,207,255,.3)}
+.spend-label{font-size:10px;color:var(--muted);margin-top:6px}
+.spend-val{font-size:10px;color:var(--accent);font-weight:700;position:absolute;top:-18px;left:50%;transform:translateX(-50%);white-space:nowrap;opacity:0;transition:opacity .3s}
+.spend-bar:hover .spend-val{opacity:1}
+.spend-axis-line{position:absolute;bottom:30px;left:0;right:0;height:1px;background:rgba(255,255,255,.06)}
 
-  /* Timeline dots */
-  .timeline { display: flex; flex-direction: column; gap: 12px; padding-left: 4px; }
-  .tl-item { display: flex; gap: 14px; align-items: flex-start; }
-  .tl-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 3px; flex-shrink: 0; border: 2px solid; }
-  .tl-content { font-size: 12px; line-height: 1.5; }
-  .tl-year { font-weight: 700; font-size: 11px; }
-  .tl-text { color: var(--muted); }
+/* ── RADIAL CHART ── */
+#radial-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+.radial-center{
+  position:absolute;text-align:center;pointer-events:none;
+  font-family:'Space Grotesk',sans-serif;
+}
+.radial-center-num{font-size:28px;font-weight:700;color:var(--accent)}
+.radial-center-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 
-  /* Footer */
-  .footer { text-align: center; padding: 20px 32px; border-top: 1px solid var(--border); color: var(--muted); font-size: 11px; }
-  .footer a { color: rgba(99,179,237,0.5); text-decoration: none; }
+/* ── BARRIERS DOTS ── */
+.barrier-row{
+  display:flex;align-items:center;gap:12px;padding:10px 0;
+  border-bottom:1px solid rgba(255,255,255,.03);
+  opacity:0;transform:translateY(8px);transition:all .5s ease;
+}
+.barrier-row.in{opacity:1;transform:none}
+.barrier-rank{
+  font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;
+  color:rgba(255,255,255,.06);width:32px;text-align:center;flex-shrink:0;
+}
+.barrier-content{flex:1}
+.barrier-name{font-size:13px;color:var(--text);font-weight:500;margin-bottom:6px}
+.barrier-dots-row{display:flex;gap:4px}
+.barrier-dot{width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,.04);transition:all .6s ease}
+.barrier-dot.filled{background:var(--dot-color)}
+.barrier-pct-num{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--dot-color);width:52px;text-align:right;flex-shrink:0}
 
-  /* Pulse anim for KPI */
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
-  .live { animation: pulse 2.5s infinite; }
+/* ── TIMELINE ── */
+.tl-container{position:relative;padding-left:28px}
+.tl-container::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;background:linear-gradient(180deg,var(--accent),var(--green),var(--purple))}
+.tl-item{
+  position:relative;margin-bottom:20px;padding:14px 18px;border-radius:10px;
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);
+  transition:border-color .3s,background .3s;cursor:default;
+  opacity:0;transform:translateX(10px);transition:opacity .5s,transform .5s,border-color .3s,background .3s;
+}
+.tl-item.in{opacity:1;transform:none}
+.tl-item:hover{background:rgba(0,207,255,.04);border-color:rgba(0,207,255,.15)}
+.tl-item::before{
+  content:'';position:absolute;left:-33px;top:18px;
+  width:10px;height:10px;border-radius:50%;
+  background:var(--dot-c);box-shadow:0 0 10px var(--dot-c);
+}
+.tl-year{font-size:11px;font-weight:700;letter-spacing:.08em;margin-bottom:3px}
+.tl-text{font-size:12px;color:var(--muted);line-height:1.5}
+.tl-highlight{color:var(--dot-c);font-weight:600}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:40px;border-top:1px solid var(--border);
+  color:var(--muted);font-size:11px;letter-spacing:.05em;
+  line-height:2;
+}
+footer a{color:rgba(0,207,255,.5);text-decoration:none}
+footer a:hover{color:var(--accent)}
+.footer-title{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:8px}
+.footer-sub{color:var(--muted);font-size:13px;margin-bottom:24px}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="header-top">
-    <div>
-      <h1>AI Adoption in Business<br><span>Global Trends 2019–2025</span></h1>
-      <p>A data-driven analysis of how artificial intelligence reshaped global enterprise — sector by sector, year by year.</p>
-      <div class="sources">Data sources: <span>McKinsey Global AI Survey 2019–2024 · IBM Global AI Adoption Index 2023–2024 · IDC AI Spending Guide 2024 · Stanford HAI Index 2025</span></div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
-      <span class="badge">DataConnect 2026</span>
-      <span class="badge live" style="background:rgba(126,232,162,0.1);border-color:rgba(126,232,162,0.3);color:#7ee8a2;">● Live data</span>
-    </div>
-  </div>
-</div>
+<div id="progress"></div>
 
-<!-- KPI Row -->
-<div class="kpi-row">
-  <div class="kpi" style="--kpi-color:#63b3ed">
-    <div class="kpi-label">AI Adoption Rate 2025</div>
-    <div class="kpi-value">78%</div>
-    <div class="kpi-sub">of enterprises globally</div>
-    <span class="kpi-delta up">↑ +20pp vs 2023</span>
+<nav>
+  <div class="nav-logo">AI · 2019–2025</div>
+  <div class="nav-dots">
+    <div class="nav-dot active" data-section="hero" title="Overview"></div>
+    <div class="nav-dot" data-section="trend" title="Adoption Trend"></div>
+    <div class="nav-dot" data-section="sectors" title="By Sector"></div>
+    <div class="nav-dot" data-section="usecases" title="Use Cases"></div>
+    <div class="nav-dot" data-section="spending" title="Investment"></div>
+    <div class="nav-dot" data-section="barriers" title="Barriers"></div>
   </div>
-  <div class="kpi" style="--kpi-color:#7ee8a2">
-    <div class="kpi-label">AI Spending 2025</div>
-    <div class="kpi-value">$632B</div>
-    <div class="kpi-sub">global enterprise AI spend</div>
-    <span class="kpi-delta up">↑ +29% YoY</span>
-  </div>
-  <div class="kpi" style="--kpi-color:#f6ad55">
-    <div class="kpi-label">GenAI Adoption</div>
-    <div class="kpi-value">65%</div>
-    <div class="kpi-sub">of firms using GenAI tools</div>
-    <span class="kpi-delta up">↑ from 33% in 2023</span>
-  </div>
-  <div class="kpi" style="--kpi-color:#b794f4">
-    <div class="kpi-label">Avg. ROI on AI</div>
-    <div class="kpi-value">3.5×</div>
-    <div class="kpi-sub">return on AI investment</div>
-    <span class="kpi-delta up">↑ top quartile: 8×</span>
-  </div>
-  <div class="kpi" style="--kpi-color:#fc8181">
-    <div class="kpi-label">Workforce Affected</div>
-    <div class="kpi-value">40%</div>
-    <div class="kpi-sub">of roles transformed by AI</div>
-    <span class="kpi-delta up">↑ IMF estimate 2025</span>
-  </div>
-</div>
+  <div class="nav-badge">DataConnect 2026</div>
+</nav>
 
-<!-- Charts Grid -->
-<div class="grid">
-
-  <!-- Main trend line — col 8 -->
-  <div class="card col-8">
-    <div class="card-title">Adoption Trajectory</div>
-    <div class="card-subtitle">% of enterprises reporting AI deployment · 2019–2025</div>
-    <div class="chart-wrap"><canvas id="trendChart" height="220"></canvas></div>
-    <div class="insight"><strong>Inflection point 2023:</strong> The release of large language models triggered a +17pp surge in adoption — the steepest single-year jump since AI tracking began. Financial services led; healthcare followed within 6 months.</div>
-  </div>
-
-  <!-- Milestone timeline — col 4 -->
-  <div class="card col-4">
-    <div class="card-title">Key Inflection Points</div>
-    <div class="card-subtitle">Events that reshaped adoption curves</div>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#63b3ed;border-color:#63b3ed"></div>
-        <div class="tl-content"><div class="tl-year" style="color:#63b3ed">2019</div><div class="tl-text">Cloud AI platforms mature. Adoption reaches 58%; dominated by IT & finance.</div></div>
+<!-- ══════════════ HERO ══════════════ -->
+<section class="full" id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">Global Enterprise AI Study · 2019–2025</div>
+    <h1 class="hero-title">
+      The AI Revolution<br>
+      <span class="grad">Has Already Happened</span>
+    </h1>
+    <p class="hero-sub">Six years of data from 5,000+ enterprises across 12 industries — visualized.</p>
+    <div class="hero-kpis">
+      <div class="hero-kpi">
+        <span class="hero-kpi-num" id="c1" data-target="78">0</span>
+        <div class="hero-kpi-label">% Adoption Rate 2025</div>
+        <div class="hero-kpi-delta">↑ +35pp since 2019</div>
       </div>
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#fc8181;border-color:#fc8181"></div>
-        <div class="tl-content"><div class="tl-year" style="color:#fc8181">2020</div><div class="tl-text">COVID-19 disrupts deployment cycles. Adoption dips to 50%; remote automation accelerates.</div></div>
+      <div class="hero-kpi">
+        <span class="hero-kpi-num green" id="c2" data-target="632" data-suffix="B">$0</span>
+        <div class="hero-kpi-label">AI Spending 2025</div>
+        <div class="hero-kpi-delta">↑ 17× since 2019</div>
       </div>
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#f6ad55;border-color:#f6ad55"></div>
-        <div class="tl-content"><div class="tl-year" style="color:#f6ad55">2022</div><div class="tl-text">MLOps maturity. Firms move from PoC to production. Stable 56% adoption base.</div></div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#7ee8a2;border-color:#7ee8a2"></div>
-        <div class="tl-content"><div class="tl-year" style="color:#7ee8a2">2023 ★</div><div class="tl-text">GenAI explosion. ChatGPT, GPT-4, Claude. Adoption surges to 72% in 12 months.</div></div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-dot" style="background:#b794f4;border-color:#b794f4"></div>
-        <div class="tl-content"><div class="tl-year" style="color:#b794f4">2025</div><div class="tl-text">AI agents & agentic workflows. 78% adoption. ROI realization at scale.</div></div>
+      <div class="hero-kpi">
+        <span class="hero-kpi-num orange" id="c3" data-target="3.5" data-decimal="1" data-suffix="×">0×</span>
+        <div class="hero-kpi-label">Avg. Return on AI</div>
+        <div class="hero-kpi-delta">Top 25%: 8× ROI</div>
       </div>
     </div>
   </div>
+  <div class="scroll-hint">Scroll to explore</div>
+</section>
 
-  <!-- Sector comparison — col 6 -->
-  <div class="card col-6">
-    <div class="card-title">Sector Breakdown</div>
-    <div class="card-subtitle">AI adoption rate by industry · 2025</div>
-    <div class="chart-wrap"><canvas id="sectorChart" height="260"></canvas></div>
-  </div>
-
-  <!-- Use cases donut + legend — col 6 -->
-  <div class="card col-6" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
-    <div style="flex:0 0 180px">
-      <div class="card-title">Top Use Cases</div>
-      <div class="card-subtitle">Share of AI deployments</div>
-      <div class="chart-wrap" style="width:180px"><canvas id="donutChart" width="180" height="180"></canvas></div>
+<!-- ══════════════ TREND ══════════════ -->
+<section id="trend">
+  <div class="section-label">01 · Adoption Trajectory</div>
+  <h2 class="section-title">From Curiosity<br>to Core Infrastructure</h2>
+  <p class="section-desc">AI went from an experiment in 38% of enterprises to mission-critical infrastructure in 78% — a journey shaped by a pandemic, a recovery, and one explosive year.</p>
+  <div class="row">
+    <div class="glass c8 card-pad">
+      <div class="card-inner-label">% enterprises reporting AI deployment · 2019–2025</div>
+      <div class="card-inner-title">Three Adoption Curves</div>
+      <div class="d3-wrap" id="trend-chart" style="height:280px"></div>
     </div>
-    <div style="flex:1;min-width:160px">
-      <div class="donut-legend" id="donutLegend"></div>
-      <div class="insight" style="margin-top:16px"><strong>Process automation</strong> remains #1 despite GenAI hype — enterprises prioritize reliability over novelty when production stakes are high.</div>
+    <div class="c4" style="display:flex;flex-direction:column;gap:12px">
+      <div class="tl-container" id="timeline">
+        <div class="tl-item" style="--dot-c:#63b3ed">
+          <div class="tl-year" style="color:#63b3ed">2019 — Baseline</div>
+          <div class="tl-text">Cloud AI matures. <span class="tl-highlight">58% adopt</span>. Finance and IT lead; adoption concentrated in PoC phase.</div>
+        </div>
+        <div class="tl-item" style="--dot-c:#fc8181">
+          <div class="tl-year" style="color:#fc8181">2020 — Disruption</div>
+          <div class="tl-text">COVID halts projects. <span class="tl-highlight">Drop to 50%</span>. Remote automation accelerates as silver lining.</div>
+        </div>
+        <div class="tl-item" style="--dot-c:#f6ad55">
+          <div class="tl-year" style="color:#f6ad55">2021–22 — Rebuild</div>
+          <div class="tl-text">MLOps maturity. Stable <span class="tl-highlight">56% base</span>. Firms move from experimentation to production-grade systems.</div>
+        </div>
+        <div class="tl-item" style="--dot-c:#00ff9d">
+          <div class="tl-year" style="color:#00ff9d">2023 ★ — Inflection</div>
+          <div class="tl-text">GenAI explosion. ChatGPT, GPT-4, Claude. <span class="tl-highlight">+17pp in 12 months</span> — steepest surge since tracking began.</div>
+        </div>
+        <div class="tl-item" style="--dot-c:#c77dff">
+          <div class="tl-year" style="color:#c77dff">2025 — Infrastructure</div>
+          <div class="tl-text">AI agents. Agentic workflows. <span class="tl-highlight">78% deployment</span>. ROI realization at enterprise scale.</div>
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- Spending bar chart — col 6 -->
-  <div class="card col-6">
-    <div class="card-title">Investment Growth</div>
-    <div class="card-subtitle">Global enterprise AI spending · $B · 2019–2025</div>
-    <div class="chart-wrap"><canvas id="spendChart" height="220"></canvas></div>
-  </div>
-
-  <!-- Barrier horizontal bars — col 6 -->
-  <div class="card col-6">
-    <div class="card-title">Adoption Barriers</div>
-    <div class="card-subtitle">% of firms citing as top obstacle · 2024</div>
-    <div style="margin-top:8px">
-      <ul class="bar-list" id="barrierList"></ul>
+<!-- ══════════════ SECTORS ══════════════ -->
+<section id="sectors">
+  <div class="section-label">02 · Industry Breakdown</div>
+  <h2 class="section-title">Not All Industries<br>Move at the Same Speed</h2>
+  <p class="section-desc">Financial services leads with 89% adoption — nearly 2.5× the rate of government. The gap reveals where trust, regulation, and talent converge to create friction.</p>
+  <div class="row">
+    <div class="glass c7 card-pad">
+      <div class="card-inner-label">AI adoption rate by industry · 2025</div>
+      <div class="card-inner-title">Sector Leadership</div>
+      <div id="sector-bars"></div>
     </div>
-    <div class="insight" style="margin-top:14px"><strong>Talent gap</strong> overtook data quality as the #1 barrier in 2024 — a structural shift signalling that the bottleneck moved from infrastructure to people.</div>
+    <div class="c5" style="display:flex;flex-direction:column;gap:12px">
+      <div class="glass card-pad" style="flex:1">
+        <div class="card-inner-label">Year-over-year</div>
+        <div class="card-inner-title">Fastest Growing Sectors</div>
+        <div class="d3-wrap" id="growth-chart" style="height:200px"></div>
+      </div>
+      <div class="glass card-pad" style="flex:0">
+        <div class="insight"><strong>Key finding:</strong> Healthcare jumped +22pp in 2024 alone — faster than any sector in a single year — driven by diagnostic AI and administrative automation.</div>
+      </div>
+    </div>
   </div>
+</section>
 
-</div>
+<!-- ══════════════ USE CASES ══════════════ -->
+<section id="usecases">
+  <div class="section-label">03 · What AI Actually Does</div>
+  <h2 class="section-title">Process Automation<br>Still Runs the Show</h2>
+  <p class="section-desc">Despite the GenAI hype cycle, enterprises deploy AI most where returns are predictable. Automation dominates because production reliability beats novelty when stakes are high.</p>
+  <div class="row">
+    <div class="glass c5 card-pad" style="display:flex;flex-direction:column;align-items:center">
+      <div class="card-inner-label" style="width:100%">share of enterprise AI deployments</div>
+      <div class="card-inner-title" style="width:100%">Use Case Distribution</div>
+      <div id="radial-wrap" style="width:240px;height:240px">
+        <div class="radial-center">
+          <div class="radial-center-num" id="radial-center-num">—</div>
+          <div class="radial-center-label" id="radial-center-label">hover</div>
+        </div>
+      </div>
+    </div>
+    <div class="c7" style="display:flex;flex-direction:column;gap:10px;padding-left:8px">
+      <div class="glass card-pad" style="flex:1">
+        <div class="card-inner-label">breakdown per use case</div>
+        <div class="card-inner-title">Enterprise Priority Stack</div>
+        <div id="usecase-bars"></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-<div class="footer">
-  Built for DataConnect 2026 Data Visualization Competition · Danil Trifonov &nbsp;·&nbsp;
-  Sources: <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank">McKinsey</a>,
-  <a href="https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/ai-adoption-index" target="_blank">IBM</a>,
-  <a href="https://aiindex.stanford.edu/" target="_blank">Stanford HAI</a>,
-  <a href="https://www.idc.com/" target="_blank">IDC</a>
-</div>
+<!-- ══════════════ SPENDING ══════════════ -->
+<section id="spending">
+  <div class="section-label">04 · Capital Commitment</div>
+  <h2 class="section-title">$37B to $632B<br>in Six Years</h2>
+  <p class="section-desc">Enterprise AI investment grew 17× between 2019 and 2025. The 2023–2024 spike was the sharpest capital shift in tech since the cloud computing boom.</p>
+  <div class="row">
+    <div class="glass c8 card-pad">
+      <div class="card-inner-label">global enterprise AI spending · $B · 2019–2025</div>
+      <div class="card-inner-title">Investment Trajectory</div>
+      <div class="spend-bars" id="spend-bars">
+        <div class="spend-axis-line"></div>
+      </div>
+      <div style="display:flex;justify-content:space-around;margin-top:4px">
+        <span style="font-size:10px;color:var(--muted)">2019</span>
+        <span style="font-size:10px;color:var(--muted)">2020</span>
+        <span style="font-size:10px;color:var(--muted)">2021</span>
+        <span style="font-size:10px;color:var(--muted)">2022</span>
+        <span style="font-size:10px;color:var(--muted)">2023</span>
+        <span style="font-size:10px;color:var(--muted)">2024</span>
+        <span style="font-size:10px;color:var(--muted)">2025</span>
+      </div>
+    </div>
+    <div class="c4" style="display:flex;flex-direction:column;gap:12px">
+      <div class="glass card-pad" style="flex:1">
+        <div class="card-inner-label">CAGR 2019–2025</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:56px;font-weight:700;color:var(--green);text-shadow:0 0 30px rgba(0,255,157,.3);line-height:1;margin-bottom:4px">58%</div>
+        <div style="font-size:12px;color:var(--muted)">Compound annual growth rate<br>of enterprise AI investment</div>
+        <div class="insight" style="margin-top:14px"><strong>2024 alone:</strong> spending jumped $347B YoY — more than the entire market was worth in 2022.</div>
+      </div>
+      <div class="glass card-pad">
+        <div class="card-inner-label">Projected 2026</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:700;color:var(--purple);line-height:1">$820B</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">IDC forecast · GenAI drives 60%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ BARRIERS ══════════════ -->
+<section id="barriers">
+  <div class="section-label">05 · What Holds Companies Back</div>
+  <h2 class="section-title">The Bottleneck Moved<br>from Data to People</h2>
+  <p class="section-desc">In 2022, data quality was the #1 barrier. By 2024, the talent gap took over — a structural shift signalling that infrastructure is ready, but humans aren't yet.</p>
+  <div class="row">
+    <div class="glass c12 card-pad">
+      <div class="card-inner-label">% of firms citing as top obstacle · 2024 · n=4,200</div>
+      <div class="card-inner-title">Adoption Barriers Ranked</div>
+      <div id="barrier-rows"></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-title">The AI Revolution · Global Business Transformation 2019–2025</div>
+  <div class="footer-sub">DataConnect 2026 Data Visualization Competition · Danil Trifonov</div>
+  Data sources:
+  <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank">McKinsey Global AI Survey 2019–2024</a> ·
+  <a href="https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/ai-adoption-index" target="_blank">IBM AI Adoption Index 2023–2024</a> ·
+  <a href="https://aiindex.stanford.edu/" target="_blank">Stanford HAI Index 2025</a> ·
+  <a href="https://www.idc.com/" target="_blank">IDC AI Spending Guide 2024–2026</a> ·
+  <a href="https://www.imf.org/" target="_blank">IMF World Economic Outlook 2025</a><br><br>
+  © 2026 · Built with D3.js · All data from public research sources
+</footer>
+
+<div class="tooltip-d3" id="tooltip"></div>
 
 <script>
-const COLORS = {
-  blue:   '#63b3ed',
-  green:  '#7ee8a2',
-  orange: '#f6ad55',
-  red:    '#fc8181',
-  purple: '#b794f4',
-  teal:   '#4fd1c5',
-  pink:   '#f687b3',
-  bg:     '#0d1526',
-  muted:  '#718096',
-};
+/* ═══════════════════════════════════════════
+   HERO CANVAS — PARTICLE NETWORK
+═══════════════════════════════════════════ */
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [], mouse = {x: -999, y: -999};
 
-const defaults = {
-  responsive: true,
-  maintainAspectRatio: false,
-  plugins: { legend: { display: false }, tooltip: {
-    backgroundColor: '#1a2744',
-    borderColor: 'rgba(99,179,237,0.3)',
-    borderWidth: 1,
-    titleColor: '#e2e8f0',
-    bodyColor: '#a0aec0',
-    padding: 10,
-    cornerRadius: 6,
-  }},
-  scales: {
-    x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#718096', font: { size: 11 } }, border: { color: 'rgba(255,255,255,0.06)' } },
-    y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#718096', font: { size: 11 } }, border: { color: 'rgba(255,255,255,0.06)' } },
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.vx = (Math.random() - .5) * .3;
+    this.vy = (Math.random() - .5) * .3;
+    this.r = Math.random() * 1.5 + .5;
+    this.alpha = Math.random() * .4 + .1;
   }
-};
-
-// — TREND LINE CHART —
-const years = ['2019','2020','2021','2022','2023','2024','2025'];
-const adoptionAll  = [58, 50, 56, 56, 72, 75, 78];
-const adoptionGen  = [0,   0,  0,  5, 33, 55, 65];
-const adoptionProd = [14, 12, 16, 20, 32, 46, 55];
-
-const trendCtx = document.getElementById('trendChart').getContext('2d');
-const gradBlue = trendCtx.createLinearGradient(0,0,0,220);
-gradBlue.addColorStop(0,'rgba(99,179,237,0.25)'); gradBlue.addColorStop(1,'rgba(99,179,237,0)');
-const gradGreen = trendCtx.createLinearGradient(0,0,0,220);
-gradGreen.addColorStop(0,'rgba(126,232,162,0.2)'); gradGreen.addColorStop(1,'rgba(126,232,162,0)');
-
-new Chart(trendCtx, {
-  type: 'line',
-  data: {
-    labels: years,
-    datasets: [
-      { label: 'Overall AI Adoption', data: adoptionAll, borderColor: COLORS.blue, backgroundColor: gradBlue, borderWidth: 2.5, pointBackgroundColor: COLORS.blue, pointRadius: 4, pointHoverRadius: 7, tension: 0.35, fill: true },
-      { label: 'GenAI Adoption', data: adoptionGen, borderColor: COLORS.green, backgroundColor: gradGreen, borderWidth: 2, pointBackgroundColor: COLORS.green, pointRadius: 4, pointHoverRadius: 7, tension: 0.35, fill: true, borderDash:[4,3] },
-      { label: 'AI in Production', data: adoptionProd, borderColor: COLORS.orange, borderWidth: 2, pointBackgroundColor: COLORS.orange, pointRadius: 4, pointHoverRadius: 7, tension: 0.35, fill: false, borderDash:[6,3] },
-    ]
-  },
-  options: {
-    ...defaults,
-    plugins: { ...defaults.plugins,
-      legend: { display: true, position: 'top', labels: { color: '#a0aec0', font: { size: 11 }, boxWidth: 14, padding: 16, usePointStyle: true } },
-      tooltip: { ...defaults.plugins.tooltip,
-        callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` }
-      },
-      annotation: { annotations: { line1: {
-        type: 'line', xMin: '2023', xMax: '2023',
-        borderColor: 'rgba(126,232,162,0.4)', borderWidth: 1.5, borderDash: [4,4],
-        label: { content: 'GenAI surge', display: true, position: 'start', color: '#7ee8a2', font: { size: 10 }, backgroundColor: 'rgba(13,21,38,0.8)', padding: { x: 6, y: 3 } }
-      }}}
-    },
-    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 100, ticks: { ...defaults.scales.y.ticks, callback: v => v + '%' } } }
+  update() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0 || this.x > W) this.vx *= -1;
+    if (this.y < 0 || this.y > H) this.vy *= -1;
   }
-});
+  draw() {
+    const dx = mouse.x - this.x, dy = mouse.y - this.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const a = dist < 150 ? this.alpha + (1-dist/150)*0.5 : this.alpha;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(0,207,255,${a})`;
+    ctx.fill();
+  }
+}
 
-// — SECTOR HORIZONTAL BAR —
-const sectorCtx = document.getElementById('sectorChart').getContext('2d');
-const sectors = ['Financial Services','Technology','Retail & Commerce','Healthcare','Manufacturing','Energy & Utilities','Education','Government'];
-const sectorVals = [89, 87, 74, 68, 65, 58, 45, 38];
-const sectorColors = [COLORS.blue,COLORS.green,COLORS.orange,COLORS.purple,COLORS.teal,COLORS.pink,COLORS.red,'#d69e2e'];
+for (let i = 0; i < 120; i++) particles.push(new Particle());
 
-new Chart(sectorCtx, {
-  type: 'bar',
-  data: {
-    labels: sectors,
-    datasets: [{ data: sectorVals, backgroundColor: sectorColors.map(c => c+'33'), borderColor: sectorColors, borderWidth: 1.5, borderRadius: 4, borderSkipped: false }]
-  },
-  options: {
-    ...defaults,
-    indexAxis: 'y',
-    plugins: { ...defaults.plugins, tooltip: { ...defaults.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.parsed.x}% adoption` } } },
-    scales: {
-      x: { ...defaults.scales.x, min: 0, max: 100, ticks: { ...defaults.scales.x.ticks, callback: v => v+'%' } },
-      y: { grid: { display: false }, ticks: { color: '#a0aec0', font: { size: 11 } }, border: { display: false } }
+function drawLines() {
+  for (let i = 0; i < particles.length; i++) {
+    for (let j = i+1; j < particles.length; j++) {
+      const dx = particles[i].x - particles[j].x;
+      const dy = particles[i].y - particles[j].y;
+      const d = Math.sqrt(dx*dx+dy*dy);
+      if (d < 100) {
+        ctx.beginPath();
+        ctx.moveTo(particles[i].x, particles[i].y);
+        ctx.lineTo(particles[j].x, particles[j].y);
+        ctx.strokeStyle = `rgba(0,207,255,${(1-d/100)*0.08})`;
+        ctx.lineWidth = .5;
+        ctx.stroke();
+      }
     }
   }
-});
+}
 
-// — USE CASE DONUT —
-const useCases = ['Process Automation','Customer Service AI','Marketing & Analytics','Product Development','Risk & Compliance','HR & Talent'];
-const useCaseVals = [38, 27, 19, 8, 5, 3];
-const donutColors = [COLORS.blue, COLORS.green, COLORS.orange, COLORS.purple, COLORS.teal, COLORS.red];
+function heroLoop() {
+  ctx.clearRect(0, 0, W, H);
+  // Radial gradient bg
+  const grad = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, Math.max(W,H)*.7);
+  grad.addColorStop(0, 'rgba(0,30,60,0.3)');
+  grad.addColorStop(1, 'rgba(6,8,15,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+  drawLines();
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(heroLoop);
+}
+heroLoop();
 
-const donutCtx = document.getElementById('donutChart').getContext('2d');
-new Chart(donutCtx, {
-  type: 'doughnut',
-  data: {
-    labels: useCases,
-    datasets: [{ data: useCaseVals, backgroundColor: donutColors.map(c => c+'cc'), borderColor: '#0d1526', borderWidth: 2, hoverOffset: 6 }]
-  },
-  options: {
-    responsive: false,
-    cutout: '62%',
-    plugins: { legend: { display: false }, tooltip: { ...defaults.plugins.tooltip, callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed}%` } } }
+/* ═══════════════════════════════════════════
+   COUNTER ANIMATIONS
+═══════════════════════════════════════════ */
+function animCount(el, target, decimal, prefix, suffix, duration) {
+  const start = performance.now();
+  function step(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1-t, 4);
+    const val = target * ease;
+    const disp = decimal ? val.toFixed(decimal) : Math.round(val);
+    el.textContent = (prefix||'') + disp + (suffix||'');
+    if (t < 1) requestAnimationFrame(step);
   }
+  requestAnimationFrame(step);
+}
+
+setTimeout(() => {
+  animCount(document.getElementById('c1'), 78, 0, '', '%', 2200);
+  animCount(document.getElementById('c2'), 632, 0, '$', 'B', 2200);
+  animCount(document.getElementById('c3'), 3.5, 1, '', '×', 2200);
+}, 400);
+
+/* ═══════════════════════════════════════════
+   SCROLL PROGRESS BAR + NAV DOTS
+═══════════════════════════════════════════ */
+const sections = document.querySelectorAll('section[id]');
+const progressBar = document.getElementById('progress');
+const dots = document.querySelectorAll('.nav-dot');
+
+function onScroll() {
+  const pct = (window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100;
+  progressBar.style.width = pct + '%';
+  sections.forEach((sec, i) => {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top <= 150 && rect.bottom > 150) {
+      dots.forEach(d => d.classList.remove('active'));
+      if (dots[i]) dots[i].classList.add('active');
+    }
+  });
+}
+window.addEventListener('scroll', onScroll, { passive: true });
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    const id = dot.dataset.section;
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  });
 });
 
-// Build donut legend
-const legendEl = document.getElementById('donutLegend');
-useCases.forEach((uc, i) => {
-  legendEl.innerHTML += `<div class="legend-item"><div class="legend-dot" style="background:${donutColors[i]}"></div><div class="legend-label">${uc}</div><div class="legend-val">${useCaseVals[i]}%</div></div>`;
-});
+/* ═══════════════════════════════════════════
+   INTERSECTION OBSERVER
+═══════════════════════════════════════════ */
+const ioOpts = { threshold: 0.15 };
+const io = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) {
+      en.target.classList.add('in-view');
+      en.target.querySelectorAll('.tl-item').forEach((el,i) => setTimeout(()=>el.classList.add('in'),i*120));
+      en.target.querySelectorAll('.sector-bar-row').forEach((el,i) => setTimeout(()=>{
+        el.classList.add('in');
+        const fill = el.querySelector('.sb-fill');
+        if (fill) fill.style.width = fill.dataset.pct+'%';
+      }, i*80));
+      en.target.querySelectorAll('.barrier-row').forEach((el,i) => setTimeout(()=>{
+        el.classList.add('in');
+        el.querySelectorAll('.barrier-dot').forEach((dot,j) => {
+          setTimeout(()=>dot.classList.add('filled'), j*30);
+        });
+      }, i*100));
+      // draw trend lines
+      en.target.querySelectorAll('.line-path').forEach(p => setTimeout(()=>p.classList.add('drawn'),300));
+      en.target.querySelectorAll('.area-path').forEach(p => setTimeout(()=>p.classList.add('shown'),500));
+      // spending bars
+      if (en.target.id === 'spending') drawSpendBars();
+      if (en.target.id === 'sectors') drawGrowthChart();
+      if (en.target.id === 'usecases') drawRadial();
+      if (en.target.id === 'trend') drawTrendChart();
+    }
+  });
+}, ioOpts);
+sections.forEach(s => io.observe(s));
 
-// — SPENDING BAR —
-const spendCtx = document.getElementById('spendChart').getContext('2d');
-const spending = [37.5, 40.2, 52.1, 81.4, 142.3, 489.9, 632.0];
-const spendGrad = spendCtx.createLinearGradient(0, 0, 0, 220);
-spendGrad.addColorStop(0, 'rgba(99,179,237,0.7)'); spendGrad.addColorStop(1, 'rgba(99,179,237,0.15)');
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const years = [2019,2020,2021,2022,2023,2024,2025];
+const adoption = [58,50,56,56,72,75,78];
+const genAI    = [0, 0,  0,  5, 33,55, 65];
+const inProd   = [14,12, 16, 20, 32,46, 55];
 
-new Chart(spendCtx, {
-  type: 'bar',
-  data: {
-    labels: years,
-    datasets: [{ label: 'AI Spending $B', data: spending, backgroundColor: spendGrad, borderColor: COLORS.blue, borderWidth: 1, borderRadius: 5, borderSkipped: false }]
-  },
-  options: {
-    ...defaults,
-    plugins: { ...defaults.plugins, tooltip: { ...defaults.plugins.tooltip, callbacks: { label: ctx => ` $${ctx.parsed.y}B global spend` } } },
-    scales: { ...defaults.scales, y: { ...defaults.scales.y, ticks: { ...defaults.scales.y.ticks, callback: v => '$'+v+'B' } } }
-  }
-});
-
-// — BARRIER BARS (animated) —
-const barriers = [
-  { label: 'AI Skills & Talent Gap', pct: 64, color: COLORS.red },
-  { label: 'Data Quality & Access', pct: 57, color: COLORS.orange },
-  { label: 'Unclear ROI / Business Case', pct: 48, color: COLORS.blue },
-  { label: 'Data Privacy & Security', pct: 44, color: COLORS.purple },
-  { label: 'Integration Complexity', pct: 38, color: COLORS.teal },
-  { label: 'Regulatory / Compliance', pct: 31, color: COLORS.green },
-  { label: 'Change Management', pct: 26, color: COLORS.pink },
+const sectors = [
+  {name:'Financial Services', val:89, color:'#00cfff'},
+  {name:'Technology', val:87, color:'#00ff9d'},
+  {name:'Retail & Commerce', val:74, color:'#ffb347'},
+  {name:'Healthcare', val:68, color:'#c77dff'},
+  {name:'Manufacturing', val:65, color:'#4fd1c5'},
+  {name:'Energy & Utilities', val:58, color:'#ffd93d'},
+  {name:'Education', val:45, color:'#f687b3'},
+  {name:'Government', val:38, color:'#fc8181'},
 ];
 
-const barrierList = document.getElementById('barrierList');
-barriers.forEach(b => {
-  barrierList.innerHTML += `
-    <li class="bar-item">
-      <div class="bar-header"><span class="bar-label">${b.label}</span><span class="bar-pct">${b.pct}%</span></div>
-      <div class="bar-track"><div class="bar-fill" style="width:0%;background:${b.color}" data-width="${b.pct}%"></div></div>
-    </li>`;
+const useCases = [
+  {name:'Process Automation', pct:38, color:'#00cfff'},
+  {name:'Customer Service AI', pct:27, color:'#00ff9d'},
+  {name:'Marketing & Analytics', pct:19, color:'#ffb347'},
+  {name:'Product Development', pct:8, color:'#c77dff'},
+  {name:'Risk & Compliance', pct:5, color:'#ffd93d'},
+  {name:'HR & Talent', pct:3, color:'#fc8181'},
+];
+
+const spendData = [37.5, 40.2, 52.1, 81.4, 142.3, 489.9, 632.0];
+
+const barriers = [
+  {name:'AI Skills & Talent Gap', pct:64, color:'#fc8181'},
+  {name:'Data Quality & Governance', pct:57, color:'#ffb347'},
+  {name:'Unclear ROI / Business Case', pct:48, color:'#00cfff'},
+  {name:'Data Privacy & Security', pct:44, color:'#c77dff'},
+  {name:'Integration Complexity', pct:38, color:'#4fd1c5'},
+  {name:'Regulatory / Compliance Risk', pct:31, color:'#00ff9d'},
+  {name:'Change Management', pct:26, color:'#ffd93d'},
+];
+
+/* ═══════════════════════════════════════════
+   TOOLTIP HELPER
+═══════════════════════════════════════════ */
+const tip = document.getElementById('tooltip');
+function showTip(e, html) {
+  tip.innerHTML = html;
+  tip.classList.add('show');
+  moveTip(e);
+}
+function moveTip(e) {
+  let x = e.clientX + 14, y = e.clientY - 10;
+  if (x + 200 > window.innerWidth) x = e.clientX - 214;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
+}
+function hideTip() { tip.classList.remove('show'); }
+document.addEventListener('mousemove', e => { if (tip.classList.contains('show')) moveTip(e); });
+
+/* ═══════════════════════════════════════════
+   D3 TREND CHART
+═══════════════════════════════════════════ */
+function drawTrendChart() {
+  const wrap = document.getElementById('trend-chart');
+  if (wrap.querySelector('svg')) return;
+  const W = wrap.clientWidth || 560, H = 280;
+  const m = {top:20,right:20,bottom:30,left:36};
+  const iW = W - m.left - m.right, iH = H - m.top - m.bottom;
+
+  const svg = d3.select(wrap).append('svg')
+    .attr('width','100%').attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+
+  const x = d3.scaleLinear().domain([2019,2025]).range([0,iW]);
+  const y = d3.scaleLinear().domain([0,100]).range([iH,0]);
+
+  // Grid
+  g.append('g').attr('class','grid').call(d3.axisLeft(y).ticks(5).tickSize(-iW).tickFormat(''));
+  g.append('g').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('d')));
+  g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(d=>d+'%'));
+
+  const datasets = [
+    {data:adoption, color:'#00cfff', label:'Overall Adoption'},
+    {data:genAI,    color:'#00ff9d', label:'GenAI Adoption', dash:'5,3'},
+    {data:inProd,   color:'#ffb347', label:'In Production',  dash:'8,4'},
+  ];
+
+  datasets.forEach(ds => {
+    const pts = years.map((yr,i) => ({x:x(yr), y:y(ds.data[i])}));
+    const lineGen = d3.line().x(d=>d.x).y(d=>d.y).curve(d3.curveCatmullRom.alpha(.5));
+
+    // Area
+    const areaGen = d3.area().x(d=>d.x).y0(iH).y1(d=>d.y).curve(d3.curveCatmullRom.alpha(.5));
+    const areaGrad = g.append('defs').append('linearGradient')
+      .attr('id','ag'+ds.color.replace('#',''))
+      .attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
+    areaGrad.append('stop').attr('offset','0%').attr('stop-color',ds.color).attr('stop-opacity',.18);
+    areaGrad.append('stop').attr('offset','100%').attr('stop-color',ds.color).attr('stop-opacity',0);
+    g.append('path').datum(pts).attr('class','area-path').attr('d',areaGen)
+      .style('fill',`url(#ag${ds.color.replace('#','')})`);
+
+    // Line
+    const totalLen = 800;
+    g.append('path').datum(pts).attr('class','line-path').attr('d',lineGen)
+      .attr('stroke',ds.color)
+      .attr('stroke-dasharray', ds.dash || 'none')
+      .style('stroke-dashoffset',totalLen).style('stroke-dasharray',totalLen+' '+totalLen);
+
+    // Dots
+    pts.forEach((pt,i) => {
+      g.append('circle').attr('cx',pt.x).attr('cy',pt.y).attr('r',3.5)
+        .attr('fill',ds.color).attr('stroke','#06080f').attr('stroke-width',2)
+        .style('cursor','pointer')
+        .on('mouseover',e => showTip(e, `<div style="color:${ds.color};font-weight:700">${ds.label}</div><div>${years[i]}: <strong>${ds.data[i]}%</strong></div>`))
+        .on('mouseout',hideTip);
+    });
+  });
+
+  // Legend
+  const legData = [{l:'Overall',c:'#00cfff'},{l:'GenAI',c:'#00ff9d',d:'5,3'},{l:'Production',c:'#ffb347',d:'8,4'}];
+  const leg = svg.append('g').attr('transform',`translate(${m.left+10},${m.top+6})`);
+  legData.forEach((ld,i) => {
+    const gx = leg.append('g').attr('transform',`translate(${i*110},0)`);
+    gx.append('line').attr('x1',0).attr('y1',6).attr('x2',16).attr('y2',6)
+      .attr('stroke',ld.c).attr('stroke-width',2).attr('stroke-dasharray',ld.d||'none');
+    gx.append('text').attr('x',20).attr('y',10).attr('fill','#a0b8d0').attr('font-size',11).text(ld.l);
+  });
+
+  // Annotation 2023
+  const x23 = x(2023) + m.left;
+  svg.append('line').attr('x1',x23).attr('y1',m.top).attr('x2',x23).attr('y2',H-m.bottom)
+    .attr('stroke','rgba(0,255,157,.25)').attr('stroke-width',1).attr('stroke-dasharray','4,4');
+  svg.append('text').attr('x',x23+4).attr('y',m.top+14)
+    .attr('fill','#00ff9d').attr('font-size',10).attr('font-family','Inter').text('GenAI surge →');
+}
+
+/* ═══════════════════════════════════════════
+   SECTOR BARS (HTML animated)
+═══════════════════════════════════════════ */
+const sectorWrap = document.getElementById('sector-bars');
+sectors.forEach(s => {
+  sectorWrap.innerHTML += `
+    <div class="sector-bar-row">
+      <span class="sb-label">${s.name}</span>
+      <div class="sb-track"><div class="sb-fill" style="background:${s.color}" data-pct="${s.val}"></div></div>
+      <span class="sb-pct" style="color:${s.color}">${s.val}%</span>
+    </div>`;
 });
 
-// Animate bars on load
-requestAnimationFrame(() => setTimeout(() => {
-  document.querySelectorAll('.bar-fill').forEach(el => { el.style.width = el.dataset.width; });
-}, 400));
+/* ═══════════════════════════════════════════
+   GROWTH CHART (D3 bar)
+═══════════════════════════════════════════ */
+function drawGrowthChart() {
+  const wrap = document.getElementById('growth-chart');
+  if (wrap.querySelector('svg')) return;
+  const growthData = [
+    {name:'Healthcare',  val:22, c:'#c77dff'},
+    {name:'Retail',      val:18, c:'#ffb347'},
+    {name:'Energy',      val:15, c:'#ffd93d'},
+    {name:'Mfg.',        val:12, c:'#4fd1c5'},
+    {name:'Finance',     val:8,  c:'#00cfff'},
+  ];
+  const W = wrap.clientWidth || 300, H = 200;
+  const m = {top:10,right:10,bottom:30,left:40};
+  const iW = W-m.left-m.right, iH = H-m.top-m.bottom;
+  const svg = d3.select(wrap).append('svg').attr('width','100%').attr('height',H).attr('viewBox',`0 0 ${W} ${H}`);
+  const g = svg.append('g').attr('transform',`translate(${m.left},${m.top})`);
+  const x = d3.scaleBand().domain(growthData.map(d=>d.name)).range([0,iW]).padding(.3);
+  const y = d3.scaleLinear().domain([0,25]).range([iH,0]);
+  g.append('g').attr('transform',`translate(0,${iH})`).call(d3.axisBottom(x).tickSize(0)).select('.domain').remove();
+  g.selectAll('.tick text').attr('fill','#718096').attr('font-size',10);
+  g.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(d=>'+'+d+'pp')).select('.domain').remove();
+  g.selectAll('.tick line').attr('stroke','rgba(255,255,255,.04)');
+  growthData.forEach(d => {
+    g.append('rect')
+      .attr('x',x(d.name)).attr('y',iH).attr('width',x.bandwidth()).attr('height',0)
+      .attr('rx',4).attr('fill',d.c+'cc').attr('stroke',d.c).attr('stroke-width',1)
+      .on('mouseover',e=>showTip(e,`<span style="color:${d.c}">${d.name}</span><br>+${d.val}pp YoY 2024`))
+      .on('mouseout',hideTip)
+      .transition().duration(900).delay(growthData.indexOf(d)*80)
+      .attr('y',y(d.val)).attr('height',iH-y(d.val));
+  });
+}
+
+/* ═══════════════════════════════════════════
+   RADIAL / DONUT (D3)
+═══════════════════════════════════════════ */
+function drawRadial() {
+  const wrap = document.getElementById('radial-wrap');
+  if (wrap.querySelector('svg')) return;
+  const size = 240;
+  const svg = d3.select(wrap).append('svg').attr('width',size).attr('height',size);
+  const g = svg.append('g').attr('transform',`translate(${size/2},${size/2})`);
+  const radius = size/2 - 10;
+  const arc = d3.arc().innerRadius(radius*.55).outerRadius(radius);
+  const pie = d3.pie().sort(null).value(d=>d.pct).padAngle(.025);
+  const arcs = pie(useCases);
+
+  const centerNum = document.getElementById('radial-center-num');
+  const centerLabel = document.getElementById('radial-center-label');
+
+  g.selectAll('path').data(arcs).enter().append('path')
+    .attr('d',arc).attr('fill',d=>d.data.color+'cc')
+    .attr('stroke',d=>d.data.color).attr('stroke-width',.8)
+    .style('cursor','pointer')
+    .on('mouseover',function(e,d){
+      d3.select(this).transition().duration(150).attr('d', d3.arc().innerRadius(radius*.52).outerRadius(radius+6).padAngle(.025)(d));
+      centerNum.textContent = d.data.pct+'%';
+      centerLabel.textContent = d.data.name.split(' ')[0];
+      centerNum.style.color = d.data.color;
+      showTip(e, `<span style="color:${d.data.color};font-weight:700">${d.data.name}</span><br>${d.data.pct}% of deployments`);
+    })
+    .on('mouseout',function(e,d){
+      d3.select(this).transition().duration(150).attr('d',arc(d));
+      centerNum.textContent='—'; centerLabel.textContent='hover';
+      centerNum.style.color='var(--accent)';
+      hideTip();
+    })
+    .transition().delay((d,i)=>i*80).duration(700)
+    .attrTween('d', function(d) {
+      const i = d3.interpolate({startAngle:d.startAngle,endAngle:d.startAngle}, d);
+      return t => arc(i(t));
+    });
+}
+
+/* USE CASE BARS */
+const ucWrap = document.getElementById('usecase-bars');
+useCases.forEach(uc => {
+  ucWrap.innerHTML += `
+    <div class="sector-bar-row">
+      <span class="sb-label">${uc.name}</span>
+      <div class="sb-track" style="height:10px"><div class="sb-fill" style="background:linear-gradient(90deg,${uc.color},${uc.color}88)" data-pct="${uc.pct}"></div></div>
+      <span class="sb-pct" style="color:${uc.color}">${uc.pct}%</span>
+    </div>`;
+});
+
+/* ═══════════════════════════════════════════
+   SPENDING BARS
+═══════════════════════════════════════════ */
+function drawSpendBars() {
+  const wrap = document.getElementById('spend-bars');
+  const maxVal = Math.max(...spendData);
+  const maxH = 180;
+  spendData.forEach((v,i) => {
+    const pct = (v / maxVal) * maxH;
+    const wrap2 = document.createElement('div');
+    wrap2.className = 'spend-bar-wrap';
+    wrap2.innerHTML = `<div class="spend-bar" style="height:0" data-h="${pct}px">
+      <span class="spend-val">$${v}B</span>
+    </div>`;
+    wrap.insertBefore(wrap2, wrap.querySelector('.spend-axis-line'));
+    setTimeout(() => {
+      wrap2.querySelector('.spend-bar').style.height = pct+'px';
+    }, i*120 + 300);
+    wrap2.querySelector('.spend-bar').addEventListener('mouseover', e => {
+      showTip(e, `<span style="color:#00cfff">${years[i]}</span><br>$${v}B global AI spend`);
+    });
+    wrap2.querySelector('.spend-bar').addEventListener('mouseout', hideTip);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   BARRIER DOT ROWS
+═══════════════════════════════════════════ */
+const barrierWrap = document.getElementById('barrier-rows');
+barriers.forEach((b,i) => {
+  const dots = Array(10).fill(0).map((_,j) => {
+    const filled = j < Math.round(b.pct/10);
+    return `<div class="barrier-dot" style="--dot-color:${b.color}${filled?'':';background:rgba(255,255,255,.04)'}" ${filled?'':''}></div>`;
+  }).join('');
+  barrierWrap.innerHTML += `
+    <div class="barrier-row">
+      <div class="barrier-rank">${i+1}</div>
+      <div class="barrier-content">
+        <div class="barrier-name">${b.name}</div>
+        <div class="barrier-dots-row">${dots}</div>
+      </div>
+      <div class="barrier-pct-num" style="--dot-color:${b.color}">${b.pct}%</div>
+    </div>`;
+});
+// Fix dots: mark filled ones
+document.querySelectorAll('.barrier-row').forEach((row, ri) => {
+  const dots = row.querySelectorAll('.barrier-dot');
+  const filled = Math.round(barriers[ri].pct/10);
+  dots.forEach((d,i) => { if(i < filled) d.style.background = barriers[ri].color; });
+});
 </script>
 </body>
 </html>
