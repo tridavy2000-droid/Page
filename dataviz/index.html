@@ -76,11 +76,11 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 .h1g{background:linear-gradient(130deg,#38bdf8 0%,#818cf8 50%,#34d399 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .hero-sub{font-size:clamp(13px,1.1vw,15px);color:var(--mid);font-weight:300;letter-spacing:.02em;margin-bottom:44px;line-height:1.5}
 
-.hero-stats{display:flex;flex-direction:column;gap:18px}
-.hstat{display:flex;align-items:baseline;gap:14px;opacity:0;transform:translateX(-16px);transition:all .7s}
-.hnum{font-family:var(--mono);font-size:clamp(34px,4.5vw,52px);font-weight:400;line-height:1}
+.hero-stats{display:flex;flex-direction:column;gap:18px;min-width:0}
+.hstat{display:flex;align-items:baseline;gap:14px;opacity:0;transform:translateX(-16px);transition:all .7s;min-width:0;overflow:hidden}
+.hnum{font-family:var(--mono);font-size:clamp(28px,3.8vw,48px);font-weight:400;line-height:1;white-space:nowrap;overflow:hidden;flex-shrink:0}
 .hnum.cb{color:var(--blue)}.hnum.cg{color:var(--green)}.hnum.cw{color:#fff}
-.hstat-label{font-size:13px;color:var(--text);font-weight:500}
+.hstat-label{font-size:13px;color:var(--text);font-weight:500;white-space:nowrap}
 .hstat-sub{font-size:11px;color:var(--dim);margin-top:2px}
 
 .hero-cta{margin-top:36px;font-size:11px;font-family:var(--mono);color:var(--dim);letter-spacing:.1em;display:inline-flex;align-items:center;gap:8px;opacity:0;transition:opacity .8s 1s}
@@ -234,6 +234,28 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 .ft-big{font-family:var(--mono);font-size:28px;font-weight:400;color:var(--blue);line-height:1}
 .ft-comp{font-size:10px;color:var(--dim);margin-top:6px;letter-spacing:.04em;line-height:1.6}
 
+/* ── SECTION BRIDGES ────── */
+.sect-bridge{max-width:1200px;margin:0 auto;padding:20px 64px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;position:relative}
+@media(max-width:640px){.sect-bridge{padding:16px 24px 20px}}
+.sb-rail{width:100%;display:flex;align-items:center;position:relative}
+.sb-rail-l{flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(56,189,248,.22));transform:scaleX(0);transform-origin:right;transition:transform .9s ease .1s}
+.sb-rail-r{flex:1;height:1px;background:linear-gradient(90deg,rgba(52,211,153,.22),transparent);transform:scaleX(0);transform-origin:left;transition:transform .9s ease .1s}
+.sb-node{width:10px;height:10px;border-radius:50%;border:2px solid rgba(56,189,248,.35);background:var(--bg);flex-shrink:0;opacity:0;transition:opacity .3s .55s;position:relative;z-index:2}
+.sb-node::before{content:'';position:absolute;inset:-5px;border-radius:50%;border:1px solid rgba(56,189,248,.12);animation:sbp 2.5s ease-in-out infinite}
+@keyframes sbp{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.6);opacity:0}}
+.sect-bridge.vis .sb-rail-l,.sect-bridge.vis .sb-rail-r{transform:scaleX(1)}
+.sect-bridge.vis .sb-node{opacity:1}
+.sb-badge{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;opacity:0;transform:translateY(7px);transition:opacity .55s .45s,transform .55s .45s}
+.sect-bridge.vis .sb-badge{opacity:1;transform:none}
+.sb-val{font-family:var(--mono);font-size:clamp(14px,1.7vw,20px);font-weight:400}
+.sb-sep{color:var(--dim);font-size:13px;opacity:.45}
+.sb-text{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--dim);text-transform:uppercase}
+@keyframes bridge-pt{0%{opacity:0;transform:translateY(0)}25%{opacity:.9}100%{opacity:0;transform:translateY(-28px)}}
+@keyframes bridge-pt-up{0%{opacity:0;transform:translateY(0)}25%{opacity:.9}100%{opacity:0;transform:translateY(28px)}}
+
+/* ── SECTION ARRIVAL FLASH ── */
+@keyframes arr-flash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
+
 /* ── SCROLL MAGIC ────── */
 @keyframes fp-rise{0%{opacity:0;transform:translateY(0) scale(.7)}10%{opacity:.85}65%{opacity:.5;transform:translateY(-100px) scale(1.08)}100%{opacity:0;transform:translateY(-155px) scale(.85)}}
 @keyframes fp-fall{0%{opacity:0;transform:translateY(0) scale(.7)}10%{opacity:.85}65%{opacity:.5;transform:translateY(100px) scale(1.08)}100%{opacity:0;transform:translateY(155px) scale(.85)}}
@@ -349,7 +371,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">01</div>
   <div class="stag">01 · The Surge</div>
   <h2 class="shed">One year changed<br><em>everything.</em></h2>
-  <p class="spull">Between 2022 and 2023, enterprise AI adoption jumped <strong>+17 percentage points</strong> — the steepest single-year surge on record. Generative AI compressed a decade of progress into twelve months.</p>
+  <p class="spull">Between 2022 and 2023, enterprise AI adoption jumped <strong>+17 percentage points</strong> — the largest single-year surge on record. Of early GenAI adopters, <strong>33% reported revenue impact above 20%</strong> within the first year alone.</p>
   <div class="clabel">% of enterprises deploying AI · 2019–2025</div>
   <div class="s1-grid">
     <div>
@@ -359,7 +381,21 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <svg id="surge-svg"></svg>
   </div>
 </section>
-<div class="vdiv"></div>
+
+<div class="sect-bridge" id="br1" data-color="#fbbf24">
+  <div class="sb-rail">
+    <div class="sb-rail-l"></div>
+    <div class="sb-node" style="border-color:rgba(251,191,36,.45)"></div>
+    <div class="sb-rail-r" style="background:linear-gradient(90deg,rgba(251,191,36,.2),transparent)"></div>
+  </div>
+  <div class="sb-badge">
+    <span class="sb-val" style="color:#fbbf24">89%</span>
+    <span class="sb-sep">vs</span>
+    <span class="sb-val" style="color:#f87171">38%</span>
+    <span class="sb-sep">·</span>
+    <span class="sb-text">Same wave — very different boats</span>
+  </div>
+</div>
 
 <!-- S2 -->
 <section class="section" id="s2">
@@ -367,7 +403,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">02</div>
   <div class="stag">02 · The Leaders</div>
   <h2 class="shed">Not all industries<br>move at <em>one pace.</em></h2>
-  <p class="spull">Financial services leads at <strong>89%</strong> — more than double government at 38%. Where trust, regulation, and talent converge, adoption accelerates.</p>
+  <p class="spull">Financial services leads at <strong>89%</strong> — driven by decades of clean transaction data and regulatory pressure on fraud detection. Government trails at <strong>38%</strong>, constrained by procurement cycles and security classification requirements.</p>
   <div class="clabel">AI adoption rate by industry · 2025</div>
   <div class="tier-legend">
     <span class="tl-pill" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#fbbf24">Leaders 80%+</span>
@@ -376,7 +412,19 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   </div>
   <div class="scards" id="scards"></div>
 </section>
-<div class="vdiv"></div>
+
+<div class="sect-bridge" id="br2" data-color="#34d399">
+  <div class="sb-rail">
+    <div class="sb-rail-l"></div>
+    <div class="sb-node" style="border-color:rgba(52,211,153,.45)"></div>
+    <div class="sb-rail-r" style="background:linear-gradient(90deg,rgba(52,211,153,.2),transparent)"></div>
+  </div>
+  <div class="sb-badge">
+    <span class="sb-val" style="color:#34d399">$632B</span>
+    <span class="sb-sep">·</span>
+    <span class="sb-text">Capital follows adoption — at 58% CAGR</span>
+  </div>
+</div>
 
 <!-- S3 -->
 <section class="section" id="s3">
@@ -384,7 +432,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">03</div>
   <div class="stag">03 · The Capital</div>
   <h2 class="shed">From $37B<br>to <span class="gr">$632B.</span></h2>
-  <p class="spull">Enterprise AI investment grew <strong>17-fold</strong> in six years. More was spent on AI in 2024 alone than the entire market was worth in 2022.</p>
+  <p class="spull">Enterprise AI investment grew <strong>17-fold</strong> in six years, surpassing the global cloud market ($582B, 2024) for the first time. In 2024 alone, enterprises spent more on AI than the entire AI market was worth in all of 2022.</p>
   <div class="cap-center">
     <div class="cap-glow"></div>
     <div class="cap-num">$<span id="capc">0</span>B</div>
@@ -393,7 +441,19 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="clabel" style="margin-top:24px">Annual investment · USD billions · 2019–2025</div>
   <svg id="spend-svg"></svg>
 </section>
-<div class="vdiv"></div>
+
+<div class="sect-bridge" id="br3" data-color="#f87171">
+  <div class="sb-rail">
+    <div class="sb-rail-l"></div>
+    <div class="sb-node" style="border-color:rgba(248,113,113,.45)"></div>
+    <div class="sb-rail-r" style="background:linear-gradient(90deg,rgba(248,113,113,.2),transparent)"></div>
+  </div>
+  <div class="sb-badge">
+    <span class="sb-val" style="color:#f87171">#1 Barrier</span>
+    <span class="sb-sep">·</span>
+    <span class="sb-text">Money can't buy enough AI engineers</span>
+  </div>
+</div>
 
 <!-- S4 -->
 <section class="section" id="s4">
@@ -401,11 +461,23 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">04</div>
   <div class="stag">04 · The Bottleneck</div>
   <h2 class="shed">Technology is ready.<br><em>People aren't.</em></h2>
-  <p class="spull">In 2022, data quality was the #1 AI barrier. By 2024, <strong>the talent gap had taken over</strong> — for the first time, people are the primary constraint.</p>
+  <p class="spull">In 2022, data quality was the #1 AI blocker. By 2024, the talent gap overtook it — <strong>64% of enterprises</strong> cite inability to hire or retain AI engineers as their primary constraint. For the first time in this study's history, <strong>people are the bottleneck, not technology</strong>.</p>
   <div class="clabel">Rank shift 2022 → 2024 · % citing as primary obstacle</div>
   <div class="barrier-panel"><svg id="barrier-svg"></svg></div>
 </section>
-<div class="vdiv"></div>
+
+<div class="sect-bridge" id="br4" data-color="#a78bfa">
+  <div class="sb-rail">
+    <div class="sb-rail-l"></div>
+    <div class="sb-node" style="border-color:rgba(167,139,250,.45)"></div>
+    <div class="sb-rail-r" style="background:linear-gradient(90deg,rgba(167,139,250,.2),transparent)"></div>
+  </div>
+  <div class="sb-badge">
+    <span class="sb-val" style="color:#a78bfa">38%</span>
+    <span class="sb-sep">·</span>
+    <span class="sb-text">Barriers shape — but don't stop — automation</span>
+  </div>
+</div>
 
 <!-- S5 -->
 <section class="section" id="s5">
@@ -413,11 +485,25 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">05</div>
   <div class="stag">05 · What AI Actually Does</div>
   <h2 class="shed">Reliability beats<br><em>novelty</em> at scale.</h2>
-  <p class="spull">Despite the GenAI hype, process automation leads. Enterprises deploy AI most where returns are <strong>predictable and measurable</strong>. Click any tile to learn more.</p>
+  <p class="spull">Despite GenAI hype dominating headlines, process automation leads at 38% because the ROI is <strong>unambiguous</strong>: 40% cost reduction in financial reconciliation, 35% in customer service. Enterprises bet on measurable wins first, novelty second.</p>
   <div class="clabel">Share of enterprise AI deployments · 2025</div>
   <div class="uc-grid" id="ucg"></div>
 </section>
-<div class="vdiv"></div>
+
+<div class="sect-bridge" id="br5" data-color="#38bdf8">
+  <div class="sb-rail">
+    <div class="sb-rail-l"></div>
+    <div class="sb-node"></div>
+    <div class="sb-rail-r"></div>
+  </div>
+  <div class="sb-badge">
+    <span class="sb-val" style="color:#38bdf8">3.5×</span>
+    <span class="sb-sep">avg ROI ·</span>
+    <span class="sb-val" style="color:#fbbf24">8×</span>
+    <span class="sb-sep">·</span>
+    <span class="sb-text">Top quartile is compounding advantage now</span>
+  </div>
+</div>
 
 <!-- S6 -->
 <section class="section" id="s6">
@@ -504,13 +590,16 @@ document.addEventListener('mousemove',e=>{if(tt.classList.contains('on'))mv(e)})
 
 /* SCRAMBLE COUNTER */
 function scramble(el,target,dec,pre,suf,ms,delay){
+  if(!el)return;
+  if(el._scT)clearTimeout(el._scT);
+  if(el._scI)clearInterval(el._scI);
   const chars='0123456789';
   const final=(dec?target.toFixed(dec):Math.round(target)).toString();
-  setTimeout(()=>{
+  el._scT=setTimeout(()=>{
     let step=0;const steps=ms/50;
-    const iv=setInterval(()=>{
+    el._scI=setInterval(()=>{
       step++;const prog=step/steps;
-      if(prog>=1){el.textContent=(pre||'')+final+(suf||'');clearInterval(iv);return}
+      if(prog>=1){el.textContent=(pre||'')+final+(suf||'');clearInterval(el._scI);return}
       let s=(pre||'');
       for(let i=0;i<final.length;i++){
         const rAt=(i+1)/final.length;
@@ -1212,6 +1301,50 @@ function _spawnFP(sId,rev){
     });
   }),{threshold:.3});
   hio.observe(hero);
+})();
+
+// ── 11. SECTION BRIDGES — animate rails + spawn particles ─────
+(function(){
+  const brio=new IntersectionObserver(e=>e.forEach(x=>{
+    if(x.isIntersecting){
+      x.target.classList.add('vis');
+      const col=x.target.dataset.color||'#38bdf8';
+      const br=x.target.getBoundingClientRect();
+      const up=_sd==='up';
+      const vals=x.target.querySelectorAll('.sb-val');
+      vals.forEach((v,i)=>{
+        const p=document.createElement('div');
+        const lx=br.left+br.width*.15+Math.random()*br.width*.7;
+        const ty=br.top+br.height/2;
+        p.style.cssText=`position:fixed;left:${lx}px;top:${ty}px;color:${col};z-index:90;pointer-events:none;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.05em;opacity:0;animation:${up?'bridge-pt-up':'bridge-pt'} 2.4s ease-out ${i*.18+Math.random()*.15}s forwards`;
+        p.textContent=v.textContent;
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),3200);
+      });
+    } else {
+      x.target.classList.remove('vis');
+    }
+  }),{threshold:.55});
+  document.querySelectorAll('.sect-bridge').forEach(b=>brio.observe(b));
+})();
+
+// ── 12. SECTION ARRIVAL FLASH — horizontal light streak ───────
+(function(){
+  const sids=['s1','s2','s3','s4','s5','s6'];
+  const colors={'s1':'rgba(56,189,248,.25)','s2':'rgba(251,191,36,.22)','s3':'rgba(52,211,153,.25)','s4':'rgba(248,113,113,.22)','s5':'rgba(167,139,250,.22)','s6':'rgba(56,189,248,.18)'};
+  const _fst={};sids.forEach(id=>_fst[id]=true);
+  const afio=new IntersectionObserver(e=>e.forEach(x=>{
+    const id=x.target.id;
+    if(!x.isIntersecting)return;
+    if(_fst[id]){_fst[id]=false;return}
+    const fl=document.createElement('div');
+    const br=x.target.getBoundingClientRect();
+    const col=colors[id]||'rgba(56,189,248,.22)';
+    fl.style.cssText=`position:fixed;left:0;top:${Math.max(0,br.top)}px;width:100%;height:2px;background:linear-gradient(90deg,transparent 0%,${col} 40%,${col} 60%,transparent 100%);z-index:200;pointer-events:none;animation:arr-flash .8s ease-out forwards`;
+    document.body.appendChild(fl);
+    setTimeout(()=>fl.remove(),1000);
+  }),{threshold:.12});
+  sids.forEach(id=>{const el=$(id);if(el)afio.observe(el)});
 })();
 </script>
 </body>
