@@ -256,6 +256,28 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 /* ── SECTION ARRIVAL FLASH ── */
 @keyframes arr-flash{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
 
+/* ── MOBILE FIXES ────── */
+@media(max-width:640px){
+  /* Hero: remove forced full-height, hide right-column visual widgets */
+  #hero{min-height:auto;gap:32px;padding-bottom:52px}
+  .hero-right{display:none}
+  /* Sections: don't force 90vh — let content decide height */
+  .section{min-height:0}
+  /* Ticker: reduce horizontal padding so fade masks don't eat content */
+  .ticker-wrap{padding:10px 16px}
+  .ticker-wrap::before{left:12px;width:36px}
+  .ticker-wrap::after{right:12px;width:36px}
+  /* S3: constrain the glow ellipse to viewport */
+  .cap-glow{width:min(500px,86vw);height:min(220px,36vw)}
+  /* S4: tighter panel padding to give SVG more usable width */
+  .barrier-panel{padding:16px 12px}
+  /* S1: reduce callout number + grid gap */
+  .callout-n{font-size:40px}
+  .s1-grid{gap:20px}
+  /* Bridge badges: allow text to wrap tighter */
+  .sb-text{font-size:8px;letter-spacing:.1em}
+}
+
 /* ── SCROLL MAGIC ────── */
 @keyframes fp-rise{0%{opacity:0;transform:translateY(0) scale(.7)}10%{opacity:.85}65%{opacity:.5;transform:translateY(-100px) scale(1.08)}100%{opacity:0;transform:translateY(-155px) scale(.85)}}
 @keyframes fp-fall{0%{opacity:0;transform:translateY(0) scale(.7)}10%{opacity:.85}65%{opacity:.5;transform:translateY(100px) scale(1.08)}100%{opacity:0;transform:translateY(155px) scale(.85)}}
@@ -936,7 +958,7 @@ function buildBumpChart(){
   const W=el.parentElement.clientWidth||820;
   const nR=7,rowH=52;
   const H=nR*rowH+72;
-  const mL=Math.min(185,W*.22),mR=Math.min(80,W*.12);
+  const mL=Math.min(185,Math.max(100,W*.26)),mR=Math.min(80,W*.12);
   const M={t:46,r:mR,b:12,l:mL};
   const iW=W-M.l-M.r;
   const svg=d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
