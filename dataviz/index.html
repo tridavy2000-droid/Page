@@ -4,294 +4,531 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The AI Revolution — 2019–2025</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,200;9..40,300;9..40,400;9..40,500;9..40,700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://d3js.org/d3.v7.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#050a12;
-  --surface:#08101f;
-  --line:rgba(56,189,248,.1);
+  --bg:#030810;
+  --s1:rgba(255,255,255,.03);
+  --line:rgba(56,189,248,.07);
   --blue:#38bdf8;
   --green:#34d399;
+  --gold:#fbbf24;
   --red:#f87171;
-  --text:#ddeeff;
-  --mid:#8badc8;
-  --dim:#2d4a63;
+  --purple:#a78bfa;
+  --text:#e2eeff;
+  --mid:#7a9cbf;
+  --dim:#2a405a;
   --mono:'DM Mono',monospace;
   --sans:'DM Sans',sans-serif;
+  --glow-b:rgba(56,189,248,.28);
+  --glow-g:rgba(52,211,153,.28);
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:400;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-::selection{background:rgba(56,189,248,.25)}
+::selection{background:rgba(56,189,248,.2)}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--blue);border-radius:2px}
 
-/* ── NAV ────────────────────────────── */
+/* ── BLOBS ───────────────────────────────────────────────── */
+.blob{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.blob1{
+  width:800px;height:800px;top:-300px;left:-200px;
+  background:radial-gradient(circle,rgba(56,189,248,.055) 0%,transparent 65%);
+  animation:blob1 28s ease-in-out infinite;
+}
+.blob2{
+  width:700px;height:700px;bottom:-250px;right:-150px;
+  background:radial-gradient(circle,rgba(52,211,153,.045) 0%,transparent 65%);
+  animation:blob2 34s ease-in-out infinite;
+}
+@keyframes blob1{0%,100%{transform:translate(0,0)}40%{transform:translate(50px,-40px)}70%{transform:translate(-30px,50px)}}
+@keyframes blob2{0%,100%{transform:translate(0,0)}35%{transform:translate(-60px,40px)}65%{transform:translate(40px,-50px)}}
+
+/* ── PROGRESS ────────────────────────────────────────────── */
+#progress-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--green));z-index:200;width:0;transition:width .08s linear}
+
+/* ── NAV ─────────────────────────────────────────────────── */
 #nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
-  padding:16px 48px;
-  background:rgba(5,10,18,.8);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--line);
+  padding:13px 52px;
+  background:rgba(3,8,16,.72);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(56,189,248,.06);
 }
-#nav-logo{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--blue);text-transform:uppercase}
-#nav-chapters{display:flex;gap:6px}
-.nc{width:20px;height:2px;background:var(--dim);cursor:pointer;transition:all .3s;border-radius:1px}
-.nc.active,.nc:hover{background:var(--blue)}
-#nav-label{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em}
-#progress-bar{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--green));z-index:200;width:0;transition:width .08s linear}
+#nav-logo{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--blue);text-transform:uppercase}
+#nav-items{display:flex;gap:4px}
+.ni{
+  height:26px;padding:0 12px;display:flex;align-items:center;border-radius:4px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);
+  text-transform:uppercase;cursor:pointer;transition:all .25s;
+}
+.ni:hover,.ni.active{color:var(--blue);background:rgba(56,189,248,.07)}
+#nav-right{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em}
+@media(max-width:768px){#nav-items{display:none}}
 
-/* ── SHARED ─────────────────────────── */
-.page{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 48px 64px;max-width:1140px;margin:0 auto;position:relative}
-.section-tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--blue);text-transform:uppercase;margin-bottom:16px;opacity:0;transform:translateY(12px);transition:all .7s}
-.section-hed{font-size:clamp(32px,4.5vw,56px);font-weight:700;line-height:1.08;letter-spacing:-.025em;color:#fff;margin-bottom:0;opacity:0;transform:translateY(16px);transition:all .7s .1s}
-.section-hed em{font-style:normal;color:var(--blue)}
-.section-hed .green{color:var(--green)}
-.section-pull{font-size:clamp(15px,1.4vw,18px);color:var(--mid);font-weight:300;line-height:1.6;max-width:640px;margin:16px 0 40px;opacity:0;transform:translateY(12px);transition:all .7s .2s}
-.section-pull strong{color:var(--text);font-weight:500}
-.chart-label{font-family:var(--mono);font-size:10px;color:var(--dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
-.fade-in .section-tag,.fade-in .section-hed,.fade-in .section-pull{opacity:1;transform:none}
+/* ── WRAPPER ─────────────────────────────────────────────── */
+.wrap{position:relative;z-index:1}
 
-/* ── HERO ───────────────────────────── */
-#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:80px;padding:100px 48px 64px;max-width:1140px;margin:0 auto}
-@media(max-width:860px){#hero{grid-template-columns:1fr;gap:48px}}
-.hero-left{}
-.hero-tag{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--blue);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.hero-tag::before{content:'';width:24px;height:1px;background:var(--blue)}
-h1{font-size:clamp(40px,6vw,72px);font-weight:700;line-height:1.0;letter-spacing:-.03em;color:#fff;margin-bottom:8px}
-h1 span{color:var(--blue)}
-.hero-year{font-size:clamp(14px,1.2vw,16px);color:var(--dim);font-weight:300;letter-spacing:.04em;margin-bottom:40px}
-.hero-stats{display:flex;flex-direction:column;gap:20px}
-.hstat{display:flex;align-items:baseline;gap:14px;opacity:0;transform:translateX(-16px);transition:all .8s}
-.hstat-num{font-family:var(--mono);font-size:clamp(36px,4.5vw,52px);font-weight:500;line-height:1;color:var(--blue)}
-.hstat-num.green{color:var(--green)}
-.hstat-num.white{color:#fff}
-.hstat-meta{display:flex;flex-direction:column}
+/* ── HERO ────────────────────────────────────────────────── */
+#hero{
+  min-height:100vh;
+  display:grid;grid-template-columns:1fr 1fr;align-items:center;
+  gap:60px;padding:110px 64px 64px;
+  max-width:1200px;margin:0 auto;
+}
+@media(max-width:900px){#hero{grid-template-columns:1fr;padding:100px 36px 48px}}
+
+.hero-badge{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--blue);
+  text-transform:uppercase;margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-badge::before{content:'';width:24px;height:1px;background:var(--blue)}
+
+h1{
+  font-size:clamp(48px,7.5vw,90px);font-weight:700;
+  line-height:.96;letter-spacing:-.04em;color:#fff;margin-bottom:10px;
+}
+.h1-grad{
+  background:linear-gradient(130deg,#38bdf8 0%,#818cf8 55%,#34d399 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:clamp(13px,1.1vw,15px);color:var(--mid);font-weight:300;
+  letter-spacing:.02em;margin-bottom:44px;line-height:1.5;
+}
+
+.hero-stats{display:flex;flex-direction:column;gap:18px}
+.hstat{
+  display:flex;align-items:baseline;gap:14px;
+  opacity:0;transform:translateX(-16px);transition:all .7s;
+}
+.hstat-num{
+  font-family:var(--mono);font-size:clamp(34px,4.5vw,52px);
+  font-weight:400;line-height:1;
+}
+.hstat-num.c-blue{color:var(--blue)}
+.hstat-num.c-green{color:var(--green)}
+.hstat-num.c-white{color:#fff}
 .hstat-label{font-size:13px;color:var(--text);font-weight:500}
 .hstat-sub{font-size:11px;color:var(--dim);margin-top:2px}
-.hero-cta{margin-top:48px;font-size:12px;font-family:var(--mono);color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity 1.2s .8s}
-.hero-cta::after{content:'';width:0;height:1px;background:var(--blue);transition:width .4s}
-.hero-cta:hover::after{width:40px}
-.arrow-down{display:inline-block;animation:floatDown 1.8s ease-in-out infinite}
-@keyframes floatDown{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
 
-/* DOT GRID */
-.hero-right{display:flex;flex-direction:column;align-items:center;gap:16px}
-.dot-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:5px;width:260px}
-.dot{width:22px;height:22px;border-radius:50%;background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.1);transition:background .4s,border-color .4s,box-shadow .4s;cursor:default}
-.dot.lit{background:var(--blue);border-color:var(--blue);box-shadow:0 0 10px rgba(56,189,248,.45)}
-.dot.lit.green{background:var(--green);border-color:var(--green);box-shadow:0 0 10px rgba(52,211,153,.4)}
-.dot-caption{font-family:var(--mono);font-size:10px;color:var(--dim);text-align:center;letter-spacing:.08em;line-height:1.6}
-.dot-caption strong{color:var(--blue);font-weight:500}
-.dot-year-label{font-family:var(--mono);font-size:11px;color:var(--mid);letter-spacing:.06em}
+.hero-cta{
+  margin-top:36px;font-size:11px;font-family:var(--mono);color:var(--dim);
+  letter-spacing:.1em;display:inline-flex;align-items:center;gap:8px;
+  opacity:0;transition:opacity .8s 1s;
+}
+.arrow-float{animation:floatY 2s ease-in-out infinite}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
-/* ── SECTION 1 — THE SURGE ─────────── */
-#s1 .chart-area{margin-top:8px}
-#surge-svg{width:100%;overflow:visible}
-.anno-label{font-family:var(--sans);font-size:12px;font-weight:500;fill:var(--green);pointer-events:none}
-.anno-val{font-family:var(--mono);font-size:28px;font-weight:500;fill:var(--green)}
+/* ── DOT GRID ────────────────────────────────────────────── */
+.hero-right{display:flex;flex-direction:column;align-items:center;gap:20px}
+.dot-frame{
+  background:rgba(56,189,248,.025);
+  border:1px solid rgba(56,189,248,.09);
+  border-radius:14px;padding:24px 28px 32px;
+  position:relative;
+}
+.dot-frame-label{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.12em;white-space:nowrap;
+}
+.dot-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;width:310px}
+@media(max-width:480px){.dot-grid{width:260px}.dot{width:20px!important;height:20px!important}}
+.dot{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.08);
+  transition:background .35s,border-color .35s,box-shadow .35s;
+}
+.dot.lit{background:var(--blue);border-color:var(--blue);box-shadow:0 0 10px var(--glow-b)}
+.dot.lit.green{background:var(--green);border-color:var(--green);box-shadow:0 0 10px var(--glow-g)}
 
-/* ── SECTION 2 — LEADERS ───────────── */
-#s2{max-width:1140px}
-.sector-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:8px}
-.sector-cell{background:var(--bg);padding:20px 24px;display:flex;flex-direction:column;gap:6px;transition:background .25s;cursor:default}
-.sector-cell:hover{background:var(--surface)}
-.sc-name{font-size:12px;color:var(--mid);font-weight:400}
-.sc-pct{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--text)}
-.sc-bar{height:2px;background:var(--dim);border-radius:1px;margin-top:4px;position:relative}
-.sc-fill{height:100%;width:0;border-radius:1px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-.sc-delta{font-size:10px;font-family:var(--mono)}
-.sector-avg-line{position:relative;border-top:1px dashed rgba(56,189,248,.2);margin:16px 0 4px}
-.sector-avg-label{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;position:absolute;right:0;top:-8px}
+.dot-readout{display:flex;align-items:center;gap:16px}
+.dot-pct{
+  font-family:var(--mono);font-size:clamp(30px,3.5vw,42px);font-weight:400;
+  color:var(--blue);line-height:1;
+}
+.dot-pct sup{font-size:.5em;vertical-align:super;font-weight:300}
+.dot-meta{}
+.dot-year{font-family:var(--mono);font-size:12px;color:var(--mid);letter-spacing:.06em}
+.dot-caption{font-size:11px;color:var(--dim);margin-top:3px}
 
-/* ── SECTION 3 — CAPITAL ───────────── */
-#s3 .capital-hero{display:flex;align-items:flex-end;gap:32px;margin:24px 0;flex-wrap:wrap}
-.big-num{font-family:var(--mono);font-size:clamp(64px,9vw,112px);font-weight:500;line-height:1;color:var(--green);letter-spacing:-.02em}
-.big-num-meta{padding-bottom:12px}
-.bn-label{font-size:14px;color:var(--mid);font-weight:300}
-.bn-growth{font-family:var(--mono);font-size:22px;color:var(--text);font-weight:500;margin-top:6px}
-.bn-growth span{color:var(--green)}
-#spend-chart{width:100%;margin-top:8px}
-.spend-tooltip{position:fixed;pointer-events:none;font-family:var(--mono);font-size:11px;color:var(--text);background:rgba(8,16,31,.95);border:1px solid var(--line);padding:8px 12px;border-radius:4px;z-index:500;opacity:0;transition:opacity .15s;line-height:1.7}
-.spend-tooltip.show{opacity:1}
+/* ── KPI BAR ─────────────────────────────────────────────── */
+.kpi-bar{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  max-width:1200px;margin:0 auto;padding:0 64px 72px;
+}
+@media(max-width:900px){.kpi-bar{padding:0 36px 56px}}
+@media(max-width:640px){.kpi-bar{grid-template-columns:1fr}}
 
-/* ── SECTION 4 — BOTTLENECK ─────────── */
-#barrier-chart{width:100%;margin-top:8px}
+.kpi-card{
+  padding:22px 26px;border-radius:10px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  opacity:0;transform:translateY(14px);
+  transition:opacity .6s,transform .6s,border-color .25s,background .25s;
+}
+.kpi-card:hover{
+  border-color:rgba(56,189,248,.2);
+  background:rgba(56,189,248,.04);
+  transform:translateY(-3px)!important;
+}
+.kc-val{
+  font-family:var(--mono);font-size:clamp(28px,3.5vw,40px);
+  font-weight:400;line-height:1;
+}
+.kc-val.c-blue{color:var(--blue)}
+.kc-val.c-green{color:var(--green)}
+.kc-val.c-white{color:#fff}
+.kc-label{font-size:12px;color:var(--text);font-weight:500;margin-top:6px}
+.kc-sub{font-size:10px;color:var(--dim);margin-top:3px}
 
-/* ── SECTION 5 — WHAT AI DOES ─────── */
-#s5{max-width:1140px}
-.use-row{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);opacity:0;transform:translateX(-10px);transition:all .5s}
-.use-row.in{opacity:1;transform:none}
-.use-rank{font-family:var(--mono);font-size:11px;color:var(--dim);width:18px;flex-shrink:0}
-.use-name{font-size:14px;color:var(--text);font-weight:400;flex:1}
-.use-track{flex:2;height:4px;background:rgba(56,189,248,.06);border-radius:2px}
-.use-fill{height:100%;border-radius:2px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
-.use-pct{font-family:var(--mono);font-size:13px;font-weight:500;width:44px;text-align:right;flex-shrink:0}
+/* ── DIVIDER ─────────────────────────────────────────────── */
+.vdiv{
+  width:1px;height:56px;margin:0 auto 0;
+  background:linear-gradient(180deg,transparent,rgba(56,189,248,.3),transparent);
+}
 
-/* ── FOOTER ─────────────────────────── */
-footer{max-width:1140px;margin:0 auto;padding:48px 48px 64px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:end}
-@media(max-width:640px){footer{grid-template-columns:1fr}}
-.ft-title{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
-.ft-content{font-size:12px;color:var(--dim);line-height:1.8}
-.ft-content a{color:rgba(56,189,248,.5);text-decoration:none}
-.ft-content a:hover{color:var(--blue)}
+/* ── SHARED SECTION ──────────────────────────────────────── */
+.section{
+  min-height:90vh;display:flex;flex-direction:column;justify-content:center;
+  padding:90px 64px 72px;max-width:1200px;margin:0 auto;
+}
+@media(max-width:900px){.section{padding:80px 36px 60px}}
+
+.stag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--blue);
+  text-transform:uppercase;margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+  opacity:0;transform:translateY(10px);transition:opacity .6s,transform .6s;
+}
+.stag::before{content:'';width:20px;height:1px;background:currentColor}
+.shed{
+  font-size:clamp(34px,5vw,62px);font-weight:700;line-height:1.04;
+  letter-spacing:-.035em;color:#fff;
+  opacity:0;transform:translateY(14px);transition:opacity .6s .08s,transform .6s .08s;
+}
+.shed em{font-style:normal;color:var(--blue)}
+.shed .gr{color:var(--green)}
+.spull{
+  font-size:clamp(14px,1.25vw,17px);color:var(--mid);font-weight:300;
+  line-height:1.65;max-width:620px;margin:14px 0 32px;
+  opacity:0;transform:translateY(10px);transition:opacity .6s .16s,transform .6s .16s;
+}
+.spull strong{color:var(--text);font-weight:500}
+.clabel{
+  font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.13em;
+  text-transform:uppercase;margin-bottom:14px;
+  opacity:0;transition:opacity .6s .22s;
+}
+.fade-in .stag,.fade-in .shed,.fade-in .spull,.fade-in .clabel{opacity:1;transform:none}
+
+/* ── S1 LAYOUT ───────────────────────────────────────────── */
+.s1-grid{display:grid;grid-template-columns:280px 1fr;gap:40px;align-items:start}
+@media(max-width:900px){.s1-grid{grid-template-columns:1fr}}
+.callout{
+  padding:20px;border-radius:8px;
+  background:rgba(52,211,153,.05);border:1px solid rgba(52,211,153,.14);
+  margin-bottom:18px;
+}
+.callout-n{
+  font-family:var(--mono);font-size:52px;font-weight:400;
+  color:var(--green);line-height:1;letter-spacing:-.02em;
+}
+.callout-l{font-size:11px;color:var(--mid);margin-top:6px;line-height:1.5}
+.surge-legend{display:flex;flex-direction:column;gap:10px}
+.sl-row{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;color:var(--mid)}
+.sl-line{width:22px;height:2px;border-radius:1px;flex-shrink:0}
+
+/* ── S2 SECTORS ──────────────────────────────────────────── */
+.sector-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+}
+@media(max-width:900px){.sector-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.sector-grid{grid-template-columns:1fr}}
+.sc-card{
+  padding:18px 20px;border-radius:8px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  border-left-width:2px;cursor:default;
+  opacity:0;transform:translateY(12px);
+  transition:opacity .5s,transform .5s,background .22s,box-shadow .22s;
+}
+.sc-card:hover{
+  background:rgba(56,189,248,.04);
+  box-shadow:0 8px 28px rgba(0,0,0,.35);
+  transform:translateY(-3px)!important;
+}
+.sc-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sc-pct{font-family:var(--mono);font-size:38px;font-weight:400;line-height:1}
+.sc-delta{font-family:var(--mono);font-size:10px}
+.sc-name{font-size:11px;color:var(--mid);margin-top:7px;line-height:1.3}
+.sc-track{height:2px;background:rgba(255,255,255,.05);border-radius:1px;margin-top:12px}
+.sc-fill{height:100%;border-radius:1px;width:0;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+
+/* ── S3 CAPITAL ──────────────────────────────────────────── */
+.cap-center{text-align:center;margin:28px 0 8px;position:relative}
+.cap-glow-ring{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:400px;height:200px;
+  background:radial-gradient(ellipse,rgba(52,211,153,.11) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none;
+  animation:glowPulse 3.5s ease-in-out infinite;
+}
+@keyframes glowPulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}}
+.cap-num{
+  font-family:var(--mono);font-size:clamp(72px,11vw,130px);font-weight:400;
+  line-height:1;color:var(--green);letter-spacing:-.025em;position:relative;z-index:1;
+  text-shadow:0 0 60px rgba(52,211,153,.25);
+}
+.cap-meta{
+  font-family:var(--mono);font-size:12px;color:var(--mid);
+  margin-top:8px;letter-spacing:.04em;
+}
+.cap-meta span{color:var(--green)}
+
+/* ── S4 BARRIERS ─────────────────────────────────────────── */
+.barrier-panel{
+  background:rgba(255,255,255,.02);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:10px;padding:24px 28px;
+}
+
+/* ── S5 USE CASES ────────────────────────────────────────── */
+.uc-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+}
+@media(max-width:900px){.uc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.uc-grid{grid-template-columns:1fr}}
+.uc-tile{
+  padding:18px 20px;border-radius:8px;
+  background:rgba(255,255,255,.025);
+  border:1px solid rgba(255,255,255,.06);
+  display:flex;align-items:center;gap:16px;
+  cursor:default;opacity:0;transform:translateY(10px);
+  transition:opacity .5s,transform .5s,background .22s,border-color .22s;
+}
+.uc-tile:hover{
+  background:rgba(56,189,248,.04);
+  border-color:rgba(56,189,248,.15);
+  transform:translateY(-2px)!important;
+}
+.uc-ring{width:52px;height:52px;flex-shrink:0}
+.uc-rank{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em}
+.uc-name{font-size:13px;font-weight:500;color:var(--text);margin:3px 0}
+.uc-pct{font-family:var(--mono);font-size:20px;font-weight:400}
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer{
+  max-width:1200px;margin:0 auto;padding:44px 64px 72px;
+  border-top:1px solid rgba(56,189,248,.06);
+  display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;
+}
+@media(max-width:640px){footer{grid-template-columns:1fr;padding:40px 36px 56px}}
+.ft-title{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+.ft-src{font-size:11px;color:var(--dim);line-height:2}
+.ft-src a{color:rgba(56,189,248,.45);text-decoration:none;transition:color .2s}
+.ft-src a:hover{color:var(--blue)}
 .ft-right{text-align:right}
-@media(max-width:640px){.ft-right{text-align:left}}
-.ft-big{font-family:var(--mono);font-size:32px;font-weight:500;color:var(--blue);line-height:1}
-.ft-competition{font-size:11px;color:var(--dim);margin-top:6px;letter-spacing:.04em}
+.ft-big{font-family:var(--mono);font-size:28px;font-weight:400;color:var(--blue);line-height:1}
+.ft-comp{font-size:10px;color:var(--dim);margin-top:6px;letter-spacing:.04em;line-height:1.6}
 
-/* ── TOOLTIP ──────────────────────── */
-#tt{position:fixed;pointer-events:none;z-index:500;font-family:var(--mono);font-size:11px;line-height:1.7;background:rgba(8,16,31,.96);border:1px solid var(--line);padding:10px 14px;border-radius:3px;color:var(--text);opacity:0;transition:opacity .12s;min-width:130px}
+/* ── TOOLTIP ─────────────────────────────────────────────── */
+#tt{
+  position:fixed;pointer-events:none;z-index:500;
+  font-family:var(--mono);font-size:11px;line-height:1.75;
+  background:rgba(3,8,16,.96);border:1px solid rgba(56,189,248,.12);
+  padding:10px 14px;border-radius:6px;color:var(--text);
+  opacity:0;transition:opacity .1s;min-width:130px;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);
+}
 #tt.on{opacity:1}
-
-/* ── DIVIDERS ─────────────────────── */
-.section-divider{width:40px;height:1px;background:var(--blue);margin:0 48px 0;opacity:.4}
 </style>
 </head>
 <body>
 
+<div class="blob blob1"></div>
+<div class="blob blob2"></div>
 <div id="progress-bar"></div>
 
 <nav id="nav">
-  <div id="nav-logo">AI · 2019–2025</div>
-  <div id="nav-chapters">
-    <div class="nc active" data-s="hero" title="Overview"></div>
-    <div class="nc" data-s="s1" title="The Surge"></div>
-    <div class="nc" data-s="s2" title="Leaders"></div>
-    <div class="nc" data-s="s3" title="Capital"></div>
-    <div class="nc" data-s="s4" title="Bottleneck"></div>
-    <div class="nc" data-s="s5" title="Use Cases"></div>
+  <div id="nav-logo">AI · Revolution</div>
+  <div id="nav-items">
+    <div class="ni active" data-s="hero">Overview</div>
+    <div class="ni" data-s="s1">01 Surge</div>
+    <div class="ni" data-s="s2">02 Leaders</div>
+    <div class="ni" data-s="s3">03 Capital</div>
+    <div class="ni" data-s="s4">04 Barriers</div>
+    <div class="ni" data-s="s5">05 Use Cases</div>
   </div>
-  <div id="nav-label">DataConnect 2026</div>
+  <div id="nav-right">DataConnect 2026</div>
 </nav>
 
-<!-- ═══ HERO ═══════════════════════════════════════════════════ -->
+<div class="wrap">
+
+<!-- ═══ HERO ════════════════════════════════════════════ -->
 <section id="hero">
   <div class="hero-left">
-    <div class="hero-tag">Global enterprise AI study</div>
-    <h1>The AI<br><span>Revolution</span></h1>
-    <div class="hero-year">2019 — 2025 · 5,000+ enterprises · 12 industries</div>
+    <div class="hero-badge">Global Enterprise AI Study · 2019–2025</div>
+    <h1>The<br><span class="h1-grad">AI Revolution</span></h1>
+    <div class="hero-sub">5,000+ enterprises · 12 industries · 6 years of data</div>
     <div class="hero-stats">
       <div class="hstat" id="hs1">
-        <div class="hstat-num" id="cnt1">0<span style="font-size:.55em">%</span></div>
-        <div class="hstat-meta">
-          <div class="hstat-label">Enterprise adoption rate</div>
+        <div class="hstat-num c-blue"><span id="cnt1">0</span>%</div>
+        <div>
+          <div class="hstat-label">Enterprise adoption rate · 2025</div>
           <div class="hstat-sub">↑ +35 percentage points since 2019</div>
         </div>
       </div>
       <div class="hstat" id="hs2">
-        <div class="hstat-num green">$<span id="cnt2">0</span><span style="font-size:.55em">B</span></div>
-        <div class="hstat-meta">
+        <div class="hstat-num c-green">$<span id="cnt2">0</span>B</div>
+        <div>
           <div class="hstat-label">Global AI investment · 2025</div>
           <div class="hstat-sub">↑ 17× growth in six years</div>
         </div>
       </div>
       <div class="hstat" id="hs3">
-        <div class="hstat-num white"><span id="cnt3">0</span><span style="font-size:.55em">×</span></div>
-        <div class="hstat-meta">
+        <div class="hstat-num c-white"><span id="cnt3">0</span>×</div>
+        <div>
           <div class="hstat-label">Average return on AI investment</div>
           <div class="hstat-sub">Top quartile: 8× ROI</div>
         </div>
       </div>
     </div>
-    <div class="hero-cta" id="hero-cta">Scroll to explore <span class="arrow-down">↓</span></div>
+    <div class="hero-cta" id="hero-cta">Scroll to explore <span class="arrow-float">↓</span></div>
   </div>
+
   <div class="hero-right">
-    <div class="dot-grid" id="dot-grid" title="Each dot = 1% of enterprises"></div>
-    <div class="dot-caption"><strong id="dot-pct-label">0</strong> of 100 enterprises<br>have adopted AI</div>
-    <div class="dot-year-label" id="dot-year">2019</div>
+    <div class="dot-frame">
+      <div class="dot-grid" id="dot-grid"></div>
+      <div class="dot-frame-label">1 DOT = 1% OF ENTERPRISES</div>
+    </div>
+    <div class="dot-readout">
+      <div class="dot-pct"><span id="dot-pct-label">0</span><sup>%</sup></div>
+      <div class="dot-meta">
+        <div class="dot-year" id="dot-year">2019</div>
+        <div class="dot-caption">have deployed AI</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<!-- KPI CARDS -->
+<div class="kpi-bar">
+  <div class="kpi-card" id="kc1">
+    <div class="kc-val c-blue">78%</div>
+    <div class="kc-label">Enterprise Adoption Rate</div>
+    <div class="kc-sub">Up from 43% in 2019 · +35 pp</div>
+  </div>
+  <div class="kpi-card" id="kc2">
+    <div class="kc-val c-green">$632B</div>
+    <div class="kc-label">Global AI Spending · 2025</div>
+    <div class="kc-sub">58% compound annual growth rate</div>
+  </div>
+  <div class="kpi-card" id="kc3">
+    <div class="kc-val c-white">3.5×</div>
+    <div class="kc-label">Average Return on Investment</div>
+    <div class="kc-sub">Top performers achieving 8× ROI</div>
+  </div>
+</div>
 
-<!-- ═══ S1 — THE SURGE ═════════════════════════════════════════ -->
-<section class="page" id="s1">
-  <div class="section-tag">01 · The Surge</div>
-  <h2 class="section-hed">One year changed<br><em>everything.</em></h2>
-  <p class="section-pull">Between 2022 and 2023, overall AI adoption jumped <strong>+17 percentage points</strong> — the steepest single-year surge since tracking began. A decade of gradual progress compressed into twelve months.</p>
-  <div class="chart-label">% of enterprises deploying AI · 2019–2025</div>
-  <div class="chart-area">
+<div class="vdiv"></div>
+
+<!-- ═══ S1 — THE SURGE ══════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="stag">01 · The Surge</div>
+  <h2 class="shed">One year changed<br><em>everything.</em></h2>
+  <p class="spull">Between 2022 and 2023, enterprise AI adoption jumped <strong>+17 percentage points</strong> — the steepest single-year surge since tracking began. Generative AI compressed a decade of progress into twelve months.</p>
+  <div class="clabel">% of enterprises deploying AI · 2019–2025</div>
+  <div class="s1-grid">
+    <div>
+      <div class="callout">
+        <div class="callout-n">+17pp</div>
+        <div class="callout-l">The 2022→2023 single-year surge — largest on record. Triggered by GenAI mass adoption.</div>
+      </div>
+      <div class="surge-legend" id="surge-legend"></div>
+    </div>
     <svg id="surge-svg"></svg>
   </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="vdiv"></div>
 
-<!-- ═══ S2 — LEADERS ════════════════════════════════════════════ -->
-<section class="page" id="s2">
-  <div class="section-tag">02 · The Leaders</div>
-  <h2 class="section-hed">Not all industries<br>move at the <em>same speed.</em></h2>
-  <p class="section-pull">Financial services leads at <strong>89%</strong> — more than double the rate of government at 38%. The gap reflects where trust, regulation, and talent converge to either accelerate or constrain adoption.</p>
-  <div class="chart-label">AI adoption rate by industry · 2025</div>
+<!-- ═══ S2 — THE LEADERS ════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="stag">02 · The Leaders</div>
+  <h2 class="shed">Not all industries<br>move at <em>one pace.</em></h2>
+  <p class="spull">Financial services leads at <strong>89%</strong> — more than double the government rate of 38%. The gap reflects where trust, regulation, and talent converge to accelerate or constrain adoption.</p>
+  <div class="clabel">AI adoption rate by industry · 2025</div>
   <div class="sector-grid" id="sector-grid"></div>
 </section>
 
-<div class="section-divider"></div>
+<div class="vdiv"></div>
 
-<!-- ═══ S3 — CAPITAL ════════════════════════════════════════════ -->
-<section class="page" id="s3">
-  <div class="section-tag">03 · The Capital</div>
-  <h2 class="section-hed">From $37B to<br><em class="green">$632B.</em></h2>
-  <p class="section-pull">Enterprise AI investment grew <strong>17-fold</strong> between 2019 and 2025. More was spent on AI in 2024 alone than the entire market was worth in 2022 — a capital shift without precedent in enterprise technology.</p>
-  <div class="capital-hero">
-    <div class="big-num">$<span id="cap-counter">0</span>B</div>
-    <div class="big-num-meta">
-      <div class="bn-label">Global enterprise AI spend · 2025</div>
-      <div class="bn-growth">CAGR <span>58%</span> · 2019–2025</div>
-    </div>
+<!-- ═══ S3 — THE CAPITAL ═════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="stag">03 · The Capital</div>
+  <h2 class="shed">From $37B<br>to <span class="gr">$632B.</span></h2>
+  <p class="spull">Enterprise AI investment grew <strong>17-fold</strong> in six years. More was spent on AI in 2024 alone than the entire market was worth in 2022 — a capital shift without precedent in enterprise technology.</p>
+  <div class="cap-center">
+    <div class="cap-glow-ring"></div>
+    <div class="cap-num">$<span id="cap-ctr">0</span>B</div>
+    <div class="cap-meta">Global enterprise AI spend 2025 · CAGR <span>58%</span> · 2019–2025</div>
   </div>
-  <div class="chart-label">Annual investment · $B · 2019–2025</div>
-  <svg id="spend-chart"></svg>
+  <div class="clabel">Annual investment · USD billions · 2019–2025</div>
+  <svg id="spend-svg"></svg>
 </section>
 
-<div class="section-divider"></div>
+<div class="vdiv"></div>
 
-<!-- ═══ S4 — BOTTLENECK ═════════════════════════════════════════ -->
-<section class="page" id="s4">
-  <div class="section-tag">04 · The Bottleneck</div>
-  <h2 class="section-hed">The infrastructure is ready.<br><em>The humans are not.</em></h2>
-  <p class="section-pull">In 2022, data quality was the #1 barrier to AI adoption. By 2024, the talent gap had taken over. For the first time, <strong>people — not technology — are the constraint.</strong></p>
-  <div class="chart-label">% citing as primary obstacle · ranked 2024</div>
-  <svg id="barrier-chart"></svg>
+<!-- ═══ S4 — THE BOTTLENECK ══════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="stag">04 · The Bottleneck</div>
+  <h2 class="shed">The technology is ready.<br><em>People aren't.</em></h2>
+  <p class="spull">In 2022, data quality was the #1 barrier to AI adoption. By 2024, <strong>the talent gap had taken over</strong>. For the first time, people — not technology — are the primary constraint on AI progress.</p>
+  <div class="clabel">% citing as primary obstacle · 2024 ranking vs 2022</div>
+  <div class="barrier-panel">
+    <svg id="barrier-svg"></svg>
+  </div>
 </section>
 
-<div class="section-divider"></div>
+<div class="vdiv"></div>
 
-<!-- ═══ S5 — USE CASES ══════════════════════════════════════════ -->
-<section class="page" id="s5">
-  <div class="section-tag">05 · What AI Actually Does</div>
-  <h2 class="section-hed">Reliability beats<br><em>novelty</em> at scale.</h2>
-  <p class="section-pull">Despite the generative AI hype cycle, process automation still runs the show. Enterprises deploy AI most where returns are <strong>predictable and measurable</strong> — not where they're most exciting.</p>
-  <div class="chart-label">Share of enterprise AI deployments · 2025</div>
-  <div id="use-rows"></div>
+<!-- ═══ S5 — USE CASES ═══════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="stag">05 · What AI Actually Does</div>
+  <h2 class="shed">Reliability beats<br><em>novelty</em> at scale.</h2>
+  <p class="spull">Despite the generative AI hype cycle, process automation still leads. Enterprises deploy AI most where returns are <strong>predictable and measurable</strong> — not where they're most exciting.</p>
+  <div class="clabel">Share of enterprise AI deployments · 2025</div>
+  <div class="uc-grid" id="uc-grid"></div>
 </section>
 
 <footer>
-  <div class="ft-left">
+  <div>
     <div class="ft-title">Data Sources</div>
-    <div class="ft-content">
-      <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank">McKinsey Global AI Survey</a> · 2019–2024<br>
-      <a href="https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/ai-adoption-index" target="_blank">IBM AI Adoption Index</a> · 2023–2024<br>
-      <a href="https://aiindex.stanford.edu/" target="_blank">Stanford HAI AI Index</a> · 2025<br>
-      <a href="https://www.idc.com/" target="_blank">IDC AI Spending Guide</a> · 2024–2026<br>
-      Built with D3.js · HTML5 · CSS
+    <div class="ft-src">
+      <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank">McKinsey Global AI Survey</a> · 2019–2024 ·
+      <a href="https://www.ibm.com/thought-leadership/institute-business-value/en-us/report/ai-adoption-index" target="_blank">IBM AI Adoption Index</a> · 2024<br>
+      <a href="https://aiindex.stanford.edu/" target="_blank">Stanford HAI AI Index</a> · 2025 ·
+      <a href="https://www.idc.com/" target="_blank">IDC AI Spending Guide</a> · 2024–2026 ·
+      Built with D3.js v7
     </div>
   </div>
   <div class="ft-right">
     <div class="ft-big">2019–2025</div>
-    <div class="ft-competition">DataConnect 2026 · Data Visualization Competition<br>Danil Trifonov · Independent</div>
+    <div class="ft-comp">DataConnect 2026 · Data Visualization Competition<br>Danil Trifonov · Independent</div>
   </div>
 </footer>
 
+</div><!-- /wrap -->
 <div id="tt"></div>
-<div class="spend-tooltip" id="spend-tt"></div>
 
 <script>
 'use strict';
-/* ═══════════════════════════════════════
-   DATA
-═══════════════════════════════════════ */
+
+/* ── DATA ─────────────────────────────────────────────── */
 const years  = [2019,2020,2021,2022,2023,2024,2025];
 const adopt  = [58,50,56,56,72,75,78];
 const genai  = [0,0,0,5,33,55,65];
@@ -299,486 +536,448 @@ const inprod = [14,12,16,20,32,46,55];
 const spend  = [37.5,40.2,52.1,81.4,142.3,489.9,632.0];
 
 const sectors = [
-  {n:'Financial Services',v:89,d:'+8',hi:true},
-  {n:'Technology',v:87,d:'+5',hi:true},
-  {n:'Retail & Commerce',v:74,d:'+18',hi:false},
-  {n:'Healthcare',v:68,d:'+22',hi:false},
-  {n:'Manufacturing',v:65,d:'+12',hi:false},
-  {n:'Energy & Utilities',v:58,d:'+15',hi:false},
-  {n:'Education',v:45,d:'+9',hi:false},
-  {n:'Government',v:38,d:'+11',hi:false},
+  {n:'Financial Services', v:89, d:'+8',  c:'#fbbf24'},
+  {n:'Technology',          v:87, d:'+5',  c:'#38bdf8'},
+  {n:'Retail & Commerce',   v:74, d:'+18', c:'#34d399'},
+  {n:'Healthcare',          v:68, d:'+22', c:'#a78bfa'},
+  {n:'Manufacturing',       v:65, d:'+12', c:'#2dd4bf'},
+  {n:'Energy & Utilities',  v:58, d:'+15', c:'#facc15'},
+  {n:'Education',           v:45, d:'+9',  c:'#fb923c'},
+  {n:'Government',          v:38, d:'+11', c:'#f87171'},
 ];
 
 const barriers = [
-  {n:'AI Skills & Talent Gap',v24:64,v22:52,rank22:2,rank24:1},
-  {n:'Data Quality & Governance',v24:57,v22:61,rank22:1,rank24:2},
-  {n:'Unclear ROI / Business Case',v24:48,v22:44,rank22:3,rank24:3},
-  {n:'Data Privacy & Security',v24:44,v22:38,rank22:5,rank24:4},
-  {n:'Integration Complexity',v24:38,v22:41,rank22:4,rank24:5},
-  {n:'Regulatory & Compliance',v24:31,v22:28,rank22:6,rank24:6},
-  {n:'Change Management',v24:26,v22:22,rank22:7,rank24:7},
+  {n:'AI Skills & Talent Gap',    v24:64, v22:52, r22:2, r24:1},
+  {n:'Data Quality & Governance', v24:57, v22:61, r22:1, r24:2},
+  {n:'Unclear ROI / Business Case',v24:48, v22:44, r22:3, r24:3},
+  {n:'Data Privacy & Security',   v24:44, v22:38, r22:5, r24:4},
+  {n:'Integration Complexity',    v24:38, v22:41, r22:4, r24:5},
+  {n:'Regulatory & Compliance',   v24:31, v22:28, r22:6, r24:6},
+  {n:'Change Management',         v24:26, v22:22, r22:7, r24:7},
 ];
 
 const usecases = [
-  {n:'Process Automation',v:38},
-  {n:'Customer Experience AI',v:27},
-  {n:'Marketing & Analytics',v:19},
-  {n:'Product & R&D',v:8},
-  {n:'Risk & Compliance',v:5},
-  {n:'HR & Talent',v:3},
+  {n:'Process Automation',     v:38, c:'#38bdf8'},
+  {n:'Customer Experience AI', v:27, c:'#34d399'},
+  {n:'Marketing & Analytics',  v:19, c:'#a78bfa'},
+  {n:'Product & R&D',          v:8,  c:'#fbbf24'},
+  {n:'Risk & Compliance',      v:5,  c:'#2dd4bf'},
+  {n:'HR & Talent',            v:3,  c:'#f472b6'},
 ];
 
-/* ═══════════════════════════════════════
-   UTILS
-═══════════════════════════════════════ */
+/* ── UTILS ────────────────────────────────────────────── */
 const $ = id => document.getElementById(id);
 const tt = $('tt');
-function showTip(e, html){
-  tt.innerHTML = html; tt.classList.add('on');
-  moveTip(e);
-}
+
+function tip(e, html){ tt.innerHTML=html; tt.classList.add('on'); moveTip(e); }
 function moveTip(e){
-  let x = e.clientX+14, y = e.clientY-10;
-  if(x+160>innerWidth) x = e.clientX-174;
+  let x=e.clientX+16, y=e.clientY-10;
+  if(x+190>innerWidth) x=e.clientX-206;
   tt.style.left=x+'px'; tt.style.top=y+'px';
 }
 function hideTip(){ tt.classList.remove('on'); }
-document.addEventListener('mousemove', e => { if(tt.classList.contains('on')) moveTip(e); });
+document.addEventListener('mousemove', e=>{ if(tt.classList.contains('on')) moveTip(e); });
 
-function animNum(el, target, dec, prefix, suffix, ms, delay){
+function countUp(el, target, dec, pre, suf, ms, delay){
   setTimeout(()=>{
-    const s = performance.now();
-    const raf = now => {
-      const t = Math.min((now-s)/ms,1);
-      const ease = 1-Math.pow(1-t,4);
-      const v = target*ease;
-      el.innerHTML = (prefix||'')+(dec?v.toFixed(dec):Math.round(v))+(suffix||'');
-      if(t<1) requestAnimationFrame(raf);
+    const t0 = performance.now();
+    const go = now => {
+      const prog = Math.min((now-t0)/ms, 1);
+      const ease = 1-Math.pow(1-prog, 4);
+      const val = target*ease;
+      el.innerHTML = (pre||'')+(dec ? val.toFixed(dec) : Math.round(val))+(suf||'');
+      if(prog < 1) requestAnimationFrame(go);
     };
-    requestAnimationFrame(raf);
+    requestAnimationFrame(go);
   }, delay||0);
 }
 
-/* ═══════════════════════════════════════
-   PROGRESS + NAV
-═══════════════════════════════════════ */
-const sections = ['hero','s1','s2','s3','s4','s5'];
-const ncs = document.querySelectorAll('.nc');
-window.addEventListener('scroll',()=>{
-  const pct = (scrollY/(document.body.scrollHeight-innerHeight))*100;
-  $('progress-bar').style.width = pct+'%';
-  sections.forEach((id,i)=>{
-    const el = document.getElementById(id);
-    if(!el) return;
-    const r = el.getBoundingClientRect();
-    if(r.top<=120 && r.bottom>120){
-      ncs.forEach(n=>n.classList.remove('active'));
-      if(ncs[i]) ncs[i].classList.add('active');
+/* ── PROGRESS + NAV ───────────────────────────────────── */
+const sectionIds = ['hero','s1','s2','s3','s4','s5'];
+const navItems = document.querySelectorAll('.ni');
+window.addEventListener('scroll', ()=>{
+  $('progress-bar').style.width = (scrollY/(document.body.scrollHeight-innerHeight)*100)+'%';
+  sectionIds.forEach((id,i)=>{
+    const el=document.getElementById(id); if(!el) return;
+    const r=el.getBoundingClientRect();
+    if(r.top<=110 && r.bottom>110){
+      navItems.forEach(n=>n.classList.remove('active'));
+      if(navItems[i]) navItems[i].classList.add('active');
     }
   });
 },{passive:true});
-ncs.forEach(nc => nc.addEventListener('click',()=>{
-  document.getElementById(nc.dataset.s)?.scrollIntoView({behavior:'smooth'});
+navItems.forEach(n=>n.addEventListener('click',()=>{
+  document.getElementById(n.dataset.s)?.scrollIntoView({behavior:'smooth'});
 }));
 
-/* ═══════════════════════════════════════
-   DOT GRID HERO
-═══════════════════════════════════════ */
-const grid = $('dot-grid');
-const totalDots = 100;
-// Year → adoption data pairs
-const adoptByYear = [
-  {y:2019,v:58},{y:2020,v:50},{y:2021,v:56},{y:2022,v:56},{y:2023,v:72},{y:2024,v:75},{y:2025,v:78}
-];
-for(let i=0;i<totalDots;i++){
-  const d = document.createElement('div');
-  d.className='dot'; d.dataset.i=i;
-  grid.appendChild(d);
+/* ── DOT GRID ─────────────────────────────────────────── */
+const dotGrid = $('dot-grid');
+for(let i=0;i<100;i++){
+  const d=document.createElement('div'); d.className='dot';
+  dotGrid.appendChild(d);
 }
-const allDots = grid.querySelectorAll('.dot');
-let dotAnimating = false;
+const dots = dotGrid.querySelectorAll('.dot');
+const adoptByYear=[{y:2019,v:58},{y:2020,v:50},{y:2021,v:56},{y:2022,v:56},{y:2023,v:72},{y:2024,v:75},{y:2025,v:78}];
 
-function setDotsTo(pct, year, duration){
-  const lit = Math.round(pct);
-  allDots.forEach((d,i)=>{
+function setDots(pct, year, dur){
+  const lit=Math.round(pct);
+  dots.forEach((d,i)=>{
     clearTimeout(d._t);
-    d._t = setTimeout(()=>{
-      if(i < lit){
-        d.classList.add('lit');
+    d._t=setTimeout(()=>{
+      if(i<lit){ d.classList.add('lit');
         if(year===2023 && i>=56 && i<72) d.classList.add('green');
         else d.classList.remove('green');
-      } else {
-        d.classList.remove('lit','green');
-      }
-    }, i*(duration/totalDots));
+      } else d.classList.remove('lit','green');
+    }, i*(dur/100));
   });
-  $('dot-pct-label').textContent = lit;
-  $('dot-year').textContent = year;
+  $('dot-pct-label').textContent=lit;
+  $('dot-year').textContent=year;
 }
 
-// Initial animation: cycle through years
-let dotPhase = 0;
-function runDotCycle(){
-  if(dotPhase >= adoptByYear.length){
-    // Hold on 2025
-    setDotsTo(78, 2025, 800);
-    return;
-  }
-  const {y,v} = adoptByYear[dotPhase];
-  setDotsTo(v, y, 600);
-  dotPhase++;
-  setTimeout(runDotCycle, dotPhase===adoptByYear.length?1200:900);
+let phase=0;
+function cycleYear(){
+  if(phase>=adoptByYear.length){ setDots(78,2025,800); return; }
+  const {y,v}=adoptByYear[phase++];
+  setDots(v,y,600);
+  setTimeout(cycleYear, phase===adoptByYear.length ? 1200 : 880);
 }
-setTimeout(runDotCycle, 600);
+setTimeout(cycleYear, 500);
 
-// Hero stat animations
+/* Hero stat entrance */
 setTimeout(()=>{
   document.querySelectorAll('.hstat').forEach((h,i)=>{
-    setTimeout(()=>{ h.style.opacity='1'; h.style.transform='none'; }, i*180);
+    setTimeout(()=>{ h.style.opacity='1'; h.style.transform='none'; }, i*160);
   });
   $('hero-cta').style.opacity='1';
 },300);
-animNum($('cnt1'), 78, 0, '', '%', 1800, 400);
-animNum($('cnt2'), 632, 0, '', '', 2000, 500);
-animNum($('cnt3'), 3.5, 1, '', '×', 1600, 600);
+countUp($('cnt1'),78,0,'','%',1800,400);
+countUp($('cnt2'),632,0,'','',2000,520);
+countUp($('cnt3'),3.5,1,'','×',1600,640);
 
-/* ═══════════════════════════════════════
-   INTERSECTION OBSERVER
-═══════════════════════════════════════ */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(en => {
-    if(!en.isIntersecting) return;
-    const id = en.target.id;
-    en.target.classList.add('fade-in');
-    if(id==='s1') drawSurge();
-    if(id==='s2') revealSectors();
-    if(id==='s3'){ drawSpend(); animNum($('cap-counter'),632,0,'','',2000,300); }
-    if(id==='s4') drawBarriers();
-    if(id==='s5') revealUseCases();
-    io.unobserve(en.target);
-  });
-},{threshold:.15});
-['s1','s2','s3','s4','s5'].forEach(id=>{
-  const el=$(id); if(el) io.observe(el);
+/* KPI card entrance */
+['kc1','kc2','kc3'].forEach((id,i)=>{
+  setTimeout(()=>{
+    const el=$(id);
+    el.style.opacity='1'; el.style.transform='translateY(0)';
+  }, 900+i*130);
 });
 
-/* ═══════════════════════════════════════
-   S1 — SURGE CHART (D3)
-═══════════════════════════════════════ */
-function drawSurge(){
-  const wrap = $('surge-svg');
-  if(wrap.children.length) return;
-  const W = wrap.parentElement.clientWidth || 900;
-  const H = Math.min(W*.45, 320);
-  const M = {t:40,r:20,b:40,l:44};
-  const iW = W-M.l-M.r, iH = H-M.t-M.b;
+/* ── INTERSECTION OBSERVER ────────────────────────────── */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    if(!en.isIntersecting) return;
+    en.target.classList.add('fade-in');
+    const id=en.target.id;
+    if(id==='s1') buildSurge();
+    if(id==='s2') buildSectors();
+    if(id==='s3'){ buildSpend(); countUp($('cap-ctr'),632,0,'','',2200,300); }
+    if(id==='s4') buildBarriers();
+    if(id==='s5') buildUseCases();
+    io.unobserve(en.target);
+  });
+},{threshold:.1});
+['s1','s2','s3','s4','s5'].forEach(id=>{ const el=$(id); if(el) io.observe(el); });
 
-  const svg = d3.select(wrap).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
-  const g = svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
+/* ── S1 SURGE CHART ───────────────────────────────────── */
+function buildSurge(){
+  const el=$('surge-svg'); if(el.children.length) return;
+  const W=el.parentElement.clientWidth||640;
+  const H=Math.min(W*.58,400);
+  const M={t:32,r:18,b:38,l:38};
+  const iW=W-M.l-M.r, iH=H-M.t-M.b;
 
-  const x = d3.scaleLinear().domain([2019,2025]).range([0,iW]);
-  const y = d3.scaleLinear().domain([0,100]).range([iH,0]);
+  const svg=d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
+  const g=svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
+  const x=d3.scaleLinear().domain([2019,2025]).range([0,iW]);
+  const y=d3.scaleLinear().domain([0,100]).range([iH,0]);
 
-  // 2023 highlight band
-  const x22 = x(2022.5), x23 = x(2023.5);
-  g.append('rect').attr('x',x22).attr('y',0).attr('width',x23-x22).attr('height',iH)
-    .attr('fill','rgba(52,211,153,.06)');
+  const defs=svg.append('defs');
 
-  // Subtle grid
-  [25,50,75,100].forEach(v=>{
+  // Glow filter
+  const gf=defs.append('filter').attr('id','surge-glow').attr('x','-30%').attr('y','-30%').attr('width','160%').attr('height','160%');
+  gf.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','5').attr('result','blur');
+  const fm=gf.append('feMerge');
+  fm.append('feMergeNode').attr('in','blur');
+  fm.append('feMergeNode').attr('in','SourceGraphic');
+
+  // Area gradients
+  [[`ga`,'#38bdf8',.28,0],[`gg`,'#34d399',.22,0],[`gi`,'#94a3b8',.12,0]].forEach(([id,c,o0,o1])=>{
+    const gr=defs.append('linearGradient').attr('id',id).attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
+    gr.append('stop').attr('offset','0%').attr('stop-color',c).attr('stop-opacity',o0);
+    gr.append('stop').attr('offset','100%').attr('stop-color',c).attr('stop-opacity',o1);
+  });
+
+  // 2023 highlight
+  const xb0=x(2022.5), xb1=x(2023.5);
+  g.append('rect').attr('x',xb0).attr('y',0).attr('width',xb1-xb0).attr('height',iH)
+   .attr('fill','rgba(52,211,153,.06)');
+  g.append('text').attr('x',(xb0+xb1)/2).attr('y',-12).attr('text-anchor','middle')
+   .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','rgba(52,211,153,.5)')
+   .attr('letter-spacing','.1em').text('GENAI SURGE');
+
+  // Grid
+  [25,50,75].forEach(v=>{
     g.append('line').attr('x1',0).attr('x2',iW).attr('y1',y(v)).attr('y2',y(v))
-      .attr('stroke','rgba(255,255,255,.04)').attr('stroke-width',1);
+     .attr('stroke','rgba(255,255,255,.04)').attr('stroke-width',1);
+    g.append('text').attr('x',-6).attr('y',y(v)+4).attr('text-anchor','end')
+     .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a').text(v+'%');
   });
-
-  // Y labels (minimal)
-  [0,50,100].forEach(v=>{
-    g.append('text').attr('x',-8).attr('y',y(v)+4).attr('text-anchor','end')
-      .attr('font-family',"'DM Mono',monospace").attr('font-size',10)
-      .attr('fill','#2d4a63').text(v+'%');
-  });
-
-  // X labels
   years.forEach(yr=>{
-    g.append('text').attr('x',x(yr)).attr('y',iH+24).attr('text-anchor','middle')
-      .attr('font-family',"'DM Mono',monospace").attr('font-size',10)
-      .attr('fill','#2d4a63').text(yr);
+    g.append('text').attr('x',x(yr)).attr('y',iH+22).attr('text-anchor','middle')
+     .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a').text(yr);
   });
 
-  // 2023 label
-  g.append('text').attr('x',(x22+x23)/2).attr('y',-14).attr('text-anchor','middle')
-    .attr('font-family',"'DM Sans',sans-serif").attr('font-size',11).attr('font-weight',500)
-    .attr('fill','rgba(52,211,153,.7)').text('2023 — GenAI surge');
+  const aFn=(d,f)=>d3.area().x((_,i)=>x(years[i])).y0(iH).y1(v=>y(v)).curve(d3.curveCatmullRom.alpha(.5))(d);
+  const lFn=d=>d3.line().x((_,i)=>x(years[i])).y(v=>y(v)).curve(d3.curveCatmullRom.alpha(.5))(d);
 
-  // Area defs
-  const areaFn = (dat,clr) => d3.area()
-    .x((_,i)=>x(years[i])).y0(iH).y1(d=>y(d))
-    .curve(d3.curveCatmullRom.alpha(.5))(dat);
-  const lineFn = (dat) => d3.line()
-    .x((_,i)=>x(years[i])).y(d=>y(d))
-    .curve(d3.curveCatmullRom.alpha(.5))(dat);
-
-  // Grad defs
-  const defs = svg.append('defs');
-  [{id:'ga',c:'#38bdf8'},{id:'gg',c:'#34d399'},{id:'gr',c:'#94a3b8'}].forEach(({id,c})=>{
-    const gr = defs.append('linearGradient').attr('id',id).attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
-    gr.append('stop').attr('offset','0%').attr('stop-color',c).attr('stop-opacity',.15);
-    gr.append('stop').attr('offset','100%').attr('stop-color',c).attr('stop-opacity',0);
-  });
-
-  const datasets = [
-    {data:inprod, aclr:'url(#gr)', lclr:'rgba(148,163,184,.35)', dsh:'4,3', label:'In Production'},
-    {data:genai,  aclr:'url(#gg)', lclr:'rgba(52,211,153,.55)',  dsh:'',    label:'GenAI Adoption'},
-    {data:adopt,  aclr:'url(#ga)', lclr:'#38bdf8',               dsh:'',    label:'Overall Adoption'},
+  const datasets=[
+    {data:inprod,fill:'url(#gi)',stroke:'rgba(148,163,184,.55)',sw:1.5,dash:'4,3',label:'In Production',  c:'#94a3b8'},
+    {data:genai, fill:'url(#gg)',stroke:'#34d399',             sw:2.2,dash:'',    label:'GenAI Adoption', c:'#34d399'},
+    {data:adopt, fill:'url(#ga)',stroke:'#38bdf8',             sw:2.8,dash:'',    label:'Overall Adoption',c:'#38bdf8'},
   ];
 
   datasets.forEach(ds=>{
-    g.append('path').attr('d',areaFn(ds.data,ds.aclr)).attr('fill',ds.aclr).attr('class','a-area');
-    const totalLen=3000;
-    const lp = g.append('path').attr('d',lineFn(ds.data))
-      .attr('stroke',ds.lclr).attr('stroke-width', ds.label==='Overall Adoption'?2.5:1.5)
-      .attr('fill','none').attr('stroke-dasharray', ds.dsh||'none')
-      .style('stroke-dashoffset',totalLen).style('stroke-dasharray',totalLen+' '+totalLen)
-      .style('transition','stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1)');
-    setTimeout(()=>{ lp.style('stroke-dashoffset','0'); },100);
+    // Area
+    g.append('path').attr('d',aFn(ds.data)).attr('fill',ds.fill);
+    // Glow halo
+    g.append('path').attr('d',lFn(ds.data))
+     .attr('stroke',ds.stroke).attr('stroke-width',ds.sw*2.5).attr('fill','none')
+     .attr('stroke-dasharray',ds.dash||'none')
+     .attr('filter','url(#surge-glow)').attr('opacity',.3);
+    // Animated line
+    const TL=3000;
+    const lp=g.append('path').attr('d',lFn(ds.data))
+     .attr('stroke',ds.stroke).attr('stroke-width',ds.sw).attr('fill','none')
+     .attr('stroke-dasharray',ds.dash||'none')
+     .style('stroke-dashoffset',TL).style('stroke-dasharray',TL+' '+TL)
+     .style('transition','stroke-dashoffset 2s cubic-bezier(.4,0,.2,1)');
+    setTimeout(()=>lp.style('stroke-dashoffset','0'),180);
   });
 
-  // Data points — interactive
-  const allPts = [{data:adopt,c:'#38bdf8',lb:'Overall'},{data:genai,c:'#34d399',lb:'GenAI'},{data:inprod,c:'#94a3b8',lb:'Production'}];
-  allPts.forEach(({data:dat,c,lb})=>{
+  // Dots
+  [{data:adopt,c:'#38bdf8',lb:'Overall'},{data:genai,c:'#34d399',lb:'GenAI'},{data:inprod,c:'#94a3b8',lb:'Production'}]
+  .forEach(({data:dat,c,lb})=>{
     dat.forEach((v,i)=>{
-      const cx=x(years[i]), cy=y(v);
-      const cr = g.append('circle').attr('cx',cx).attr('cy',cy).attr('r',0)
-        .attr('fill',c).attr('stroke','#050a12').attr('stroke-width',2).style('cursor','default');
+      const cr=g.append('circle').attr('cx',x(years[i])).attr('cy',y(v)).attr('r',0)
+       .attr('fill',c).attr('stroke','#030810').attr('stroke-width',2).style('cursor','crosshair');
       setTimeout(()=>{
-        cr.transition().duration(300).delay(i*60).attr('r',4)
-          .on('mouseover',e=>showTip(e,`<span style="color:${c}">${lb}</span><br>${years[i]}: <b>${v}%</b>`))
+        cr.transition().duration(250).delay(i*50).attr('r',4.5);
+        cr.on('mouseover',e=>tip(e,`<span style="color:${c}">${lb}</span><br>${years[i]}: <b>${v}%</b>`))
           .on('mouseout',hideTip);
-      },400);
+      },550);
     });
   });
 
-  // Big "+17pp" annotation
-  const annoX = x(2022.5)+8, annoY = y(56)-30;
-  const annoGrp = g.append('g').attr('transform',`translate(${annoX},${annoY})`).style('opacity',0);
-  annoGrp.append('text').attr('class','anno-val').attr('x',0).attr('y',0).text('+17pp');
-  annoGrp.append('text').attr('class','anno-label').attr('x',2).attr('y',22).text('in 12 months');
-  // Arrow
-  const arrowPath = g.append('path')
-    .attr('d',`M${x(2023)},${y(72)-10} L${x(2023)},${y(64)}`)
-    .attr('stroke','rgba(52,211,153,.5)').attr('stroke-width',1.5)
-    .attr('marker-end','url(#arrow)').style('opacity',0);
-  defs.append('marker').attr('id','arrow').attr('viewBox','0 0 6 6').attr('refX',3).attr('refY',3)
-    .attr('markerWidth',4).attr('markerHeight',4).attr('orient','auto')
-    .append('path').attr('d','M0,0 L0,6 L6,3 z').attr('fill','rgba(52,211,153,.5)');
+  // +17pp callout on chart
+  const ax=xb0+8, ay=y(56)-52;
+  const ag=g.append('g').attr('transform',`translate(${ax},${ay})`).style('opacity',0);
+  ag.append('text').attr('font-family',"'DM Mono',monospace").attr('font-size',30)
+   .attr('fill','#34d399').attr('font-weight',400).text('+17pp');
+  ag.append('text').attr('y',20).attr('font-family',"'DM Sans',sans-serif")
+   .attr('font-size',11).attr('fill','rgba(52,211,153,.65)').text('in 12 months');
+  setTimeout(()=>ag.style('opacity','1').style('transition','opacity .7s'), 1700);
 
-  setTimeout(()=>{
-    annoGrp.style('opacity','1').style('transition','opacity .5s');
-    arrowPath.style('opacity','1').style('transition','opacity .5s');
-  },1400);
-
-  // Legend
-  const leg = [{l:'Overall Adoption',c:'#38bdf8',d:''},{l:'GenAI Adoption',c:'#34d399',d:''},{l:'In Production',c:'#94a3b8',d:'4,3'}];
-  leg.forEach(({l,c,d},i)=>{
-    const lx = M.l+i*160, ly=12;
-    svg.append('line').attr('x1',lx).attr('y1',ly).attr('x2',lx+18).attr('y2',ly)
-      .attr('stroke',c).attr('stroke-width',d?1.5:2.5).attr('stroke-dasharray',d||'none');
-    svg.append('text').attr('x',lx+24).attr('y',ly+4)
-      .attr('font-family',"'DM Mono',monospace").attr('font-size',10).attr('fill','#4d6680').text(l);
-  });
+  // Legend in aside
+  const leg=$('surge-legend'); if(leg && !leg.children.length){
+    datasets.slice().reverse().forEach(ds=>{
+      const d=document.createElement('div'); d.className='sl-row';
+      const lineStyle=ds.dash
+        ? `height:0;border-top:2px dashed ${ds.c};background:none`
+        : `background:${ds.c}`;
+      d.innerHTML=`<span class="sl-line" style="${lineStyle}"></span>${ds.label}`;
+      leg.appendChild(d);
+    });
+  }
 }
 
-/* ═══════════════════════════════════════
-   S2 — SECTORS
-═══════════════════════════════════════ */
-function revealSectors(){
-  const grid = $('sector-grid');
-  if(grid.children.length) return;
-  const avg = Math.round(sectors.reduce((s,x)=>s+x.v,0)/sectors.length);
-  const sorted = [...sectors].sort((a,b)=>b.v-a.v);
-  sorted.forEach((s,i)=>{
-    const cell = document.createElement('div');
-    cell.className = 'sector-cell';
-    const pctColor = s.v >= avg ? '#38bdf8' : '#4d6680';
-    cell.innerHTML = `
+/* ── S2 SECTOR CARDS ──────────────────────────────────── */
+function buildSectors(){
+  const wrap=$('sector-grid'); if(wrap.children.length) return;
+  [...sectors].sort((a,b)=>b.v-a.v).forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.className='sc-card';
+    card.style.borderLeftColor=s.c;
+    card.innerHTML=`
+      <div class="sc-top">
+        <div class="sc-pct" style="color:${s.c}">${s.v}%</div>
+        <div class="sc-delta" style="color:${s.c}">${s.d} pp</div>
+      </div>
       <div class="sc-name">${s.n}</div>
-      <div class="sc-pct" style="color:${pctColor}">${s.v}%</div>
-      <div class="sc-bar"><div class="sc-fill" style="background:${pctColor}" data-w="${s.v}"></div></div>
-      <div class="sc-delta" style="color:${s.hi?'#34d399':'#4d6680'}">${s.d} pp YoY</div>`;
-    cell.addEventListener('mouseover',e=>{
-      showTip(e,`<span style="color:#38bdf8">${s.n}</span><br>Adoption: <b>${s.v}%</b><br>YoY: ${s.d} pp`);
-    });
-    cell.addEventListener('mouseout',hideTip);
-    grid.appendChild(cell);
+      <div class="sc-track"><div class="sc-fill" style="background:${s.c}"></div></div>`;
+    card.addEventListener('mouseover',e=>tip(e,`<span style="color:${s.c}">${s.n}</span><br>Adoption: <b>${s.v}%</b><br>YoY: ${s.d} pp`));
+    card.addEventListener('mouseout',hideTip);
+    wrap.appendChild(card);
     setTimeout(()=>{
-      cell.querySelector('.sc-fill').style.width = s.v+'%';
-    }, i*80 + 300);
+      card.style.opacity='1'; card.style.transform='none';
+      setTimeout(()=>{ card.querySelector('.sc-fill').style.width=s.v+'%'; },100);
+    }, i*65+200);
   });
 }
 
-/* ═══════════════════════════════════════
-   S3 — SPENDING CHART (D3)
-═══════════════════════════════════════ */
-function drawSpend(){
-  const el = $('spend-chart');
-  if(el.children.length) return;
-  const W = el.parentElement.clientWidth || 900;
-  const H = 180;
-  const M = {t:24,r:20,b:36,l:56};
+/* ── S3 SPENDING CHART ────────────────────────────────── */
+function buildSpend(){
+  const el=$('spend-svg'); if(el.children.length) return;
+  const W=el.parentElement.clientWidth||900;
+  const H=220;
+  const M={t:16,r:14,b:36,l:50};
   const iW=W-M.l-M.r, iH=H-M.t-M.b;
-  const svg = d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
-  const g = svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
-  const x = d3.scaleBand().domain(years.map(String)).range([0,iW]).padding(.3);
-  const y = d3.scaleLinear().domain([0,700]).range([iH,0]);
+  const svg=d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
+  const g=svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
+  const x=d3.scaleBand().domain(years.map(String)).range([0,iW]).padding(.3);
+  const y=d3.scaleLinear().domain([0,700]).range([iH,0]);
 
-  // Grid lines
+  const defs=svg.append('defs');
+  const mkBGrad=(id,c)=>{
+    const gr=defs.append('linearGradient').attr('id',id).attr('x1','0').attr('y1','0').attr('x2','0').attr('y2','1');
+    gr.append('stop').attr('offset','0%').attr('stop-color',c).attr('stop-opacity',.95);
+    gr.append('stop').attr('offset','100%').attr('stop-color',c).attr('stop-opacity',.25);
+  };
+  mkBGrad('bblue','#38bdf8'); mkBGrad('bgreen','#34d399');
+
+  const bgf=defs.append('filter').attr('id','bar-gf').attr('x','-40%').attr('y','-40%').attr('width','180%').attr('height','180%');
+  bgf.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','5').attr('result','b');
+  const bfm=bgf.append('feMerge');
+  bfm.append('feMergeNode').attr('in','b');
+  bfm.append('feMergeNode').attr('in','SourceGraphic');
+
   [0,200,400,600].forEach(v=>{
     g.append('line').attr('x1',0).attr('x2',iW).attr('y1',y(v)).attr('y2',y(v))
-      .attr('stroke','rgba(255,255,255,.03)').attr('stroke-width',1);
-    g.append('text').attr('x',-8).attr('y',y(v)+4).attr('text-anchor','end')
-      .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2d4a63')
-      .text(v?`$${v}B`:'$0');
+     .attr('stroke','rgba(255,255,255,.04)').attr('stroke-width',1);
+    g.append('text').attr('x',-6).attr('y',y(v)+4).attr('text-anchor','end')
+     .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a')
+     .text(v?`$${v}B`:'$0');
   });
   years.forEach(yr=>{
-    g.append('text').attr('x',(x(String(yr))||0)+x.bandwidth()/2).attr('y',iH+20)
-      .attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace")
-      .attr('font-size',10).attr('fill','#2d4a63').text(yr);
+    g.append('text').attr('x',(x(String(yr))||0)+x.bandwidth()/2).attr('y',iH+22)
+     .attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace")
+     .attr('font-size',9).attr('fill','#2a405a').text(yr);
   });
 
-  // Bars
-  const spendTt = $('spend-tt');
   spend.forEach((v,i)=>{
-    const clr = v>=200 ? '#34d399' : 'rgba(56,189,248,.6)';
-    const bclr = v>=200 ? '#34d399' : '#38bdf8';
-    const bx = x(String(years[i]))||0;
-    const bar = g.append('rect')
-      .attr('x',bx).attr('y',iH).attr('width',x.bandwidth()).attr('height',0)
-      .attr('fill',clr).attr('rx',2)
-      .attr('stroke',bclr).attr('stroke-width',.8)
-      .style('cursor','default');
-    bar.on('mouseover',e=>{
-      showTip(e,`${years[i]}<br>$${v}B`);
-      bar.attr('fill',v>=200?'#34d399':'#38bdf8');
-    }).on('mouseout',()=>{
-      hideTip();
-      bar.attr('fill',clr);
-    });
-    setTimeout(()=>{
-      bar.transition().duration(800).delay(i*80).attr('y',y(v)).attr('height',iH-y(v));
-    },200);
-    // Value label on top 3 biggest bars
-    if(v>=140){
+    const big=v>=200;
+    const bx=x(String(years[i]))||0;
+    const bar=g.append('rect').attr('x',bx).attr('y',iH).attr('width',x.bandwidth()).attr('height',0)
+     .attr('fill',big?'url(#bgreen)':'url(#bblue)').attr('rx',2).style('cursor','crosshair');
+    if(big) bar.attr('filter','url(#bar-gf)');
+    bar.on('mouseover',e=>tip(e,`${years[i]}<br>$<b>${v}B</b>`)).on('mouseout',hideTip);
+    setTimeout(()=>{ bar.transition().duration(950).delay(i*80).attr('y',y(v)).attr('height',iH-y(v)); },200);
+    if(v>=100){
       setTimeout(()=>{
-        g.append('text').attr('x',bx+x.bandwidth()/2).attr('y',y(v)-6)
-          .attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace")
-          .attr('font-size',9).attr('fill',v>=200?'#34d399':'#38bdf8')
-          .text(`$${v}B`).style('opacity',0)
-          .transition().delay(i*80+800).duration(300).style('opacity','1');
+        g.append('text').attr('x',bx+x.bandwidth()/2).attr('y',y(v)-7)
+         .attr('text-anchor','middle').attr('font-family',"'DM Mono',monospace")
+         .attr('font-size',9).attr('fill',big?'#34d399':'#38bdf8')
+         .text(`$${v}B`).style('opacity',0)
+         .transition().delay(i*80+950).duration(300).style('opacity','1');
       },200);
     }
   });
 }
 
-/* ═══════════════════════════════════════
-   S4 — BARRIERS CHART (D3)
-═══════════════════════════════════════ */
-function drawBarriers(){
-  const el = $('barrier-chart');
-  if(el.children.length) return;
-  const W = el.parentElement.clientWidth || 900;
-  const rowH = 44, pad = 8;
-  const H = barriers.length*(rowH+pad)+pad+60;
-  const M = {t:50,r:80,b:20,l:220};
+/* ── S4 BARRIERS ──────────────────────────────────────── */
+function buildBarriers(){
+  const el=$('barrier-svg'); if(el.children.length) return;
+  const W=el.parentElement.clientWidth||820;
+  const rowH=46, gap=6;
+  const H=barriers.length*(rowH+gap)+gap+56;
+  const M={t:48,r:56,b:12,l:210};
   const iW=W-M.l-M.r;
-  const svg = d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
-  const g = svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
-  const x = d3.scaleLinear().domain([0,80]).range([0,iW]);
-  const yScale = i => i*(rowH+pad);
+  const svg=d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
+  const g=svg.append('g').attr('transform',`translate(${M.l},${M.t})`);
+  const x=d3.scaleLinear().domain([0,80]).range([0,iW]);
+  const yI=i=>i*(rowH+gap);
 
-  // Column headers
-  svg.append('text').attr('x',M.l).attr('y',30)
-    .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2d4a63').text('← LESS BLOCKING');
-  svg.append('text').attr('x',W-M.r).attr('y',30).attr('text-anchor','end')
-    .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2d4a63').text('MORE BLOCKING →');
-  // 2022/2024 legend
-  [{l:'2022',c:'rgba(56,189,248,.3)',x:M.l},{l:'2024',c:'#38bdf8',x:M.l+50}].forEach(({l,c,x:lx})=>{
-    svg.append('rect').attr('x',lx).attr('y',38).attr('width',14).attr('height',3).attr('fill',c).attr('rx',1);
-    svg.append('text').attr('x',lx+18).attr('y',43).attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#4d6680').text(l);
+  svg.append('text').attr('x',M.l).attr('y',22)
+   .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a')
+   .attr('letter-spacing','.1em').text('LESS BLOCKING');
+  svg.append('text').attr('x',W-M.r).attr('y',22).attr('text-anchor','end')
+   .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#2a405a')
+   .attr('letter-spacing','.1em').text('MORE BLOCKING');
+
+  [{l:'2022',c:'rgba(56,189,248,.22)'},{l:'2024',c:'#38bdf8'}].forEach(({l,c},idx)=>{
+    const lx=M.l+idx*56;
+    svg.append('rect').attr('x',lx).attr('y',32).attr('width',14).attr('height',3).attr('fill',c).attr('rx',1);
+    svg.append('text').attr('x',lx+18).attr('y',37)
+     .attr('font-family',"'DM Mono',monospace").attr('font-size',9).attr('fill','#4d6680').text(l);
   });
 
+  const defs=svg.append('defs');
+  const bgf=defs.append('filter').attr('id','b-gf');
+  bgf.append('feGaussianBlur').attr('in','SourceGraphic').attr('stdDeviation','3').attr('result','b');
+  const bfm=bgf.append('feMerge');
+  bfm.append('feMergeNode').attr('in','b');
+  bfm.append('feMergeNode').attr('in','SourceGraphic');
+
   barriers.forEach((b,i)=>{
-    const gy = yScale(i);
-    // Label
-    g.append('text').attr('x',-8).attr('y',gy+rowH/2+4).attr('text-anchor','end')
-      .attr('font-family',"'DM Sans',sans-serif").attr('font-size',12)
-      .attr('fill',i===0?'#38bdf8':'#8badc8').attr('font-weight',i===0?'500':'400')
-      .text(b.n);
+    const gy=yI(i);
+    const top=i===0;
+    const clr=top?'#38bdf8':'rgba(56,189,248,.55)';
 
-    // Track background
-    g.append('rect').attr('x',0).attr('y',gy+rowH/2-3).attr('width',iW).attr('height',1)
-      .attr('fill','rgba(255,255,255,.03)');
+    g.append('text').attr('x',-8).attr('y',gy+rowH/2+5).attr('text-anchor','end')
+     .attr('font-family',"'DM Sans',sans-serif").attr('font-size',12.5)
+     .attr('fill',top?'#e2eeff':'#7a9cbf').attr('font-weight',top?'500':'400')
+     .text(b.n);
 
-    // 2022 bar (ghost)
-    const b22 = g.append('rect').attr('x',0).attr('y',gy+rowH/2-6).attr('width',0).attr('height',6)
-      .attr('fill','rgba(56,189,248,.18)').attr('rx',2);
-    setTimeout(()=>{
-      b22.transition().duration(700).delay(i*80).attr('width',x(b.v22));
-    },200);
+    g.append('rect').attr('x',0).attr('y',gy+rowH/2-1).attr('width',iW).attr('height',1)
+     .attr('fill','rgba(255,255,255,.03)');
 
-    // 2024 bar
-    const b24 = g.append('rect').attr('x',0).attr('y',gy+rowH/2-3).attr('width',0).attr('height',8)
-      .attr('fill',i===0?'#38bdf8':'rgba(56,189,248,.55)').attr('rx',2);
-    setTimeout(()=>{
-      b24.transition().duration(900).delay(i*80+100).attr('width',x(b.v24));
-    },200);
+    const b22=g.append('rect').attr('x',0).attr('y',gy+rowH/2-6).attr('width',0).attr('height',6)
+     .attr('fill','rgba(56,189,248,.18)').attr('rx',2);
+    setTimeout(()=>b22.transition().duration(700).delay(i*70).attr('width',x(b.v22)),200);
 
-    // Value label
-    const vl = g.append('text').attr('x',x(b.v24)+6).attr('y',gy+rowH/2+5)
-      .attr('font-family',"'DM Mono',monospace").attr('font-size',11)
-      .attr('fill',i===0?'#38bdf8':'#4d6680').attr('font-weight',i===0?'500':'400')
-      .style('opacity',0).text(b.v24+'%');
-    setTimeout(()=>{ vl.style('opacity','1').style('transition','opacity .4s'); },900+i*80);
+    const b24bar=g.append('rect').attr('x',0).attr('y',gy+rowH/2-3).attr('width',0).attr('height',9)
+     .attr('fill',clr).attr('rx',2);
+    if(top) b24bar.attr('filter','url(#b-gf)');
+    setTimeout(()=>b24bar.transition().duration(900).delay(i*70+80).attr('width',x(b.v24)),200);
 
-    // Change arrow if rank changed
-    if(b.rank22 !== b.rank24){
-      const chg = b.rank22-b.rank24; // positive = went up (worse)
-      const clr = chg>0?'#f87171':'#34d399';
-      const sym = chg>0?'↑':'↓';
-      g.append('text').attr('x',iW+10).attr('y',gy+rowH/2+5)
-        .attr('font-family',"'DM Mono',monospace").attr('font-size',11)
-        .attr('fill',clr).text(`${sym}${Math.abs(chg)}`);
+    const vl=g.append('text').attr('x',x(b.v24)+7).attr('y',gy+rowH/2+5)
+     .attr('font-family',"'DM Mono',monospace").attr('font-size',11)
+     .attr('fill',clr).style('opacity',0).text(b.v24+'%');
+    setTimeout(()=>vl.style('opacity','1').style('transition','opacity .4s'), 900+i*70);
+
+    if(b.r22!==b.r24){
+      const chg=b.r22-b.r24;
+      const ac=chg>0?'#f87171':'#34d399';
+      g.append('text').attr('x',iW+8).attr('y',gy+rowH/2+5)
+       .attr('font-family',"'DM Mono',monospace").attr('font-size',10).attr('fill',ac)
+       .text((chg>0?'▲':'▼')+Math.abs(chg));
     }
 
-    // Hover
-    const hitArea = g.append('rect').attr('x',0).attr('y',gy).attr('width',iW+60).attr('height',rowH)
-      .attr('fill','transparent').style('cursor','default');
-    hitArea.on('mouseover',e=>{
-      showTip(e,`<span style="color:#38bdf8">${b.n}</span><br>2022: <b>${b.v22}%</b>  →  2024: <b>${b.v24}%</b><br>Rank: #${b.rank22} → #${b.rank24}`);
-    }).on('mouseout',hideTip);
+    g.append('rect').attr('x',0).attr('y',gy).attr('width',iW+50).attr('height',rowH)
+     .attr('fill','transparent').style('cursor','crosshair')
+     .on('mouseover',e=>tip(e,`<span style="color:#38bdf8">${b.n}</span><br>2022: <b>${b.v22}%</b>  →  2024: <b>${b.v24}%</b><br>Rank change: #${b.r22} → #${b.r24}`))
+     .on('mouseout',hideTip);
   });
 }
 
-/* ═══════════════════════════════════════
-   S5 — USE CASES
-═══════════════════════════════════════ */
-function revealUseCases(){
-  const wrap = $('use-rows');
-  if(wrap.children.length) return;
+/* ── S5 USE CASES ─────────────────────────────────────── */
+function buildUseCases(){
+  const wrap=$('uc-grid'); if(wrap.children.length) return;
+  const C=2*Math.PI*20;
   usecases.forEach((u,i)=>{
-    const row = document.createElement('div');
-    row.className='use-row';
-    const clr = i===0 ? '#38bdf8' : i===1 ? 'rgba(56,189,248,.7)' : 'rgba(56,189,248,.45)';
-    row.innerHTML=`
-      <div class="use-rank">${String(i+1).padStart(2,'0')}</div>
-      <div class="use-name">${u.n}</div>
-      <div class="use-track"><div class="use-fill" style="background:${clr}" data-w="${u.v}"></div></div>
-      <div class="use-pct" style="color:${clr}">${u.v}%</div>`;
-    row.addEventListener('mouseover',e=>showTip(e,`${u.n}<br><b>${u.v}%</b> of deployments`));
-    row.addEventListener('mouseout',hideTip);
-    wrap.appendChild(row);
+    const tile=document.createElement('div');
+    tile.className='uc-tile';
+    tile.innerHTML=`
+      <svg class="uc-ring" viewBox="0 0 48 48">
+        <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="3.5"/>
+        <circle class="ring-arc" cx="24" cy="24" r="20" fill="none"
+          stroke="${u.c}" stroke-width="3.5" stroke-linecap="round"
+          stroke-dasharray="0 ${C}" transform="rotate(-90 24 24)"
+          style="transition:stroke-dasharray 1.4s cubic-bezier(.4,0,.2,1) ${i*110}ms"/>
+        <text x="24" y="28" text-anchor="middle"
+          font-family="'DM Mono',monospace" font-size="9" fill="${u.c}">${u.v}%</text>
+      </svg>
+      <div>
+        <div class="uc-rank">#${i+1}</div>
+        <div class="uc-name">${u.n}</div>
+        <div class="uc-pct" style="color:${u.c}">${u.v}%</div>
+      </div>`;
+    tile.addEventListener('mouseover',e=>tip(e,`<span style="color:${u.c}">${u.n}</span><br><b>${u.v}%</b> of deployments`));
+    tile.addEventListener('mouseout',hideTip);
+    wrap.appendChild(tile);
     setTimeout(()=>{
-      row.classList.add('in');
-      row.querySelector('.use-fill').style.width = (u.v/38*80)+'%';
-    }, i*100 + 200);
+      tile.style.opacity='1'; tile.style.transform='none';
+      tile.querySelector('.ring-arc').setAttribute('stroke-dasharray',`${(u.v/38)*C} ${C}`);
+    }, i*100+300);
   });
 }
 </script>
