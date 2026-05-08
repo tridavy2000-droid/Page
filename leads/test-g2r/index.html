@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test — G2R Limited</title>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --accent: #1a1a1a;
+  --gray:   #888;
+  --light:  #f5f5f5;
+}
+
+body { font-family: 'Inter', system-ui, sans-serif; background:#fff; color:#1a1a1a; overflow-x:hidden; }
+
+/* ═══════════════════════════════════
+   BLOCK 1 — STICKY STEP-BY-STEP
+═══════════════════════════════════ */
+.sticky-section {
+  display: flex;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 40px;
+}
+
+/* Left — sticky */
+.sticky-left {
+  flex: 0 0 40%;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 60px;
+}
+
+.step-title {
+  font-size: clamp(22px, 3vw, 36px);
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 16px 0;
+  color: #ccc;
+  transition: color 0.4s ease;
+  cursor: default;
+  position: relative;
+  padding-left: 24px;
+}
+
+.step-title::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 4px; height: 0;
+  background: #1a1a1a;
+  border-radius: 2px;
+  transition: height 0.4s ease;
+}
+
+.step-title.active { color: #1a1a1a; }
+.step-title.active::before { height: 100%; }
+
+/* Right — scrollable images */
+.sticky-right {
+  flex: 0 0 60%;
+}
+
+.sticky-image {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sticky-image-inner {
+  width: 100%;
+  height: 75vh;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.img-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 600; color: #fff;
+  transition: opacity 0.6s ease;
+}
+
+.img-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+.img-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.img-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+
+/* ═══════════════════════════════════
+   BLOCK 2 — MAGNETIC BTN + MARQUEE
+═══════════════════════════════════ */
+.block2 {
+  padding: 120px 40px;
+  text-align: center;
+  background: #0a0a0a;
+  color: #fff;
+  overflow: hidden;
+}
+
+.block2-label {
+  font-size: 12px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: #666; margin-bottom: 60px;
+}
+
+/* Magnetic button */
+.magnetic-wrap {
+  display: inline-block;
+  margin-bottom: 80px;
+  position: relative;
+}
+
+.magnetic-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 180px; height: 60px;
+  background: #fff; color: #0a0a0a;
+  font-size: 15px; font-weight: 700;
+  border-radius: 100px; border: none; cursor: pointer;
+  position: relative; z-index: 1;
+  transition: transform 0.4s cubic-bezier(.23,1,.32,1);
+  user-select: none;
+}
+
+.magnetic-btn::after {
+  content: '';
+  position: absolute; inset: -12px;
+  border-radius: 100px;
+  border: 1px dashed rgba(255,255,255,0.15);
+}
+
+/* Marquee */
+.marquee-outer {
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  gap: 0;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-item {
+  display: flex; align-items: center; gap: 20px;
+  padding: 16px 32px;
+  font-size: clamp(18px, 3vw, 32px);
+  font-weight: 800;
+  white-space: nowrap;
+  color: #fff;
+}
+
+.marquee-dot { color: #555; font-size: 10px; }
+
+/* ═══════════════════════════════════
+   BLOCK 3 — LAYERED OVERLAP
+═══════════════════════════════════ */
+.block3 {
+  max-width: 1920px;
+  margin: 0 auto;
+  padding: 100px 40px;
+  position: relative;
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+
+/* BG vector */
+.bg-vector {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 0; pointer-events: none;
+}
+
+.bg-vector svg {
+  width: 80%; height: 80%;
+  opacity: 0.04;
+}
+
+/* Photos grid */
+.photos-layer {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 900px;
+}
+
+.photos-grid {
+  position: relative;
+  height: 520px;
+}
+
+.photo-item {
+  position: absolute;
+  border-radius: 16px; overflow: hidden;
+  transition: transform 0.4s cubic-bezier(.23,1,.32,1),
+              z-index 0s,
+              box-shadow 0.4s ease;
+  cursor: pointer;
+  will-change: transform;
+}
+
+.photo-item:hover {
+  transform: scale(1.06) !important;
+  z-index: 10 !important;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+}
+
+.photos-grid:has(.photo-item:hover) .photo-item:not(:hover) {
+  filter: brightness(0.6);
+}
+
+.p1 { width: 340px; height: 280px; top: 0; left: 0; z-index: 4; transform: rotate(-3deg); }
+.p2 { width: 300px; height: 300px; top: 60px; left: 200px; z-index: 3; transform: rotate(2deg); }
+.p3 { width: 320px; height: 260px; top: 30px; right: 0; z-index: 2; transform: rotate(-1deg); }
+.p4 { width: 360px; height: 240px; bottom: 0; left: 120px; z-index: 1; transform: rotate(1.5deg); }
+
+.photo-bg {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+
+.pb1 { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+.pb2 { background: linear-gradient(135deg, #2d1b69, #11998e); }
+.pb3 { background: linear-gradient(135deg, #373b44, #4286f4); }
+.pb4 { background: linear-gradient(135deg, #834d9b, #d04ed6); }
+
+/* Headline overlay */
+.block3-headline {
+  position: absolute; z-index: 20;
+  bottom: 60px; left: 40px; right: 40px;
+  font-size: clamp(48px, 8vw, 120px);
+  font-weight: 900;
+  line-height: 0.9;
+  color: #1a1a1a;
+  letter-spacing: -3px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+/* ═══════════════════════════════════
+   SECTION LABELS
+═══════════════════════════════════ */
+.section-wrap { padding: 60px 0 0; }
+
+.section-num {
+  text-align: center;
+  font-size: 11px; font-weight: 700; letter-spacing: 3px;
+  text-transform: uppercase; color: #999;
+  padding: 40px 40px 0;
+}
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media (max-width: 768px) {
+  .sticky-section {
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+
+  .sticky-left {
+    position: relative;
+    height: auto;
+    padding-right: 0;
+    padding-bottom: 40px;
+    flex: none;
+    width: 100%;
+  }
+
+  /* Mobile: horizontal swipe for images */
+  .sticky-right {
+    width: 100%;
+    flex: none;
+  }
+
+  .sticky-right-mobile {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 16px;
+    padding-bottom: 20px;
+    scrollbar-width: none;
+  }
+
+  .sticky-right-mobile::-webkit-scrollbar { display: none; }
+
+  .sticky-image {
+    height: auto;
+    flex: 0 0 85vw;
+    scroll-snap-align: center;
+  }
+
+  .sticky-image-inner { height: 240px; }
+
+  .block3 { padding: 60px 20px; }
+  .photos-grid { height: auto; }
+  .photo-item {
+    position: relative !important;
+    width: 100% !important; height: 200px !important;
+    top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+    transform: none !important;
+    margin-bottom: 12px;
+  }
+  .block3-headline { position: relative; bottom: auto; left: auto; font-size: 48px; padding: 20px 0; }
+  .block3 { flex-direction: column; }
+  .photos-layer { max-width: 100%; }
+
+  .block2 { padding: 80px 20px; }
+}
+
+@media (min-width: 1920px) {
+  .sticky-section { max-width: 1600px; }
+  .block3 { padding: 120px 80px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     BLOCK 1 — STICKY STEP-BY-STEP
+══════════════════════════════ -->
+<div class="section-num">01 — Sticky Step-by-Step</div>
+<div class="sticky-section" id="sticky-section">
+
+  <div class="sticky-left" id="sticky-left">
+    <div class="step-title active" data-step="0">Шаг первый — Исследование и анализ аудитории</div>
+    <div class="step-title" data-step="1">Шаг второй — Прототипирование и архитектура</div>
+    <div class="step-title" data-step="2">Шаг третий — Разработка и запуск</div>
+  </div>
+
+  <div class="sticky-right" id="sticky-right">
+    <div class="sticky-image" data-img="0">
+      <div class="sticky-image-inner">
+        <div class="img-placeholder img-1">Изображение 01</div>
+      </div>
+    </div>
+    <div class="sticky-image" data-img="1">
+      <div class="sticky-image-inner">
+        <div class="img-placeholder img-2">Изображение 02</div>
+      </div>
+    </div>
+    <div class="sticky-image" data-img="2">
+      <div class="sticky-image-inner">
+        <div class="img-placeholder img-3">Изображение 03</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     BLOCK 2 — MAGNETIC + MARQUEE
+══════════════════════════════ -->
+<div class="section-num" style="color:#444; background:#0a0a0a; padding-top:60px;">02 — Magnetic Button + Smart Marquee</div>
+<div class="block2">
+
+  <p class="block2-label">Наведи курсор на кнопку</p>
+
+  <div class="magnetic-wrap" id="magnetic-wrap">
+    <button class="magnetic-btn" id="magnetic-btn">Нажми меня</button>
+  </div>
+
+  <div class="marquee-outer">
+    <div class="marquee-track" id="marquee-track">
+      <div class="marquee-item">Разработка <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Дизайн <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Вёрстка <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Анимации <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Адаптив <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Интеграции <span class="marquee-dot">✦</span></div>
+      <!-- clone for seamless -->
+      <div class="marquee-item">Разработка <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Дизайн <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Вёрстка <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Анимации <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Адаптив <span class="marquee-dot">✦</span></div>
+      <div class="marquee-item">Интеграции <span class="marquee-dot">✦</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════
+     BLOCK 3 — LAYERED OVERLAP
+══════════════════════════════ -->
+<div class="section-num">03 — Overlapping Layers</div>
+<div class="block3">
+
+  <div class="bg-vector">
+    <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100 10 L190 55 L190 145 L100 190 L10 145 L10 55 Z" stroke="#1a1a1a" stroke-width="2"/>
+      <path d="M100 30 L170 67 L170 133 L100 170 L30 133 L30 67 Z" stroke="#1a1a1a" stroke-width="1.5"/>
+      <path d="M100 50 L150 80 L150 120 L100 150 L50 120 L50 80 Z" stroke="#1a1a1a" stroke-width="1"/>
+      <circle cx="100" cy="100" r="30" stroke="#1a1a1a" stroke-width="1.5"/>
+      <circle cx="100" cy="100" r="55" stroke="#1a1a1a" stroke-width="0.8"/>
+      <circle cx="100" cy="100" r="80" stroke="#1a1a1a" stroke-width="0.5"/>
+    </svg>
+  </div>
+
+  <div class="photos-layer">
+    <div class="photos-grid">
+      <div class="photo-item p1">
+        <div class="photo-bg pb1">ФОТО 01</div>
+      </div>
+      <div class="photo-item p2">
+        <div class="photo-bg pb2">ФОТО 02</div>
+      </div>
+      <div class="photo-item p3">
+        <div class="photo-bg pb3">ФОТО 03</div>
+      </div>
+      <div class="photo-item p4">
+        <div class="photo-bg pb4">ФОТО 04</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block3-headline">
+    Слои<br>& Текст
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════
+   BLOCK 1 — STICKY SCROLL SPY
+══════════════════════════════ */
+const images = document.querySelectorAll('.sticky-image');
+const titles = document.querySelectorAll('.step-title');
+const isMobile = () => window.innerWidth <= 768;
+
+function updateActiveStep() {
+  if (isMobile()) return;
+  const center = window.innerHeight / 2;
+  let activeIdx = 0;
+  images.forEach((img, i) => {
+    const rect = img.getBoundingClientRect();
+    const imgCenter = rect.top + rect.height / 2;
+    if (imgCenter <= center + 100) activeIdx = i;
+  });
+  titles.forEach((t, i) => {
+    t.classList.toggle('active', i === activeIdx);
+  });
+}
+
+window.addEventListener('scroll', updateActiveStep, { passive: true });
+updateActiveStep();
+
+/* ══════════════════════════════
+   BLOCK 2 — MAGNETIC BUTTON
+══════════════════════════════ */
+const wrap = document.getElementById('magnetic-wrap');
+const btn  = document.getElementById('magnetic-btn');
+const RADIUS = 80;
+const STRENGTH = 0.45;
+
+wrap.addEventListener('mousemove', e => {
+  const r = btn.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  const dx = e.clientX - cx;
+  const dy = e.clientY - cy;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+
+  if (dist < RADIUS) {
+    const pull = (1 - dist / RADIUS);
+    btn.style.transform = `translate(${dx * STRENGTH * pull}px, ${dy * STRENGTH * pull}px)`;
+  }
+});
+
+wrap.addEventListener('mouseleave', () => {
+  btn.style.transform = 'translate(0, 0)';
+});
+
+/* ══════════════════════════════
+   BLOCK 2 — SMART MARQUEE
+══════════════════════════════ */
+const track = document.getElementById('marquee-track');
+let marqueeX = 0;
+let baseSpeed = 0.8;          // px/frame baseline
+let scrollVelocity = 0;
+let lastScrollY = window.scrollY;
+let lastScrollTime = performance.now();
+let direction = -1;           // -1 = left, +1 = right
+let rafId;
+
+// Track scroll velocity & direction
+window.addEventListener('scroll', () => {
+  const now = performance.now();
+  const dy = window.scrollY - lastScrollY;
+  const dt = now - lastScrollTime || 1;
+  scrollVelocity = dy / dt * 16; // normalise to ~60fps
+  direction = dy >= 0 ? -1 : 1;
+  lastScrollY = window.scrollY;
+  lastScrollTime = now;
+}, { passive: true });
+
+function animateMarquee() {
+  // Decay velocity
+  scrollVelocity *= 0.9;
+  const speed = baseSpeed + Math.abs(scrollVelocity) * 1.5;
+  marqueeX += direction * speed;
+
+  const halfW = track.scrollWidth / 2;
+  if (marqueeX <= -halfW) marqueeX += halfW;
+  if (marqueeX >= halfW)  marqueeX -= halfW;
+
+  track.style.transform = `translateX(${marqueeX}px)`;
+  rafId = requestAnimationFrame(animateMarquee);
+}
+
+animateMarquee();
+
+/* ══════════════════════════════
+   MOBILE: note sticky→swipe
+══════════════════════════════ */
+// On mobile the sticky left is static and right scrolls horizontally
+// (native scroll-snap handles it — no JS needed)
+</script>
+</body>
+</html>
