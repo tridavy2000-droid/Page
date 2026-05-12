@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Тестовое задание — Данил Трифонов</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:     #0f0f0f;
+  --ink2:    #3a3a3a;
+  --muted:   #888;
+  --border:  #e8e8e8;
+  --bg:      #ffffff;
+  --bg2:     #f7f7f7;
+  --accent:  #1a1a1a;
+  --purple:  #6c3fc4;
+  --orange:  #f97316;
+  --green:   #16a34a;
+  --blue:    #2563eb;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { font-size:16px; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f0f0f0;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.doc {
+  max-width: 860px;
+  margin: 40px auto;
+  background: var(--bg);
+  box-shadow: 0 4px 60px rgba(0,0,0,0.1);
+}
+
+/* ── COVER ── */
+.cover {
+  background: var(--ink);
+  color: #fff;
+  padding: 72px 64px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cover::before {
+  content: '';
+  position: absolute; top: -120px; right: -120px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(108,63,196,0.4), transparent 70%);
+  pointer-events: none;
+}
+
+.cover::after {
+  content: '';
+  position: absolute; bottom: -80px; left: -80px;
+  width: 300px; height: 300px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(249,115,22,0.25), transparent 70%);
+  pointer-events: none;
+}
+
+.cover-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 2.5px;
+  text-transform: uppercase; color: rgba(255,255,255,0.4);
+  margin-bottom: 28px;
+}
+
+.cover-name {
+  font-size: 52px; font-weight: 900; line-height: 0.95;
+  letter-spacing: -2px; color: #fff;
+  margin-bottom: 12px;
+}
+
+.cover-role {
+  font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.55);
+  margin-bottom: 48px;
+}
+
+.cover-meta {
+  display: flex; gap: 32px; flex-wrap: wrap;
+}
+
+.cover-meta-item {
+  display: flex; flex-direction: column; gap: 3px;
+}
+
+.meta-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+}
+
+.meta-value {
+  font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.8);
+}
+
+.cover-divider {
+  margin-top: 48px; padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 13px; color: rgba(255,255,255,0.35);
+  line-height: 1.6;
+}
+
+/* ── CONTENT ── */
+.content { padding: 0 64px 80px; }
+
+/* Section */
+.section {
+  padding-top: 64px;
+  border-top: 1px solid var(--border);
+  margin-top: 64px;
+}
+
+.section:first-child { margin-top: 0; border-top: none; }
+
+.section-header {
+  display: flex; align-items: flex-start;
+  gap: 20px; margin-bottom: 40px;
+}
+
+.section-num {
+  flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 10px;
+  background: var(--ink); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800;
+  margin-top: 2px;
+}
+
+.section-num.purple { background: var(--purple); }
+.section-num.orange { background: var(--orange); }
+.section-num.green  { background: var(--green); }
+.section-num.blue   { background: var(--blue); }
+
+.section-heading { flex: 1; }
+
+.section-title {
+  font-size: 26px; font-weight: 800; line-height: 1.15;
+  letter-spacing: -0.5px; color: var(--ink);
+}
+
+.section-desc {
+  font-size: 13px; color: var(--muted);
+  margin-top: 5px; line-height: 1.5;
+}
+
+/* App cards */
+.app-cards { display: flex; flex-direction: column; gap: 20px; }
+
+.app-card {
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+
+.app-card-header {
+  padding: 24px 28px 20px;
+  display: flex; align-items: flex-start; gap: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+
+.app-icon.c1 { background: linear-gradient(135deg,#667eea,#764ba2); }
+.app-icon.c2 { background: linear-gradient(135deg,#f093fb,#f5576c); }
+.app-icon.c3 { background: linear-gradient(135deg,#4facfe,#00f2fe); }
+
+.app-card-title { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; color: var(--ink); }
+.app-card-subtitle { font-size: 13px; color: var(--purple); font-weight: 600; margin-top: 2px; }
+
+.app-card-body { padding: 20px 28px; }
+
+.app-rows { display: flex; flex-direction: column; gap: 14px; }
+
+.app-row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; }
+
+.app-row-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted);
+  padding-top: 2px;
+}
+
+.app-row-value { font-size: 14px; color: var(--ink2); line-height: 1.6; }
+
+.viral-tag {
+  display: inline-block;
+  background: rgba(22,163,74,0.08); border: 1px solid rgba(22,163,74,0.2);
+  color: var(--green); font-size: 11px; font-weight: 700;
+  padding: 2px 8px; border-radius: 100px; margin-right: 4px;
+  margin-bottom: 4px;
+}
+
+/* TG Post */
+.tg-post {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+
+.tg-post-header {
+  background: var(--bg2); padding: 14px 20px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.tg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.tg-dot.r { background: #ff5f57; }
+.tg-dot.y { background: #ffbd2e; }
+.tg-dot.g { background: #28c840; }
+.tg-label { font-size: 12px; color: var(--muted); margin-left: 6px; font-weight: 500; }
+
+.tg-post-body {
+  padding: 24px 28px;
+  font-size: 15px; line-height: 1.75; color: var(--ink2);
+  white-space: pre-line;
+}
+
+.tg-post-body strong { color: var(--ink); }
+
+/* Prompts */
+.prompts-list { display: flex; flex-direction: column; gap: 16px; }
+
+.prompt-item {
+  border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+}
+
+.prompt-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+}
+
+.prompt-num {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--ink); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 800; flex-shrink: 0;
+}
+
+.prompt-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+.prompt-tag {
+  margin-left: auto;
+  font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  background: rgba(37,99,235,0.08); color: var(--blue);
+  padding: 3px 8px; border-radius: 100px;
+}
+
+.prompt-body {
+  padding: 16px 20px;
+  font-size: 13px; line-height: 1.7; color: var(--ink2);
+  font-family: 'Inter', monospace;
+  background: #fafafa;
+}
+
+/* Tools grid */
+.tools-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tools-card {
+  border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px;
+}
+
+.tools-card-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+
+.tools-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.tool-tag {
+  background: var(--bg2); border: 1px solid var(--border);
+  font-size: 12px; font-weight: 600; color: var(--ink2);
+  padding: 4px 10px; border-radius: 100px;
+}
+
+.tool-tag.hot { background: rgba(249,115,22,0.08); border-color: rgba(249,115,22,0.25); color: var(--orange); }
+.tool-tag.purple { background: rgba(108,63,196,0.08); border-color: rgba(108,63,196,0.25); color: var(--purple); }
+
+.impress-list { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+
+.impress-item {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 18px; background: var(--bg2);
+  border: 1px solid var(--border); border-radius: 12px;
+}
+
+.impress-icon { font-size: 22px; flex-shrink: 0; }
+.impress-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.impress-desc { font-size: 13px; color: var(--ink2); line-height: 1.55; }
+
+/* Personal */
+.personal-grid { display: flex; flex-direction: column; gap: 16px; }
+
+.personal-card {
+  padding: 22px 24px; border: 1px solid var(--border); border-radius: 14px;
+  position: relative; overflow: hidden;
+}
+
+.personal-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--ink);
+}
+
+.personal-card.purple::before { background: var(--purple); }
+.personal-card.orange::before { background: var(--orange); }
+.personal-card.green::before  { background: var(--green); }
+.personal-card.blue::before   { background: var(--blue); }
+
+.personal-q {
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+}
+
+.personal-a { font-size: 15px; line-height: 1.7; color: var(--ink2); }
+.personal-a strong { color: var(--ink); }
+
+/* Footer */
+.doc-footer {
+  background: var(--ink); color: rgba(255,255,255,0.4);
+  padding: 24px 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12px;
+}
+
+.doc-footer a { color: rgba(255,255,255,0.6); text-decoration: none; }
+
+/* Print */
+@media print {
+  body { background: #fff; }
+  .doc { box-shadow: none; margin: 0; max-width: 100%; }
+  .no-print { display: none; }
+}
+
+.print-bar {
+  max-width: 860px; margin: 0 auto 16px;
+  display: flex; justify-content: flex-end;
+}
+
+.print-btn {
+  background: var(--ink); color: #fff;
+  border: none; padding: 10px 22px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+</style>
+</head>
+<body>
+
+<div class="print-bar no-print">
+  <button class="print-btn" onclick="window.print()">Сохранить PDF</button>
+</div>
+
+<div class="doc">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-label">Тестовое задание · Помощник руководителя / AI Assistant</div>
+    <div class="cover-name">Данил<br>Трифонов</div>
+    <div class="cover-role">AI-first · Vibe Coder · Быстрое мышление</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <span class="meta-label">Telegram</span>
+        <span class="meta-value">@tridavy2000</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="meta-label">Email</span>
+        <span class="meta-value">tridavy2000@gmail.com</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="meta-label">Портфолио</span>
+        <span class="meta-value">tridavy2000-droid.github.io/Page</span>
+      </div>
+      <div class="cover-meta-item">
+        <span class="meta-label">Готов к старту</span>
+        <span class="meta-value">Сразу</span>
+      </div>
+    </div>
+    <div class="cover-divider">
+      Это задание я выполнил за один подход — не потому что торопился, а потому что именно так работаю каждый день. AI — мой основной инструмент, не костыль.
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- SECTION 1 -->
+    <div class="section" style="margin-top:56px; border-top:none;">
+      <div class="section-header">
+        <div class="section-num purple">01</div>
+        <div class="section-heading">
+          <div class="section-title">AI + Скорость мышления</div>
+          <div class="section-desc">3 идеи мобильных приложений для рынка США с вирусным потенциалом</div>
+        </div>
+      </div>
+
+      <div class="app-cards">
+
+        <!-- APP 1 -->
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon c1">🎧</div>
+            <div>
+              <div class="app-card-title">Drift — AI-истории по геолокации</div>
+              <div class="app-card-subtitle">Hyperlocal storytelling · Entertainment</div>
+            </div>
+          </div>
+          <div class="app-card-body">
+            <div class="app-rows">
+              <div class="app-row">
+                <div class="app-row-label">Идея</div>
+                <div class="app-row-value">Пока ты идёшь по улице, AI в реальном времени генерирует аудио-историю на основе твоей геолокации, времени суток и погоды. Прошёл мимо старого здания — слышишь нуар-детектив 1940-х, действие которого происходит именно здесь. История меняется каждый раз.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">ЦА</div>
+                <div class="app-row-value">Городские жители 18–35, которые устали от одних и тех же подкастов. Туристы. Люди с ежедневным коротким маршрутом.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">Монетизация</div>
+                <div class="app-row-value">Freemium (3 истории в день бесплатно), $7.99/мес Premium. Партнёрства с городами и туристическими бюро. Локальный бизнес платит за упоминание в историях.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">Вирусность</div>
+                <div class="app-row-value">
+                  <span class="viral-tag">UGC</span>
+                  <span class="viral-tag">Challenge</span>
+                  <span class="viral-tag">FOMO</span>
+                  "Сегодня на прогулке мне рассказали детектив прямо про мой район" — такое не может не шерить. #DriftChallenge — пройди один и тот же маршрут 7 дней подряд.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APP 2 -->
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon c2">🎯</div>
+            <div>
+              <div class="app-card-title">Lobby — AI-тренер переговоров</div>
+              <div class="app-card-subtitle">Negotiation coaching · Productivity</div>
+            </div>
+          </div>
+          <div class="app-card-body">
+            <div class="app-rows">
+              <div class="app-row">
+                <div class="app-row-label">Идея</div>
+                <div class="app-row-value">Перед сложным разговором (переговоры о зарплате, конфликтный клиент, разговор с арендодателем) описываешь ситуацию → AI анализирует психологию собеседника, даёт персональный скрипт, разыгрывает сценарий как ролевую игру. Опционально: реальный earpiece-режим с подсказками в живом разговоре.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">ЦА</div>
+                <div class="app-row-value">Молодые специалисты 24–38, sales-менеджеры, фрилансеры — все кто испытывает тревогу перед важными разговорами.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">Монетизация</div>
+                <div class="app-row-value">$14.99/мес, B2B-тарифы для корпоративного обучения ($49/seat), разовые "разборы полётов" после важных встреч.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">Вирусность</div>
+                <div class="app-row-value">
+                  <span class="viral-tag">Success stories</span>
+                  <span class="viral-tag">Сарафан</span>
+                  "Я получил прибавку $20k — и да, я тренировался с AI" — такие истории сами разлетаются. Концепция "AI в ухе во время переговоров" — медийно взрывная.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- APP 3 -->
+        <div class="app-card">
+          <div class="app-card-header">
+            <div class="app-icon c3">📸</div>
+            <div>
+              <div class="app-card-title">Relic — AI семейный историк</div>
+              <div class="app-card-subtitle">Family memory · Emotional tech</div>
+            </div>
+          </div>
+          <div class="app-card-body">
+            <div class="app-rows">
+              <div class="app-row">
+                <div class="app-row-label">Идея</div>
+                <div class="app-row-value">Загружаешь старые семейные фото, письма, документы, голосовые. AI распознаёт лица, даты, локации и создаёт интерактивное семейное древо с нарративом: "Это твой дед в 23 года, стоит у завода где проработал 30 лет…" Семья совместно дополняет и исправляет.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">ЦА</div>
+                <div class="app-row-value">Миллениалы с пожилыми родителями, 30–55. Рынок генеалогии в США — $3 млрд, но все продукты скучные и сложные.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">Монетизация</div>
+                <div class="app-row-value">Базовое древо бесплатно, $9.99/мес за AI-нарративы и хранилище. Печатная "Книга семьи" — $29.99 разово. Подарочные подписки на праздники.</div>
+              </div>
+              <div class="app-row">
+                <div class="app-row-label">Вирусность</div>
+                <div class="app-row-value">
+                  <span class="viral-tag">Emotion</span>
+                  <span class="viral-tag">Gift</span>
+                  <span class="viral-tag">Collab</span>
+                  Эмоциональные находки ("Я только узнал что прапрабабушка эмигрировала из Польши") создают мощный UGC. Семейные группы — встроенный виральный механизм.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 2 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num orange">02</div>
+        <div class="section-heading">
+          <div class="section-title">Работа с нейросетями</div>
+          <div class="section-desc">Telegram-пост для AI-продукта + 5 рабочих промптов</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:32px;">
+        <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">Telegram-пост — AI Trading Assistant</div>
+        <div class="tg-post">
+          <div class="tg-post-header">
+            <div class="tg-dot r"></div>
+            <div class="tg-dot y"></div>
+            <div class="tg-dot g"></div>
+            <span class="tg-label">Telegram · Пост</span>
+          </div>
+          <div class="tg-post-body"><strong>Пока ты смотришь графики — он уже принял решение.</strong>
+
+Наш AI анализирует 500+ монет по 40 индикаторам одновременно.
+Ты получаешь не просто сигнал — а объяснение: почему сейчас, почему именно этот актив.
+
+<strong>Что внутри:</strong>
+→ Сканирование рынка 24/7 без выходных
+→ Сигналы только при реальном входе — не спам
+→ Уровни стоп-лосса и тейк-профита уже в сообщении
+→ История сигналов открыта — проверяй сам
+
+Наши пользователи за апрель: средний результат <strong>+18% к портфелю.</strong>
+
+Первые 100 мест — <strong>7 дней бесплатно.</strong> Потом 990₽/мес.
+
+👇 Нажми — посмотри последние 10 сигналов прямо сейчас.</div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:16px;">5 промптов которые реально работают</div>
+
+      <div class="prompts-list">
+
+        <div class="prompt-item">
+          <div class="prompt-header">
+            <div class="prompt-num">1</div>
+            <div class="prompt-title">Стратегический разбор конкурента</div>
+            <span class="prompt-tag">Бизнес</span>
+          </div>
+          <div class="prompt-body">Ты — стратегический консультант уровня McKinsey. Проанализируй компанию [название] как потенциального конкурента для [мой бизнес/продукт]. Структура: позиционирование на рынке, ценообразование, явные слабые места, как именно мы можем их обойти. Формат: таблица сравнения + 3 стратегических вывода. Будь конкретен, избегай общих фраз.</div>
+        </div>
+
+        <div class="prompt-item">
+          <div class="prompt-header">
+            <div class="prompt-num">2</div>
+            <div class="prompt-title">SOP за 5 минут</div>
+            <span class="prompt-tag">Операции</span>
+          </div>
+          <div class="prompt-body">Создай пошаговый SOP (Standard Operating Procedure) для задачи: [описание задачи]. Требования: каждый шаг — одно конкретное действие, без воды. Уровень детализации такой, чтобы новый сотрудник без вопросов справился с первого раза. В конце — чеклист для самопроверки. Формат: нумерованный список.</div>
+        </div>
+
+        <div class="prompt-item">
+          <div class="prompt-header">
+            <div class="prompt-num">3</div>
+            <div class="prompt-title">Подготовка к переговорам</div>
+            <span class="prompt-tag">Продажи</span>
+          </div>
+          <div class="prompt-body">Я иду на переговоры о [зарплата / сделка / партнёрство]. Мои условия: [X]. Их вероятная позиция: [Y]. Контекст: [2-3 предложения о ситуации]. Дай мне: 3 сильных аргумента в мою пользу, 2 вероятных возражения и как их закрыть одним предложением, идеальную открывающую фразу для начала разговора.</div>
+        </div>
+
+        <div class="prompt-item">
+          <div class="prompt-header">
+            <div class="prompt-num">4</div>
+            <div class="prompt-title">Честный разбор ошибки</div>
+            <span class="prompt-tag">Рефлексия</span>
+          </div>
+          <div class="prompt-body">Вот что произошло: [описание ситуации или провала]. Выступи как честный ментор — без смягчений и утешений. Ответь на три вопроса: что именно пошло не так и почему, кто несёт ответственность (включая меня), что конкретно нужно изменить в процессе чтобы это не повторилось. Не жалей меня.</div>
+        </div>
+
+        <div class="prompt-item">
+          <div class="prompt-header">
+            <div class="prompt-num">5</div>
+            <div class="prompt-title">Письмо которое получает ответ</div>
+            <span class="prompt-tag">Коммуникация</span>
+          </div>
+          <div class="prompt-body">Напиши письмо / сообщение для [кому: клиент / партнёр / работодатель] с целью [чего хочу добиться]. Контекст: [1-2 предложения]. Тон: [профессиональный / дружелюбный / прямой]. Требования: одно чёткое действие в конце, без воды, без извинений за беспокойство, длина — до 5 предложений. Дай 2 варианта: мягкий и прямой.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION 3 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num green">03</div>
+        <div class="section-heading">
+          <div class="section-title">Vibe Coding / Технологии</div>
+          <div class="section-desc">Инструменты, опыт и то что реально впечатлило</div>
+        </div>
+      </div>
+
+      <div class="tools-grid">
+        <div class="tools-card">
+          <div class="tools-card-label">AI-инструменты</div>
+          <div class="tools-tags">
+            <span class="tool-tag hot">Claude Code</span>
+            <span class="tool-tag hot">GPT-4o</span>
+            <span class="tool-tag">Gemini</span>
+            <span class="tool-tag">Perplexity</span>
+            <span class="tool-tag">Midjourney</span>
+            <span class="tool-tag">ElevenLabs</span>
+            <span class="tool-tag">Runway</span>
+          </div>
+        </div>
+        <div class="tools-card">
+          <div class="tools-card-label">No-code / Автоматизация</div>
+          <div class="tools-tags">
+            <span class="tool-tag purple">n8n</span>
+            <span class="tool-tag">Make</span>
+            <span class="tool-tag">Zapier</span>
+            <span class="tool-tag">Notion</span>
+            <span class="tool-tag">Airtable</span>
+            <span class="tool-tag">Webflow</span>
+          </div>
+        </div>
+        <div class="tools-card">
+          <div class="tools-card-label">Vibe Coding</div>
+          <div class="tools-tags">
+            <span class="tool-tag hot">Claude Code</span>
+            <span class="tool-tag hot">Cursor</span>
+            <span class="tool-tag">Bolt</span>
+            <span class="tool-tag">Lovable</span>
+            <span class="tool-tag">Replit</span>
+            <span class="tool-tag">Base44</span>
+          </div>
+        </div>
+        <div class="tools-card">
+          <div class="tools-card-label">Разработка</div>
+          <div class="tools-tags">
+            <span class="tool-tag">HTML/CSS/JS</span>
+            <span class="tool-tag">Python</span>
+            <span class="tool-tag">GitHub</span>
+            <span class="tool-tag">Vercel</span>
+            <span class="tool-tag">Telegram API</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Что реально впечатлило в последнее время</div>
+
+      <div class="impress-list">
+        <div class="impress-item">
+          <div class="impress-icon">⚡</div>
+          <div>
+            <div class="impress-title">Claude Code — не просто генератор кода</div>
+            <div class="impress-desc">Работает как junior-разработчик с полным пониманием контекста проекта. Я им верстаю лендинги, пишу автоматизации, отлаживаю скрипты — и это реально быстрее чем делать руками. Это задание тоже выполнено с его помощью.</div>
+          </div>
+        </div>
+        <div class="impress-item">
+          <div class="impress-icon">🔍</div>
+          <div>
+            <div class="impress-title">Perplexity — убил для меня Google в рабочих задачах</div>
+            <div class="impress-desc">Не просто ссылки, а синтезированный ответ с источниками. Скорость получения актуальной информации выросла в 3-4 раза.</div>
+          </div>
+        </div>
+        <div class="impress-item">
+          <div class="impress-icon">🎙</div>
+          <div>
+            <div class="impress-title">ElevenLabs — голос стал неотличим от человека</div>
+            <div class="impress-desc">Это меняет всё для контент-продакшна. Воронки, обучающие материалы, автоматизированные звонки — барьер входа исчез.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-num blue">04</div>
+        <div class="section-heading">
+          <div class="section-title">Личное</div>
+          <div class="section-desc">Честно — без корпоративных шаблонов</div>
+        </div>
+      </div>
+
+      <div class="personal-grid">
+
+        <div class="personal-card purple">
+          <div class="personal-q">Почему интересна эта вакансия?</div>
+          <div class="personal-a">Потому что она на стыке AI и реального бизнеса — не "пользоваться ChatGPT", а <strong>решать задачи быстро с помощью правильных инструментов.</strong> Именно в этом режиме я работаю каждый день. Мне неинтересно быть в компании где AI — это диковинка. Интересно там где это уже стандарт и надо быть быстрее всех.</div>
+        </div>
+
+        <div class="personal-card orange">
+          <div class="personal-q">Сильная сторона</div>
+          <div class="personal-a"><strong>Скорость от идеи до результата.</strong> Я не планирую бесконечно — я пробую, смотрю что работает, итерирую. С AI-инструментами это стало моим главным преимуществом: там где раньше нужна была неделя — теперь день. Это задание — хороший пример.</div>
+        </div>
+
+        <div class="personal-card green">
+          <div class="personal-q">Стресс и многозадачность</div>
+          <div class="personal-a">Стресс для меня — сигнал расставить приоритеты, не паниковать. Когда много задач — я быстро отделяю <strong>реально срочное от просто шумящего.</strong> Многозадачность мне даётся легко потому что я работаю системно: каждая задача в своём треке, ничего в голове.</div>
+        </div>
+
+        <div class="personal-card blue">
+          <div class="personal-q">Что нравится в сфере IT / AI</div>
+          <div class="personal-a">То что скорость роста зависит только от тебя. <strong>AI убрал большинство барьеров входа</strong> — теперь важно мышление, а не сколько лет ты учился. Мне нравится что я могу сегодня придумать идею, а завтра показать работающий прототип. В любой другой сфере это невозможно.</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>Данил Трифонов · Тестовое задание</span>
+    <span>tridavy2000-droid.github.io/Page</span>
+    <span>tridavy2000@gmail.com</span>
+  </div>
+
+</div>
+
+</body>
+</html>
