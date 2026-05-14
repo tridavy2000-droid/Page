@@ -1,0 +1,602 @@
+{
+  "name": "ElevenLabs Voice Agent Manager Bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message", "callback_query"],
+        "additionalFields": {}
+      },
+      "id": "node-001",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [80, 300],
+      "webhookId": "el-bot-webhook",
+      "credentials": {
+        "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const update = $input.first().json;\nconst cb = update.callback_query;\nconst msg = update.message;\n\nlet telegram_id, chat_id, text, callback_data, first_name, username, callback_id;\n\nif (cb) {\n  telegram_id = String(cb.from.id);\n  chat_id = String(cb.message.chat.id);\n  text = '';\n  callback_data = cb.data || '';\n  first_name = cb.from.first_name || '';\n  username = cb.from.username || '';\n  callback_id = cb.id;\n} else {\n  telegram_id = String(msg.from.id);\n  chat_id = String(msg.chat.id);\n  text = (msg.text || '').trim();\n  callback_data = '';\n  first_name = msg.from.first_name || '';\n  username = msg.from.username || '';\n  callback_id = null;\n}\n\nreturn [{ json: { telegram_id, chat_id, text, callback_data, first_name, username, callback_id } }];"
+      },
+      "id": "node-002",
+      "name": "Extract Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `INSERT INTO users (telegram_id, username, first_name) VALUES (${$json.telegram_id}, '${$json.username.replace(/'/g,\"''\")}', '${$json.first_name.replace(/'/g,\"''\")}') ON DUPLICATE KEY UPDATE username=VALUES(username), first_name=VALUES(first_name)` }}"
+      },
+      "id": "node-003",
+      "name": "Upsert User",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [480, 300],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `INSERT IGNORE INTO user_states (telegram_id, state, selected_agent_id) VALUES (${$('Extract Data').item.json.telegram_id}, 'idle', NULL)` }}"
+      },
+      "id": "node-004",
+      "name": "Init User State",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [680, 300],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `SELECT state, COALESCE(selected_agent_id,'') AS selected_agent_id FROM user_states WHERE telegram_id=${$('Extract Data').item.json.telegram_id}` }}"
+      },
+      "id": "node-005",
+      "name": "Get User State",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [880, 300],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const ex = $('Extract Data').first().json;\nconst st = $input.first().json;\n\nconst text = ex.text || '';\nconst cb = ex.callback_data || '';\nconst state = st.state || 'idle';\nconst selected_agent_id = st.selected_agent_id || '';\n\nlet route = 'menu';\n\nif (text === '/start' || text === '/menu' || cb === 'back_menu') {\n  route = 'menu';\n} else if (cb === 'my_agents') {\n  route = 'my_agents';\n} else if (cb.startsWith('agent_select_')) {\n  route = 'agent_select';\n} else if (cb === 'edit_prompt') {\n  route = 'set_waiting_prompt';\n} else if (cb === 'edit_welcome') {\n  route = 'set_waiting_welcome';\n} else if (cb === 'edit_kb') {\n  route = 'set_waiting_kb';\n} else if (state === 'waiting_prompt' && text && !text.startsWith('/')) {\n  route = 'process_prompt';\n} else if (state === 'waiting_welcome' && text && !text.startsWith('/')) {\n  route = 'process_welcome';\n} else if (state === 'waiting_kb' && text && !text.startsWith('/')) {\n  route = 'process_kb';\n}\n\nreturn [{ json: { ...ex, state, selected_agent_id, route } }];"
+      },
+      "id": "node-006",
+      "name": "Determine Route",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1080, 300]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $json.route }}",
+        "rules": {
+          "rules": [
+            { "value2": "menu" },
+            { "value2": "my_agents" },
+            { "value2": "agent_select" },
+            { "value2": "set_waiting_prompt" },
+            { "value2": "set_waiting_welcome" },
+            { "value2": "set_waiting_kb" },
+            { "value2": "process_prompt" },
+            { "value2": "process_welcome" },
+            { "value2": "process_kb" }
+          ]
+        },
+        "fallbackOutput": 0
+      },
+      "id": "node-007",
+      "name": "Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [1280, 300]
+    },
+
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "👋 *Welcome to ElevenLabs Agent Manager!*\n\nHere you can manage your voice agents: edit their prompts, welcome messages, and knowledge base.\n\nChoose an option below:",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "={ \"inline_keyboard\": [[{\"text\": \"🤖 My Agents\", \"callback_data\": \"my_agents\"}]] }"
+        }
+      },
+      "id": "node-008",
+      "name": "Main Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1500, 60],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `SELECT agent_id, agent_name FROM user_agents WHERE telegram_id=${$json.telegram_id} ORDER BY added_at ASC` }}"
+      },
+      "id": "node-009",
+      "name": "Get User Agents",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 200],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const agents = $input.all().map(i => i.json);\nconst chat_id = $('Determine Route').first().json.chat_id;\n\nif (agents.length === 0) {\n  return [{ json: { chat_id, text: '❌ You have no agents yet. Please contact the administrator to link your ElevenLabs agents.', keyboard: null } }];\n}\n\nconst buttons = agents.map(a => [{ text: `🤖 ${a.agent_name}`, callback_data: `agent_select_${a.agent_id}` }]);\nbuttons.push([{ text: '🏠 Main Menu', callback_data: 'back_menu' }]);\n\nreturn [{ json: { chat_id, text: '📋 *Your Agents:*\\n\\nSelect an agent to manage:', keyboard: JSON.stringify({ inline_keyboard: buttons }) } }];"
+      },
+      "id": "node-010",
+      "name": "Build Agents Keyboard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1700, 200]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "={{ $json.keyboard }}"
+        }
+      },
+      "id": "node-011",
+      "name": "Show Agents",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1900, 200],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const d = $input.first().json;\nconst agent_id = d.callback_data.replace('agent_select_', '');\nreturn [{ json: { ...d, agent_id_to_select: agent_id } }];"
+      },
+      "id": "node-012",
+      "name": "Extract Agent ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 360]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `SELECT COUNT(*) AS cnt, agent_name FROM user_agents WHERE telegram_id=${$json.telegram_id} AND agent_id='${$json.agent_id_to_select}'` }}"
+      },
+      "id": "node-013",
+      "name": "Verify Ownership",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1700, 360],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.cnt }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "node-014",
+      "name": "Is Agent Owner",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1900, 360]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='agent_selected', selected_agent_id='${$('Extract Agent ID').item.json.agent_id_to_select}' WHERE telegram_id=${$('Extract Agent ID').item.json.telegram_id}` }}"
+      },
+      "id": "node-015",
+      "name": "Save Selected Agent",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [2100, 280],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Extract Agent ID').item.json.chat_id }}",
+        "text": "={{ `✅ *${$('Verify Ownership').item.json.agent_name}* selected!\\n\\nWhat would you like to edit?` }}",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "={ \"inline_keyboard\": [[{\"text\": \"📝 Edit Prompt\", \"callback_data\": \"edit_prompt\"}, {\"text\": \"👋 Edit Welcome Message\", \"callback_data\": \"edit_welcome\"}], [{\"text\": \"📚 Update Knowledge Base\", \"callback_data\": \"edit_kb\"}], [{\"text\": \"← Back to Agents\", \"callback_data\": \"my_agents\"}]] }"
+        }
+      },
+      "id": "node-016",
+      "name": "Agent Menu",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2300, 280],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Extract Agent ID').item.json.chat_id }}",
+        "text": "⛔ *Access Denied.*\n\nThis agent does not belong to your account.",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "node-017",
+      "name": "Access Denied",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2100, 460],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='waiting_prompt' WHERE telegram_id=${$json.telegram_id}` }}"
+      },
+      "id": "node-018",
+      "name": "Set State Waiting Prompt",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 520],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Determine Route').item.json.chat_id }}",
+        "text": "📝 *Edit Agent Prompt*\n\nSend your new system prompt. This defines how your agent behaves and responds.\n\n_Type /menu to cancel._",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "node-019",
+      "name": "Ask For Prompt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1700, 520],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='waiting_welcome' WHERE telegram_id=${$json.telegram_id}` }}"
+      },
+      "id": "node-020",
+      "name": "Set State Waiting Welcome",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 660],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Determine Route').item.json.chat_id }}",
+        "text": "👋 *Edit Welcome Message*\n\nSend the new first message your agent will say when a conversation starts.\n\n_Type /menu to cancel._",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "node-021",
+      "name": "Ask For Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1700, 660],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='waiting_kb' WHERE telegram_id=${$json.telegram_id}` }}"
+      },
+      "id": "node-022",
+      "name": "Set State Waiting KB",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 800],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Determine Route').item.json.chat_id }}",
+        "text": "📚 *Update Knowledge Base*\n\nSend the text you want to add to your agent's knowledge base. The agent will use this information to answer questions.\n\n_Type /menu to cancel._",
+        "additionalFields": { "parse_mode": "Markdown" }
+      },
+      "id": "node-023",
+      "name": "Ask For KB",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1700, 800],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `SELECT ua.agent_id FROM user_agents ua JOIN user_states us ON ua.telegram_id=us.telegram_id AND ua.agent_id=us.selected_agent_id WHERE us.telegram_id=${$json.telegram_id}` }}"
+      },
+      "id": "node-024",
+      "name": "Get Agent For Prompt",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 960],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ `https://api.elevenlabs.io/v1/convai/agents/${$json.agent_id}` }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "xi-api-key", "value": "YOUR_ELEVENLABS_API_KEY" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ conversation_config: { agent: { prompt: { prompt: $('Determine Route').item.json.text } } } }) }}"
+      },
+      "id": "node-025",
+      "name": "EL Update Prompt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1700, 960]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='agent_selected' WHERE telegram_id=${$('Determine Route').item.json.telegram_id}` }}"
+      },
+      "id": "node-026",
+      "name": "Reset State After Prompt",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1900, 960],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Determine Route').item.json.chat_id }}",
+        "text": "✅ *Prompt updated successfully!*\n\nYour agent will now use the new prompt.",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "={ \"inline_keyboard\": [[{\"text\": \"← Back to Agent\", \"callback_data\": \"my_agents\"}, {\"text\": \"🏠 Main Menu\", \"callback_data\": \"back_menu\"}]] }"
+        }
+      },
+      "id": "node-027",
+      "name": "Success Prompt",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2100, 960],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `SELECT ua.agent_id FROM user_agents ua JOIN user_states us ON ua.telegram_id=us.telegram_id AND ua.agent_id=us.selected_agent_id WHERE us.telegram_id=${$json.telegram_id}` }}"
+      },
+      "id": "node-028",
+      "name": "Get Agent For Welcome",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 1100],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ `https://api.elevenlabs.io/v1/convai/agents/${$json.agent_id}` }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "xi-api-key", "value": "YOUR_ELEVENLABS_API_KEY" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ conversation_config: { agent: { first_message: $('Determine Route').item.json.text } } }) }}"
+      },
+      "id": "node-029",
+      "name": "EL Update Welcome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1700, 1100]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='agent_selected' WHERE telegram_id=${$('Determine Route').item.json.telegram_id}` }}"
+      },
+      "id": "node-030",
+      "name": "Reset State After Welcome",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1900, 1100],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Determine Route').item.json.chat_id }}",
+        "text": "✅ *Welcome message updated!*\n\nYour agent will now greet users with the new message.",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "={ \"inline_keyboard\": [[{\"text\": \"← Back to Agent\", \"callback_data\": \"my_agents\"}, {\"text\": \"🏠 Main Menu\", \"callback_data\": \"back_menu\"}]] }"
+        }
+      },
+      "id": "node-031",
+      "name": "Success Welcome",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2100, 1100],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    },
+
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `SELECT ua.agent_id FROM user_agents ua JOIN user_states us ON ua.telegram_id=us.telegram_id AND ua.agent_id=us.selected_agent_id WHERE us.telegram_id=${$json.telegram_id}` }}"
+      },
+      "id": "node-032",
+      "name": "Get Agent For KB",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1500, 1240],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ `https://api.elevenlabs.io/v1/convai/agents/${$json.agent_id}/add-to-knowledge-base` }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "xi-api-key", "value": "YOUR_ELEVENLABS_API_KEY" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ type: 'text', name: 'KB Update via Telegram', text: $('Determine Route').item.json.text }) }}"
+      },
+      "id": "node-033",
+      "name": "EL Update KB",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1700, 1240]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ `UPDATE user_states SET state='agent_selected' WHERE telegram_id=${$('Determine Route').item.json.telegram_id}` }}"
+      },
+      "id": "node-034",
+      "name": "Reset State After KB",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2,
+      "position": [1900, 1240],
+      "credentials": { "mySql": { "id": "MYSQL_CREDS_ID", "name": "MySQL" } }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Determine Route').item.json.chat_id }}",
+        "text": "✅ *Knowledge base updated!*\n\nYour agent can now use this information to answer questions.",
+        "additionalFields": {
+          "parse_mode": "Markdown",
+          "reply_markup": "={ \"inline_keyboard\": [[{\"text\": \"← Back to Agent\", \"callback_data\": \"my_agents\"}, {\"text\": \"🏠 Main Menu\", \"callback_data\": \"back_menu\"}]] }"
+        }
+      },
+      "id": "node-035",
+      "name": "Success KB",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [2100, 1240],
+      "credentials": { "telegramApi": { "id": "TG_CREDS_ID", "name": "Telegram Bot" } }
+    }
+  ],
+
+  "connections": {
+    "Telegram Trigger": {
+      "main": [[{ "node": "Extract Data", "type": "main", "index": 0 }]]
+    },
+    "Extract Data": {
+      "main": [[{ "node": "Upsert User", "type": "main", "index": 0 }]]
+    },
+    "Upsert User": {
+      "main": [[{ "node": "Init User State", "type": "main", "index": 0 }]]
+    },
+    "Init User State": {
+      "main": [[{ "node": "Get User State", "type": "main", "index": 0 }]]
+    },
+    "Get User State": {
+      "main": [[{ "node": "Determine Route", "type": "main", "index": 0 }]]
+    },
+    "Determine Route": {
+      "main": [[{ "node": "Router", "type": "main", "index": 0 }]]
+    },
+    "Router": {
+      "main": [
+        [{ "node": "Main Menu",                "type": "main", "index": 0 }],
+        [{ "node": "Get User Agents",           "type": "main", "index": 0 }],
+        [{ "node": "Extract Agent ID",          "type": "main", "index": 0 }],
+        [{ "node": "Set State Waiting Prompt",  "type": "main", "index": 0 }],
+        [{ "node": "Set State Waiting Welcome", "type": "main", "index": 0 }],
+        [{ "node": "Set State Waiting KB",      "type": "main", "index": 0 }],
+        [{ "node": "Get Agent For Prompt",      "type": "main", "index": 0 }],
+        [{ "node": "Get Agent For Welcome",     "type": "main", "index": 0 }],
+        [{ "node": "Get Agent For KB",          "type": "main", "index": 0 }]
+      ]
+    },
+    "Get User Agents": {
+      "main": [[{ "node": "Build Agents Keyboard", "type": "main", "index": 0 }]]
+    },
+    "Build Agents Keyboard": {
+      "main": [[{ "node": "Show Agents", "type": "main", "index": 0 }]]
+    },
+    "Extract Agent ID": {
+      "main": [[{ "node": "Verify Ownership", "type": "main", "index": 0 }]]
+    },
+    "Verify Ownership": {
+      "main": [[{ "node": "Is Agent Owner", "type": "main", "index": 0 }]]
+    },
+    "Is Agent Owner": {
+      "main": [
+        [{ "node": "Save Selected Agent", "type": "main", "index": 0 }],
+        [{ "node": "Access Denied",       "type": "main", "index": 0 }]
+      ]
+    },
+    "Save Selected Agent": {
+      "main": [[{ "node": "Agent Menu", "type": "main", "index": 0 }]]
+    },
+    "Set State Waiting Prompt": {
+      "main": [[{ "node": "Ask For Prompt", "type": "main", "index": 0 }]]
+    },
+    "Set State Waiting Welcome": {
+      "main": [[{ "node": "Ask For Welcome", "type": "main", "index": 0 }]]
+    },
+    "Set State Waiting KB": {
+      "main": [[{ "node": "Ask For KB", "type": "main", "index": 0 }]]
+    },
+    "Get Agent For Prompt": {
+      "main": [[{ "node": "EL Update Prompt", "type": "main", "index": 0 }]]
+    },
+    "EL Update Prompt": {
+      "main": [[{ "node": "Reset State After Prompt", "type": "main", "index": 0 }]]
+    },
+    "Reset State After Prompt": {
+      "main": [[{ "node": "Success Prompt", "type": "main", "index": 0 }]]
+    },
+    "Get Agent For Welcome": {
+      "main": [[{ "node": "EL Update Welcome", "type": "main", "index": 0 }]]
+    },
+    "EL Update Welcome": {
+      "main": [[{ "node": "Reset State After Welcome", "type": "main", "index": 0 }]]
+    },
+    "Reset State After Welcome": {
+      "main": [[{ "node": "Success Welcome", "type": "main", "index": 0 }]]
+    },
+    "Get Agent For KB": {
+      "main": [[{ "node": "EL Update KB", "type": "main", "index": 0 }]]
+    },
+    "EL Update KB": {
+      "main": [[{ "node": "Reset State After KB", "type": "main", "index": 0 }]]
+    },
+    "Reset State After KB": {
+      "main": [[{ "node": "Success KB", "type": "main", "index": 0 }]]
+    }
+  },
+
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "meta": { "instanceId": "elevenlabs-bot" }
+}
