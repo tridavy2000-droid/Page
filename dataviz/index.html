@@ -54,7 +54,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:
 #nav-items{display:flex;gap:3px}
 .ni{height:26px;padding:0 11px;display:flex;align-items:center;border-radius:4px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;cursor:pointer;transition:all .22s}
 .ni:hover,.ni.active{color:var(--blue);background:rgba(56,189,248,.07)}
-#nav-right{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em}
+#nav-right{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:16px}#nav-year{opacity:.5}#nav-demo-link{text-decoration:none;padding:6px 14px;border-radius:5px;border:1px solid rgba(56,189,248,.35);color:var(--blue);background:rgba(56,189,248,.06);transition:all .22s;letter-spacing:.08em}#nav-demo-link:hover{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.6);box-shadow:0 0 12px rgba(56,189,248,.2)}
 @media(max-width:768px){#nav-items{display:none}}
 
 /* ── WRAP ──────────── */
@@ -285,6 +285,29 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 /* TOOLTIP */
 #tt{position:fixed;pointer-events:none;z-index:500;font-family:var(--mono);font-size:11px;line-height:1.75;background:rgba(3,8,16,.97);border:1px solid rgba(56,189,248,.12);padding:10px 14px;border-radius:6px;color:var(--text);opacity:0;transition:opacity .1s;min-width:130px;box-shadow:0 4px 24px rgba(0,0,0,.5)}
 #tt.on{opacity:1}
+
+/* ── LEAD MAGNET FLOAT ──── */
+#lm-float{position:fixed;bottom:28px;right:24px;z-index:150;opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s;pointer-events:none}
+#lm-float.show{opacity:1;transform:translateY(0);pointer-events:all}
+#lm-float a{display:flex;align-items:center;gap:9px;padding:11px 18px;border-radius:8px;background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(52,211,153,.1));border:1px solid rgba(56,189,248,.35);backdrop-filter:blur(12px);text-decoration:none;color:var(--blue);font-family:var(--mono);font-size:10px;letter-spacing:.09em;transition:all .22s;white-space:nowrap}
+#lm-float a:hover{background:linear-gradient(135deg,rgba(56,189,248,.25),rgba(52,211,153,.18));border-color:rgba(56,189,248,.6);box-shadow:0 4px 24px rgba(56,189,248,.2);transform:translateY(-2px)}
+.lm-icon{font-size:14px}
+@media(max-width:480px){#lm-float{bottom:16px;right:12px}}
+
+/* ── LEAD MAGNET CARD ──── */
+.lm-card{display:flex;gap:40px;margin:48px 0 40px;padding:32px 36px;border-radius:12px;background:linear-gradient(135deg,rgba(56,189,248,.07),rgba(52,211,153,.04));border:1px solid rgba(56,189,248,.18);opacity:0;transform:translateY(20px);transition:opacity .6s,transform .6s}
+.lm-card.vis{opacity:1;transform:translateY(0)}
+.lm-card-left{flex:1.4;display:flex;flex-direction:column;gap:14px}
+.lm-card-right{flex:1;display:flex;align-items:center}
+.lm-card-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;color:var(--green);text-transform:uppercase}
+.lm-card-title{font-family:var(--sans);font-size:clamp(18px,2vw,26px);font-weight:600;color:var(--text);line-height:1.2}
+.lm-card-sub{font-size:13px;color:var(--mid);line-height:1.6;max-width:360px}
+.lm-card-btn{display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:12px 24px;border-radius:6px;background:linear-gradient(135deg,rgba(56,189,248,.18),rgba(52,211,153,.12));border:1px solid rgba(56,189,248,.4);color:var(--blue);font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:all .22s;width:fit-content}
+.lm-card-btn:hover{background:linear-gradient(135deg,rgba(56,189,248,.28),rgba(52,211,153,.2));border-color:rgba(56,189,248,.7);box-shadow:0 4px 20px rgba(56,189,248,.18);transform:translateY(-2px)}
+.lm-card-items{display:flex;flex-direction:column;gap:10px}
+.lm-item{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--mid);line-height:1.5}
+.lm-check{color:var(--green);font-size:13px;flex-shrink:0;margin-top:1px}
+@media(max-width:680px){.lm-card{flex-direction:column;gap:24px;padding:24px 20px}.lm-card-right{display:none}}
 </style>
 </head>
 <body>
@@ -301,6 +324,11 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 </div>
 
 <canvas id="hero-canvas"></canvas>
+<div id="lm-float">
+  <a href="/Page/guide.pdf" download="guide_bot_trifonov.pdf">
+    <span class="lm-icon">📥</span>СКАЧАТЬ ГАЙД · БЕСПЛАТНО
+  </a>
+</div>
 <div class="blob blob1"></div>
 <div class="blob blob2"></div>
 <div class="scanline"></div>
@@ -318,7 +346,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <div class="ni" data-s="s5">05 Функции</div>
     <div class="ni" data-s="s6">06 Контакт</div>
   </div>
-  <div id="nav-right">TriDaVii · 2026</div>
+  <div id="nav-right"><a id="nav-demo-link" href="https://tridavy2000-droid.github.io/Page/" target="_blank">🤖 Демо-бот</a><span id="nav-year">TriDaVii · 2026</span></div>
 </nav>
 
 <div class="wrap">
@@ -535,10 +563,31 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <h2 class="shed">Создадим вашего<br><em>помощника.</em></h2>
   <p class="spull">Бот для вашего бизнеса — это не дорого и не долго. За 7 дней вы получите помощника, который записывает клиентов, напоминает и возвращает ушедших. <strong>Напишите прямо сейчас</strong> — разберём вашу нишу бесплатно.</p>
   <div class="outro-grid" id="outro-grid"></div>
+
+  <!-- Lead Magnet -->
+  <div class="lm-card" id="lm-card">
+    <div class="lm-card-left">
+      <div class="lm-card-tag">📕 ГАЙД · БЕСПЛАТНО</div>
+      <div class="lm-card-title">«Клиника не спит»</div>
+      <div class="lm-card-sub">Как запустить бота, который записывает клиентов круглосуточно — пошагово, без технических знаний</div>
+      <a class="lm-card-btn" href="/Page/guide.pdf" download="guide_bot_trifonov.pdf">
+        Скачать PDF
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </a>
+    </div>
+    <div class="lm-card-right">
+      <div class="lm-card-items">
+        <div class="lm-item"><span class="lm-check">✓</span>Чек-лист: какие функции нужны вашей нише</div>
+        <div class="lm-item"><span class="lm-check">✓</span>Сколько стоит и как быстро окупается</div>
+        <div class="lm-item"><span class="lm-check">✓</span>Реальные цифры: запись, неявки, возврат</div>
+        <div class="lm-item"><span class="lm-check">✓</span>Как не потерять деньги при запуске</div>
+      </div>
+    </div>
+  </div>
   <div class="outro-quote">
     <div class="oq-line"></div>
     <div class="oq-text">"Пока ваш конкурент отвечает вручную в рабочие часы — ваш бот работает круглосуточно. Каждый пропущенный звонок ночью — это деньги конкурента."</div>
-    <div class="oq-attr">— Global Enterprise AI Study · 2025 · TriDaVii · 2026</div>
+    <div class="oq-attr">— Данил Трифонов · 34 бота для МСБ · TriDaVii · 2026</div>
   </div>
 </section>
 
@@ -555,7 +604,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   </div>
   <div class="ft-right">
     <div class="ft-big">@TriDaVii</div>
-    <div class="ft-comp">TriDaVii · 2026 · Data Visualization Competition<br>Danil Trifonov · Independent</div>
+    <div class="ft-comp">Данил Трифонов · AI-помощники для малого бизнеса<br>Telegram @TriDaVii · 2026</div>
   </div>
 </footer>
 </div>
@@ -1362,6 +1411,23 @@ function _spawnFP(sId,rev){
     setTimeout(()=>fl.remove(),1000);
   }),{threshold:.12});
   sids.forEach(id=>{const el=$(id);if(el)afio.observe(el)});
+})();
+
+// ── FLOAT LEAD MAGNET ────
+(function(){
+  const lmf=document.getElementById('lm-float');
+  if(!lmf)return;
+  window.addEventListener('scroll',()=>{
+    lmf.classList.toggle('show',window.scrollY>window.innerHeight*.7);
+  },{passive:true});
+  // LM card reveal
+  const lmc=document.getElementById('lm-card');
+  if(lmc){
+    const lmio=new IntersectionObserver(e=>e.forEach(x=>{
+      if(x.isIntersecting){lmc.classList.add('vis');lmio.unobserve(lmc);}
+    }),{threshold:.15});
+    lmio.observe(lmc);
+  }
 })();
 </script>
 </body>
