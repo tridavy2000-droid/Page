@@ -54,7 +54,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:
 #nav-items{display:flex;gap:3px}
 .ni{height:26px;padding:0 11px;display:flex;align-items:center;border-radius:4px;font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase;cursor:pointer;transition:all .22s}
 .ni:hover,.ni.active{color:var(--blue);background:rgba(56,189,248,.07)}
-#nav-right{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:16px}#nav-year{opacity:.5}#nav-demo-link{text-decoration:none;padding:6px 14px;border-radius:5px;border:1px solid rgba(56,189,248,.35);color:var(--blue);background:rgba(56,189,248,.06);transition:all .22s;letter-spacing:.08em}#nav-demo-link:hover{background:rgba(56,189,248,.14);border-color:rgba(56,189,248,.6);box-shadow:0 0 12px rgba(56,189,248,.2)}
+#nav-right{font-family:var(--mono);font-size:9px;color:var(--dim);letter-spacing:.1em;display:flex;align-items:center;gap:16px}#nav-year{opacity:.5}#nav-demo-link{text-decoration:none;padding:8px 20px;border-radius:6px;border:1.5px solid rgba(56,189,248,.75);color:#fff;background:linear-gradient(135deg,rgba(56,189,248,.28),rgba(52,211,153,.18));font-size:10px;font-weight:500;transition:all .25s;letter-spacing:.09em;box-shadow:0 0 14px rgba(56,189,248,.22),inset 0 1px 0 rgba(255,255,255,.08);animation:demo-pulse 3s ease-in-out infinite}#nav-demo-link:hover{background:linear-gradient(135deg,rgba(56,189,248,.45),rgba(52,211,153,.3));border-color:rgba(56,189,248,1);box-shadow:0 0 24px rgba(56,189,248,.45),0 0 48px rgba(56,189,248,.15);transform:translateY(-1px)}@keyframes demo-pulse{0%,100%{box-shadow:0 0 14px rgba(56,189,248,.22),inset 0 1px 0 rgba(255,255,255,.08)}50%{box-shadow:0 0 22px rgba(56,189,248,.45),0 0 6px rgba(52,211,153,.2),inset 0 1px 0 rgba(255,255,255,.08)}}
 @media(max-width:768px){#nav-items{display:none}}
 
 /* ── WRAP ──────────── */
@@ -308,6 +308,13 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 .lm-item{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--mid);line-height:1.5}
 .lm-check{color:var(--green);font-size:13px;flex-shrink:0;margin-top:1px}
 @media(max-width:680px){.lm-card{flex-direction:column;gap:24px;padding:24px 20px}.lm-card-right{display:none}}
+
+/* ── DEMO FLOAT LEFT ──── */
+#demo-float{position:fixed;bottom:28px;left:24px;z-index:150;opacity:0;transform:translateY(12px);transition:opacity .4s,transform .4s;pointer-events:none}
+#demo-float.show{opacity:1;transform:translateY(0);pointer-events:all}
+#demo-float a{display:flex;align-items:center;gap:9px;padding:11px 20px;border-radius:8px;background:linear-gradient(135deg,rgba(52,211,153,.18),rgba(56,189,248,.1));border:1.5px solid rgba(52,211,153,.55);backdrop-filter:blur(12px);text-decoration:none;color:var(--green);font-family:var(--mono);font-size:10px;letter-spacing:.09em;transition:all .25s;white-space:nowrap;box-shadow:0 0 16px rgba(52,211,153,.12)}
+#demo-float a:hover{background:linear-gradient(135deg,rgba(52,211,153,.3),rgba(56,189,248,.18));border-color:rgba(52,211,153,.9);box-shadow:0 4px 24px rgba(52,211,153,.28);transform:translateY(-2px)}
+@media(max-width:480px){#demo-float{bottom:16px;left:12px}}
 </style>
 </head>
 <body>
@@ -324,6 +331,11 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 </div>
 
 <canvas id="hero-canvas"></canvas>
+<div id="demo-float">
+  <a href="https://tridavy2000-droid.github.io/Page/" target="_blank">
+    <span class="lm-icon">🤖</span>ДЕМО-БОТ · ПОПРОБОВАТЬ
+  </a>
+</div>
 <div id="lm-float">
   <a href="/Page/guide.pdf" download="guide_bot_trifonov.pdf">
     <span class="lm-icon">📥</span>СКАЧАТЬ ГАЙД · БЕСПЛАТНО
@@ -1421,10 +1433,12 @@ function _spawnFP(sId,rev){
 
 // ── FLOAT LEAD MAGNET ────
 (function(){
+  const dmf=document.getElementById('demo-float');
   const lmf=document.getElementById('lm-float');
   if(!lmf)return;
   window.addEventListener('scroll',()=>{
     lmf.classList.toggle('show',window.scrollY>window.innerHeight*.7);
+    if(dmf)dmf.classList.toggle('show',window.scrollY>window.innerHeight*.7);
   },{passive:true});
   // LM card reveal
   const lmc=document.getElementById('lm-card');
