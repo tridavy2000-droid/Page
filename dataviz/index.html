@@ -88,7 +88,11 @@ h1{font-size:clamp(48px,7.5vw,90px);font-weight:700;line-height:.96;letter-spaci
 @keyframes af{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 
 /* DOT GRID */
-.hero-right{display:flex;flex-direction:column;align-items:center;gap:16px}
+.hero-right{display:flex;flex-direction:column;align-items:center;gap:0}
+#torus-container{width:100%;max-width:430px;height:410px;border-radius:16px;overflow:hidden;border:1px solid rgba(56,189,248,.13);box-shadow:0 0 60px rgba(56,189,248,.07);cursor:grab;background:rgba(2,8,18,.5)}
+#torus-container:active{cursor:grabbing}
+#torus-container canvas{display:block;width:100%!important;height:100%!important}
+.torus-hint{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:rgba(56,189,248,.22);text-transform:uppercase;margin-top:10px;text-align:center}
 .dot-frame{background:rgba(56,189,248,.025);border:1px solid rgba(56,189,248,.09);border-radius:14px;padding:24px 28px 32px;position:relative}
 .dot-frame-lbl{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.12em;white-space:nowrap}
 .dot-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;width:310px}
@@ -385,36 +389,8 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <div class="hero-cta" id="hero-cta">Листайте вниз <span class="af">↓</span></div>
   </div>
   <div class="hero-right">
-    <div class="dot-frame">
-      <div class="dot-grid" id="dot-grid"></div>
-      <div class="dot-frame-lbl">1 ТЧК = 1 БОТ ИЗ 100</div>
-    </div>
-    <div class="dot-readout">
-      <div class="dot-pct"><span id="dpct">0</span><sup>%</sup></div>
-      <div><div class="dot-year" id="dyr">2019</div><div class="dot-cap">ботов к 2033</div></div>
-    </div>
-    <!-- Hero arc gauge -->
-    <svg id="hero-arc" viewBox="0 0 220 122" width="220" height="122">
-      <defs>
-        <linearGradient id="arc-grad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#38bdf8"/>
-          <stop offset="100%" stop-color="#34d399"/>
-        </linearGradient>
-        <filter id="arc-glow" x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="b"/>
-          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-      </defs>
-      <!-- track -->
-      <path d="M 22 108 A 88 88 0 0 1 198 108" fill="none" stroke="rgba(56,189,248,.08)" stroke-width="5" stroke-linecap="round"/>
-      <!-- 2019 segment (0→58%) -->
-      <path id="arc-2019" d="M 22 108 A 88 88 0 0 1 198 108" fill="none" stroke="rgba(56,189,248,.22)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 276.5"/>
-      <!-- progress (0→78%) -->
-      <path id="arc-prog" d="M 22 108 A 88 88 0 0 1 198 108" fill="none" stroke="url(#arc-grad)" stroke-width="5" stroke-linecap="round" stroke-dasharray="0 276.5" filter="url(#arc-glow)"/>
-      <!-- axis labels -->
-      <text x="14" y="120" font-family="'DM Mono',monospace" font-size="8" fill="rgba(56,189,248,.3)" text-anchor="middle">0%</text>
-      <text x="206" y="120" font-family="'DM Mono',monospace" font-size="8" fill="rgba(56,189,248,.3)" text-anchor="middle">100%</text>
-    </svg>
+    <div id="torus-container"></div>
+    <p class="torus-hint">перетащите · прокрутите для масштаба</p>
   </div>
 </section>
 
@@ -770,77 +746,18 @@ nis.forEach(n=>n.addEventListener('click',()=>document.getElementById(n.dataset.
   setTimeout(update,120);
 })();
 
-/* DOT GRID */
-const dg=$('dot-grid');
-for(let i=0;i<100;i++){const d=document.createElement('div');d.className='dot';dg.appendChild(d)}
-const dots=dg.querySelectorAll('.dot');
-const aby=[{y:2021,v:5},{y:2022,v:12},{y:2023,v:22},{y:2024,v:31},{y:2025,v:34},{y:2026,v:38},{y:2029,v:50},{y:2033,v:62}];
-function setDots(pct,yr,dur){
-  const lit=Math.round(pct);
-  dots.forEach((d,i)=>{clearTimeout(d._t);d._t=setTimeout(()=>{
-    if(i<lit){d.classList.add('lit');if(yr===2033&&i>=38&&i<62)d.classList.add('green');else d.classList.remove('green')}
-    else d.classList.remove('lit','green');
-  },i*(dur/100))});
-  $('dpct').textContent=lit;$('dyr').textContent=yr;
-}
-let ph=0;
-function cyc(){if(ph>=aby.length){setDots(62,2033,800);return}const{y,v}=aby[ph++];setDots(v,y,600);setTimeout(cyc,ph===aby.length?1200:880)}
-setTimeout(cyc,500);
+/* DOT GRID removed */
 
-/* HERO ARC */
-function buildHeroArc(){
-  const cx=110,cy=108,R=88;
-  const totalLen=Math.PI*R;
-  const len58=totalLen*0.05;
-  const len78=totalLen*0.62;
-  const arc2019=document.getElementById('arc-2019');
-  const arcProg=document.getElementById('arc-prog');
-  // Animate 2019 segment
-  setTimeout(()=>{
-    arc2019.style.transition='stroke-dasharray 1.1s ease';
-    arc2019.setAttribute('stroke-dasharray',len58+' '+totalLen);
-  },600);
-  // Animate progress to 78%
-  setTimeout(()=>{
-    arcProg.style.transition='stroke-dasharray 1.8s cubic-bezier(.4,0,.2,1)';
-    arcProg.setAttribute('stroke-dasharray',len78+' '+totalLen);
-  },900);
-  // Add markers after animation
-  const ns='http://www.w3.org/2000/svg';
-  const svg=document.getElementById('hero-arc');
-  setTimeout(()=>{
-    const a58=Math.PI*(1-0.58);
-    const x58=cx+R*Math.cos(a58),y58=cy-R*Math.sin(a58);
-    const c58=document.createElementNS(ns,'circle');
-    c58.setAttribute('cx',x58);c58.setAttribute('cy',y58);c58.setAttribute('r','4');
-    c58.setAttribute('fill','rgba(56,189,248,.45)');svg.appendChild(c58);
-    const t58=document.createElementNS(ns,'text');
-    t58.setAttribute('x',x58+2);t58.setAttribute('y',y58-9);
-    t58.setAttribute('text-anchor','middle');t58.setAttribute('font-family',"'DM Mono',monospace");
-    t58.setAttribute('font-size','8');t58.setAttribute('fill','rgba(56,189,248,.5)');
-    t58.textContent='2021 · 5 ботов';svg.appendChild(t58);
-    const a78=Math.PI*(1-0.78);
-    const x78=cx+R*Math.cos(a78),y78=cy-R*Math.sin(a78);
-    const c78=document.createElementNS(ns,'circle');
-    c78.setAttribute('cx',x78);c78.setAttribute('cy',y78);c78.setAttribute('r','5');
-    c78.setAttribute('fill','#34d399');c78.setAttribute('filter','url(#arc-glow)');svg.appendChild(c78);
-    const t78=document.createElementNS(ns,'text');
-    t78.setAttribute('x',x78+2);t78.setAttribute('y',y78-11);
-    t78.setAttribute('text-anchor','middle');t78.setAttribute('font-family',"'DM Mono',monospace");
-    t78.setAttribute('font-size','9');t78.setAttribute('fill','#34d399');t78.setAttribute('font-weight','500');
-    t78.textContent='2033 · 62 бота';svg.appendChild(t78);
-  },2600);
-}
-buildHeroArc();
+/* HERO ARC removed */
 
 /* HERO ANIMS */
 setTimeout(()=>{
   document.querySelectorAll('.hstat').forEach((h,i)=>setTimeout(()=>{h.style.opacity='1';h.style.transform='none'},i*160));
   $('hero-cta').style.opacity='1';
 },300);
-scramble($('cnt1'),78,0,'','',1800,400);
-scramble($('cnt2'),632,0,'','',2000,520);
-scramble($('cnt3'),3.5,1,'','',1600,640);
+scramble($('cnt1'),34,0,'','',1800,400);
+scramble($('cnt2'),67,0,'','',2000,520);
+scramble($('cnt3'),7,0,'','',1600,640);
 
 /* KPI CHIPS */
 ['kc1','kc2','kc3'].forEach((id,i)=>setTimeout(()=>{const el=$(id);el.style.opacity='1';el.style.transform='translateY(0)'},900+i*130));
@@ -1448,6 +1365,91 @@ function _spawnFP(sId,rev){
     }),{threshold:.15});
     lmio.observe(lmc);
   }
+})();
+</script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+(function() {
+  const container = document.getElementById('torus-container');
+  if (!container) return;
+  let W = container.clientWidth || 430, H = container.clientHeight || 410;
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(W, H);
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+  camera.position.set(0, 0, 5.5);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.07;
+  controls.enableZoom = true;
+  controls.minDistance = 3;
+  controls.maxDistance = 11;
+  controls.enablePan = false;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.5;
+  const geoHD = new THREE.TorusKnotGeometry(1.3, 0.42, 256, 28, 2, 3);
+  const geoLD = new THREE.TorusKnotGeometry(1.3, 0.42, 64, 8, 2, 3);
+  const geoXL = new THREE.TorusKnotGeometry(1.44, 0.48, 48, 6, 2, 3);
+  const geoGlow = new THREE.TorusKnotGeometry(1.62, 0.64, 32, 4, 2, 3);
+  const matSolid = new THREE.MeshPhongMaterial({
+    color: 0x050f1a,
+    emissive: new THREE.Color(0x061828),
+    specular: new THREE.Color(0x38bdf8),
+    shininess: 220
+  });
+  scene.add(new THREE.Mesh(geoHD, matSolid));
+  scene.add(new THREE.Mesh(geoHD, new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.18 })));
+  scene.add(new THREE.Mesh(geoLD, new THREE.MeshBasicMaterial({ color: 0x34d399, wireframe: true, transparent: true, opacity: 0.12 })));
+  scene.add(new THREE.Mesh(geoXL, new THREE.MeshBasicMaterial({ color: 0xa78bfa, wireframe: true, transparent: true, opacity: 0.05 })));
+  scene.add(new THREE.Mesh(geoGlow, new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.016, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false })));
+  scene.add(new THREE.AmbientLight(0x0a1a2a, 4));
+  const lCyan = new THREE.PointLight(0x38bdf8, 10, 14);
+  const lGreen = new THREE.PointLight(0x34d399, 8, 14);
+  const lPurple = new THREE.PointLight(0x7c3aed, 4, 10);
+  lPurple.position.set(0, 5, -3);
+  scene.add(lCyan, lGreen, lPurple);
+  const N = 900;
+  const pos = new Float32Array(N * 3);
+  const col = new Float32Array(N * 3);
+  const pal = [[0.22, 0.74, 0.97], [0.20, 0.82, 0.60], [0.65, 0.54, 0.98]];
+  for (let i = 0; i < N; i++) {
+    const r = 3.8 + Math.random() * 4;
+    const th = Math.acos(2 * Math.random() - 1);
+    const ph2 = Math.random() * 6.283;
+    pos[i*3]   = r * Math.sin(th) * Math.cos(ph2);
+    pos[i*3+1] = r * Math.sin(th) * Math.sin(ph2);
+    pos[i*3+2] = r * Math.cos(th);
+    const c = pal[i % 3];
+    col[i*3] = c[0]; col[i*3+1] = c[1]; col[i*3+2] = c[2];
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  pGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  const pts = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.028, vertexColors: true, transparent: true, opacity: 0.55 }));
+  scene.add(pts);
+  let t = 0;
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.01;
+    lCyan.position.set(Math.cos(t*0.7)*5.5, Math.sin(t*0.5)*4, Math.sin(t*0.35)*5.5);
+    lGreen.position.set(Math.cos(t*0.5+3.14)*4.5, Math.sin(t*0.8+1)*5, Math.cos(t*0.3+2)*4);
+    matSolid.emissive.setHSL(0.56 + Math.sin(t*0.18)*0.04, 0.9, 0.04 + Math.sin(t*0.25)*0.02);
+    pts.rotation.y += 0.0007;
+    pts.rotation.x += 0.0002;
+    controls.update();
+    renderer.render(scene, camera);
+  })();
+  new ResizeObserver(() => {
+    W = container.clientWidth; H = container.clientHeight;
+    if (W && H) { camera.aspect = W/H; camera.updateProjectionMatrix(); renderer.setSize(W, H); }
+  }).observe(container);
 })();
 </script>
 </body>
