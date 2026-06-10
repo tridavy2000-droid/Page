@@ -1573,6 +1573,31 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     colMesh.position.set((xS(3) + xS(4)) / 2, yS(50), -1.39);
     scene.add(colMesh);
 
+    // Canvas-texture sprite labels (always face camera)
+    function mkLbl(text, color) {
+      const cv = document.createElement('canvas'); cv.width = 140; cv.height = 36;
+      const cx = cv.getContext('2d'); cx.clearRect(0, 0, 140, 36);
+      cx.fillStyle = color || 'rgba(56,189,248,.72)';
+      cx.font = '500 18px monospace'; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+      cx.fillText(text, 70, 18);
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({
+        map: new THREE.CanvasTexture(cv), transparent: true, depthTest: false
+      }));
+      sp.scale.set(1.4, 0.35, 1); return sp;
+    }
+    // Year labels every 2 years along bottom
+    [0,2,4,6,8,10,12,14].forEach(i => {
+      const s = mkLbl(String(2019 + i)); s.position.set(xS(i), -0.6, 0); scene.add(s);
+    });
+    // Percentage labels on left Y-axis
+    [0,25,50,75,100].forEach(p => {
+      const s = mkLbl(p + '%', 'rgba(56,189,248,.48)'); s.position.set(-8.6, yS(p), 0); scene.add(s);
+    });
+    // End-of-line value labels (right side, coloured per series)
+    [{val:91,c:'#38bdf8cc',z:0.95},{val:86,c:'#34d399cc',z:0},{val:9,c:'#94a3b8cc',z:-0.95}].forEach(({val,c,z}) => {
+      const s = mkLbl(val + '%', c); s.position.set(xS(14) + 1.1, yS(val), z); scene.add(s);
+    });
+
     // Lights
     scene.add(new THREE.AmbientLight(0x0a1520, 5));
     const lA = new THREE.PointLight(0x38bdf8, 9, 28);
