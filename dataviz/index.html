@@ -941,7 +941,7 @@ function buildSpend(){
 
 /* S4 — BUMP CHART (rank shift 2022→2024) */
 function buildBumpChart(){
-  const el=$('barrier-svg');if(el.children.length)return;
+  const el=$('barrier-svg');if(!el||el.children.length)return;
   const W=el.parentElement.clientWidth||820;
   const nR=7,rowH=52;
   const H=nR*rowH+72;
