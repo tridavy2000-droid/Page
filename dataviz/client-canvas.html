@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Система взаимодействия с клиентами</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0A0C12;font-family:'Segoe UI',sans-serif;overflow:hidden;height:100vh;user-select:none}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background-image:linear-gradient(#0E1020 1px,transparent 1px),linear-gradient(90deg,#0E1020 1px,transparent 1px);
+  background-size:40px 40px}
+
+/* ── Top bar ── */
+#bar{position:fixed;top:0;left:0;right:0;height:50px;z-index:300;
+  background:rgba(6,8,14,.97);border-bottom:1px solid #10192A;
+  display:flex;align-items:center;gap:10px;padding:0 14px}
+.btitle{font-size:14px;font-weight:500;color:#B0C0D4}
+.tbtn{padding:5px 14px;font-size:13px;cursor:pointer;border-radius:5px;
+  border:1px solid #151E30;background:transparent;color:#30485A;font-family:inherit;transition:all .12s}
+.tbtn.on{background:#0C1828;color:#D0E4F4;border-color:#204060}
+.tbtn:hover:not(.on){color:#7090A8;border-color:#1A2C3A}
+.leg{display:flex;gap:8px;margin-left:auto;align-items:center}
+.li{display:flex;align-items:center;gap:5px;font-size:11px;color:#182028}
+.ld{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+
+/* ── Canvas ── */
+#vp{position:fixed;top:50px;left:0;right:0;bottom:0;overflow:hidden;cursor:grab;z-index:1}
+#vp.panning{cursor:grabbing}
+#cvs{position:absolute;top:0;left:0;transform-origin:0 0}
+
+/* ── Column backgrounds ── */
+.cbg{position:absolute;border-radius:12px;z-index:1}
+.clbl{position:absolute;font-size:9px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;z-index:3}
+
+/* ── Nodes ── */
+.node{position:absolute;border:1px solid;border-radius:8px;
+  padding:9px 12px;cursor:grab;z-index:5;transition:box-shadow .12s,transform .08s}
+.node:hover{z-index:20;transform:translateY(-1px)}
+.node.drag{cursor:grabbing;z-index:100;transform:translateY(-2px) scale(1.02)}
+.node.gate{border-radius:10px}
+
+.ntag{font-size:9px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.08em;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+.ntag-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.nname{font-size:12px;font-weight:500;color:#C4D4E4;line-height:1.3}
+.ndesc{font-size:10px;color:#1C2C38;margin-top:3px;line-height:1.4}
+.gate .nname{font-size:13px;color:#D8EAF8;font-weight:600}
+.gate .ndesc{color:#243444}
+
+/* ── SVG on top ── */
+#svg-overlay{position:absolute;top:0;left:0;overflow:visible;pointer-events:none;z-index:10}
+
+/* ── Controls ── */
+#ctrl{position:fixed;bottom:16px;right:16px;z-index:300;display:flex;gap:5px}
+.cbtn{width:30px;height:30px;border-radius:5px;background:#08090E;border:1px solid #121820;
+  color:#304060;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .1s}
+.cbtn:hover{color:#00C4A4;border-color:#00C4A4}
+#zlbl{position:fixed;bottom:22px;right:80px;z-index:300;font-size:11px;color:#182030}
+#fitbtn{position:fixed;bottom:16px;left:16px;z-index:300;
+  padding:6px 13px;border-radius:5px;border:1px solid #121820;
+  background:#08090E;color:#284050;font-size:11px;cursor:pointer;font-family:inherit;transition:all .1s}
+#fitbtn:hover{color:#00C4A4;border-color:#00C4A4}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <div style="width:3px;height:26px;background:#00C4A4;border-radius:2px;flex-shrink:0"></div>
+  <div class="btitle">Система взаимодействия с клиентами</div>
+  <button class="tbtn on" id="tab-crm"  onclick="sw('crm')">Средний бизнес + CRM</button>
+  <button class="tbtn"    id="tab-solo" onclick="sw('solo')">Соло-мастер</button>
+  <div class="leg">
+    <div class="li"><div class="ld" style="background:#3A88D8"></div>захват</div>
+    <div class="li"><div class="ld" style="background:#7848E8"></div>квалификация</div>
+    <div class="li"><div class="ld" style="background:#00B888"></div>запись</div>
+    <div class="li"><div class="ld" style="background:#C88028"></div>подготовка</div>
+    <div class="li"><div class="ld" style="background:#D83850"></div>после визита</div>
+    <div class="li" style="margin-left:10px;opacity:.5">тащи узлы · колесо — зум · фон — перемещение</div>
+  </div>
+</div>
+
+<div id="vp">
+  <div id="cvs">
+    <svg id="svg-overlay">
+      <defs>
+        <marker id="arr0" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#3A88D8" opacity=".7"/></marker>
+        <marker id="arr1" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#7848E8" opacity=".7"/></marker>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#00B888" opacity=".7"/></marker>
+        <marker id="arr3" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#C88028" opacity=".7"/></marker>
+        <marker id="arr4" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#D83850" opacity=".7"/></marker>
+      </defs>
+      <g id="eg"></g>
+    </svg>
+  </div>
+</div>
+
+<div id="ctrl">
+  <button class="cbtn" onclick="dz(-.15)">−</button>
+  <button class="cbtn" onclick="dz(+.15)">+</button>
+</div>
+<div id="zlbl">100%</div>
+<button id="fitbtn" onclick="fit()">⊡ По экрану</button>
+
+<script>
+// ── Stage themes ─────────────────────────────────────────────────────────────
+// [bg, border_auto, border_semi, accent, tag_auto, tag_semi, tag_manual, col_bg_alpha, col_border]
+const STG = [
+  ['#06101E','#102A4A','#081C34','#2268C0','#3A88D8','#1A4878','#102030', '18','1E3A5A'],  // 0 Blue
+  ['#0C0820','#1C1048','#100824','#5830C0','#7848E8','#3818A0','#1E1040', '18','281848'],  // 1 Violet
+  ['#06100E','#0C2820','#081A14','#00906A','#00B888','#006848','#083020', '18','103A28'],  // 2 Teal
+  ['#100C00','#241800','#180E00','#A06010','#C88028','#784810','#3A2800', '18','302000'],  // 3 Amber
+  ['#100608','#241018','#180810','#B82030','#D83850','#901828','#480020', '18','300818'],  // 4 Crimson
+];
+
+function th(s, t) {
+  const [bg, bda, bds, ac, tca, tcs, tcm] = STG[s];
+  return {
+    bg,
+    bd: t==='a' ? bda : t==='s' ? bds : '#101828',
+    tc: t==='a' ? tca : t==='s' ? tcs : tcm,
+    dot: t==='a' ? tca : t==='s' ? tcs : '#283848',
+    ac,
+    glow: t==='a' ? ac+'30' : 'transparent',
+  };
+}
+
+// ── Layout constants ──────────────────────────────────────────────────────────
+const CX  = [30, 295, 560, 825, 1090]; // column left X
+const CW  = 220;                        // column width
+const CH  = 540;                        // column height
+const CYY = 20;                         // column top Y
+const N0Y = 60;                         // first node Y in column
+const NDY = 100;                        // node Y step
+
+// Node dimensions by role
+const DIM = {
+  channel: [155, 68],
+  action:  [165, 78],
+  gate:    [178, 90],
+};
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+const DATA = {
+ crm:{
+  cols:[
+   {lbl:'01 · Захват',          s:0},
+   {lbl:'02 · Квалификация',    s:1},
+   {lbl:'03 · Запись',          s:2},
+   {lbl:'04 · До визита',       s:3},
+   {lbl:'05 · После визита',    s:4},
+  ],
+  nodes:[
+   // Stage 0 — каналы захвата
+   {id:'s1',c:0,s:0,t:'a',r:'channel',n:'Сайт / форма',      d:'кнопка → бот, < 30 сек'},
+   {id:'s2',c:0,s:0,t:'a',r:'channel',n:'Telegram DM',        d:'мгновенный авто-ответ'},
+   {id:'s3',c:0,s:0,t:'a',r:'channel',n:'WhatsApp',           d:'приветствие + кнопочное меню'},
+   {id:'s4',c:0,s:0,t:'s',r:'channel',n:'Instagram DM',       d:'комментарий → DM → бот'},
+   {id:'s5',c:0,s:0,t:'s',r:'channel',n:'Пропущ. звонок',    d:'авто-SMS «напишите нам»'},
+   // Stage 1 — квалификация
+   {id:'q1',c:1,s:1,t:'a',r:'gate',   n:'Выбор услуги',       d:'ключевой шлюз · кнопочное меню · бот уточняет сам'},
+   {id:'q2',c:1,s:1,t:'a',r:'action', n:'Цены / примеры',     d:'авто-ответ без участия мастера'},
+   {id:'q3',c:1,s:1,t:'a',r:'action', n:'FAQ (100+ вопросов)',d:'не беспокоит администратора'},
+   {id:'q4',c:1,s:1,t:'s',r:'action', n:'Сложный вопрос',     d:'бот → передаёт живому мастеру'},
+   // Stage 2 — запись
+   {id:'b1',c:2,s:2,t:'a',r:'action', n:'Свободные слоты',   d:'из Yclients в реал-тайм'},
+   {id:'b2',c:2,s:2,t:'a',r:'gate',   n:'Авто-бронирование', d:'главный узел записи · без администратора · 24/7'},
+   {id:'b3',c:2,s:2,t:'a',r:'action', n:'Подтверждение',     d:'клиенту + мастеру мгновенно'},
+   {id:'b4',c:2,s:2,t:'a',r:'action', n:'Карточка в CRM',    d:'автоматически после брони'},
+   // Stage 3 — подготовка к визиту
+   {id:'p1',c:3,s:3,t:'a',r:'action', n:'Напоминание 24 ч',  d:'дата, время, адрес · авто'},
+   {id:'p2',c:3,s:3,t:'a',r:'gate',   n:'Напоминание 2 ч',   d:'кнопки: подтвердить / перенести / отменить'},
+   {id:'p3',c:3,s:3,t:'a',r:'action', n:'Навигация',          d:'карта как добраться'},
+   {id:'p4',c:3,s:3,t:'a',r:'action', n:'Отмена / перенос',  d:'авто-предложение ближайшего слота'},
+   // Stage 4 — после визита
+   {id:'a1',c:4,s:4,t:'a',r:'action', n:'Запрос отзыва',     d:'Google / Яндекс / 2GIS через 3 ч'},
+   {id:'a2',c:4,s:4,t:'a',r:'gate',   n:'Повторная запись',  d:'авто-напоминание через нужный период'},
+   {id:'a3',c:4,s:4,t:'s',r:'action', n:'Реферал',            d:'«приведи друга» — авто-сообщение'},
+   {id:'a4',c:4,s:4,t:'s',r:'action', n:'Сегментация',       d:'тег по услуге и мастеру в CRM'},
+  ],
+  edges:[
+   // Захват → Квалификация (все каналы сходятся в шлюз q1)
+   {f:'s1',t:'q1',m:true,  lbl:''},
+   {f:'s2',t:'q1',m:true,  lbl:''},
+   {f:'s3',t:'q1',m:true,  lbl:''},
+   {f:'s4',t:'q1',m:false, lbl:''},
+   {f:'s5',t:'q1',m:false, lbl:''},
+   // Квалификация → Запись
+   {f:'q1',t:'b1',m:true,  lbl:'хочет записаться'},
+   {f:'q2',t:'b1',m:false, lbl:''},
+   {f:'q3',t:'b1',m:false, lbl:''},
+   {f:'q4',t:'b2',m:false, lbl:'эскалация'},
+   // Запись — цепочка
+   {f:'b1',t:'b2',m:true,  lbl:''},
+   {f:'b2',t:'b3',m:true,  lbl:''},
+   {f:'b3',t:'b4',m:true,  lbl:''},
+   // Ветка отмены
+   {f:'b2',t:'p4',m:false, lbl:'отмена'},
+   // Запись → Подготовка
+   {f:'b4',t:'p1',m:true,  lbl:''},
+   {f:'p1',t:'p2',m:true,  lbl:''},
+   {f:'p2',t:'p3',m:true,  lbl:''},
+   // Подготовка → После
+   {f:'p2',t:'a1',m:true,  lbl:'визит состоялся'},
+   {f:'a1',t:'a2',m:true,  lbl:''},
+   {f:'a2',t:'a3',m:false, lbl:''},
+   {f:'a3',t:'a4',m:false, lbl:''},
+  ],
+ },
+ solo:{
+  cols:[
+   {lbl:'01 · Захват',            s:0},
+   {lbl:'02 · Портфолио + цены',  s:1},
+   {lbl:'03 · Запись + оплата',   s:2},
+   {lbl:'04 · Подготовка',        s:3},
+   {lbl:'05 · После сессии',      s:4},
+  ],
+  nodes:[
+   {id:'s1',c:0,s:0,t:'a',r:'gate',   n:'Telegram-бот',        d:'главный канал мастера · первый ответ < 30 сек'},
+   {id:'s2',c:0,s:0,t:'s',r:'channel',n:'Instagram → TG',      d:'ссылка в bio → переход в бот'},
+   {id:'s3',c:0,s:0,t:'a',r:'channel',n:'Сайт → бот',          d:'кнопка «Написать»'},
+   {id:'s4',c:0,s:0,t:'s',r:'channel',n:'По рекомендации',     d:'«пишите в TG» → авто-приветствие'},
+   {id:'q1',c:1,s:1,t:'a',r:'gate',   n:'Каталог работ',       d:'шлюз-портфолио · альбом по стилям / услугам'},
+   {id:'q2',c:1,s:1,t:'a',r:'action', n:'Прайс-лист',          d:'актуально без переспросов'},
+   {id:'q3',c:1,s:1,t:'a',r:'action', n:'FAQ мастера',         d:'уход, боль, противопоказания'},
+   {id:'q4',c:1,s:1,t:'m',r:'action', n:'Эскиз / концепция',   d:'мастер лично обсуждает с клиентом'},
+   {id:'b1',c:2,s:2,t:'s',r:'action', n:'Выбор даты / время',  d:'бот показывает расписание'},
+   {id:'b2',c:2,s:2,t:'a',r:'gate',   n:'Предоплата',          d:'главный шлюз · ссылка СБП → авто-фиксация'},
+   {id:'b3',c:2,s:2,t:'a',r:'action', n:'Подтверждение',       d:'клиенту + мастеру карточка'},
+   {id:'b4',c:2,s:2,t:'m',r:'action', n:'Финал эскиза',        d:'лично до прихода клиента'},
+   {id:'p1',c:3,s:3,t:'a',r:'action', n:'Инструкция 3 дня',    d:'что делать до процедуры'},
+   {id:'p2',c:3,s:3,t:'a',r:'gate',   n:'Напоминание 24 ч',    d:'дата + адрес мастера · подтверждение'},
+   {id:'p3',c:3,s:3,t:'a',r:'action', n:'Напоминание 2 ч',     d:'финальный чек-ин'},
+   {id:'p4',c:3,s:3,t:'a',r:'action', n:'Навигация',            d:'геолокация или карта'},
+   {id:'a1',c:4,s:4,t:'m',r:'action', n:'Фото результата',     d:'мастер отправляет → в альбом бота'},
+   {id:'a2',c:4,s:4,t:'a',r:'gate',   n:'Запрос отзыва',       d:'Google / 2GIS через 4 ч · авто'},
+   {id:'a3',c:4,s:4,t:'a',r:'action', n:'Уход после',          d:'авто-инструкция в нужный день'},
+   {id:'a4',c:4,s:4,t:'a',r:'action', n:'Повторная запись',    d:'авто-напоминание через период'},
+  ],
+  edges:[
+   {f:'s1',t:'q1',m:true, lbl:''}, {f:'s2',t:'q1',m:false,lbl:''},
+   {f:'s3',t:'q1',m:true, lbl:''}, {f:'s4',t:'q1',m:false,lbl:''},
+   {f:'q1',t:'b1',m:true, lbl:'готов записаться'}, {f:'q2',t:'b1',m:false,lbl:''},
+   {f:'q3',t:'b1',m:false,lbl:''}, {f:'q4',t:'b4',m:false,lbl:'сложный случай'},
+   {f:'b1',t:'b2',m:true, lbl:''}, {f:'b2',t:'b3',m:true, lbl:''},
+   {f:'b3',t:'p1',m:true, lbl:''}, {f:'b4',t:'p1',m:false,lbl:''},
+   {f:'p1',t:'p2',m:true, lbl:''}, {f:'p2',t:'p3',m:true, lbl:''},
+   {f:'p3',t:'p4',m:true, lbl:''},
+   {f:'p2',t:'a1',m:true, lbl:'сессия прошла'},
+   {f:'a1',t:'a2',m:true, lbl:''}, {f:'a2',t:'a3',m:false,lbl:''},
+   {f:'a3',t:'a4',m:false,lbl:''},
+  ],
+ },
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let cur='crm', pos={}, sc=1, pan={x:30,y:24};
+let drag=null, isPan=false, ps={x:0,y:0};
+
+const cvs=document.getElementById('cvs');
+const vp=document.getElementById('vp');
+const eg=document.getElementById('eg');
+const svg=document.getElementById('svg-overlay');
+
+// ── Layout ─────────────────────────────────────────────────────────────────────
+function defPos(v) {
+  pos={};
+  const cnt={};
+  DATA[v].nodes.forEach(n=>{
+    const i=cnt[n.c]=(cnt[n.c]||0); cnt[n.c]++;
+    const [w,h]=DIM[n.r]||DIM.action;
+    pos[n.id]={ x:CX[n.c]+(CW-w)/2, y:CYY+N0Y+i*NDY, w, h };
+  });
+}
+
+// ── Build canvas ──────────────────────────────────────────────────────────────
+function build(v) {
+  cvs.querySelectorAll('.cbg,.clbl,.node').forEach(e=>e.remove());
+  eg.innerHTML='';
+
+  const d=DATA[v];
+
+  // Column backgrounds + labels
+  d.cols.forEach((col,i)=>{
+    const [,,,, tag,,, al, cb]=STG[col.s];
+    const bg=STG[col.s][0];
+
+    const bgEl=document.createElement('div');
+    bgEl.className='cbg';
+    bgEl.style.cssText=`left:${CX[i]}px;top:${CYY}px;width:${CW}px;height:${CH}px;
+      background:${bg}${al};border:1px solid #${cb};
+      border-top:2px solid ${STG[col.s][4]}40`;
+    cvs.insertBefore(bgEl, svg);
+
+    const lblEl=document.createElement('div');
+    lblEl.className='clbl';
+    lblEl.textContent=col.lbl;
+    lblEl.style.cssText=`left:${CX[i]+12}px;top:${CYY+9}px;color:${STG[col.s][4]}80`;
+    cvs.insertBefore(lblEl, svg);
+  });
+
+  // Nodes
+  d.nodes.forEach(n=>{
+    const {bg,bd,tc,dot,ac,glow}=th(n.s,n.t);
+    const p=pos[n.id];
+    const el=document.createElement('div');
+    el.className=`node ${n.r==='gate'?'gate':''}`;
+    el.dataset.id=n.id;
+
+    const tagLabel = n.t==='a'?'авто':n.t==='s'?'полу-авто':'вручную';
+    const roleExtra = n.r==='gate'?' · шлюз':'';
+
+    el.innerHTML=`<div class="ntag"><div class="ntag-dot" style="background:${dot}"></div>
+<span style="color:${tc}">${tagLabel}${roleExtra}</span></div>
+<div class="nname">${n.n}</div>
+<div class="ndesc">${n.d}</div>`;
+
+    el.style.cssText=`left:${p.x}px;top:${p.y}px;width:${p.w}px;
+      background:${bg};border-color:${bd};
+      ${n.r==='gate'?`box-shadow:0 0 16px ${glow},0 2px 12px rgba(0,0,0,.5);`:'box-shadow:0 2px 8px rgba(0,0,0,.3);'}`;
+    el.addEventListener('mousedown', onND);
+    cvs.insertBefore(el, svg);
+  });
+
+  drawEdges();
+}
+
+// ── Edge drawing ──────────────────────────────────────────────────────────────
+function pt(id) {
+  const p=pos[id]; if(!p) return null;
+  return {rx:p.x+p.w, lx:p.x, cy:p.y+p.h/2, bx:p.x+p.w/2, by:p.y+p.h, ty:p.y};
+}
+
+function drawEdges() {
+  const d=DATA[cur], nm={};
+  d.nodes.forEach(n=>nm[n.id]=n);
+  let html='';
+
+  d.edges.forEach(e=>{
+    const f=pt(e.f), t=pt(e.t); if(!f||!t) return;
+    const fn=nm[e.f];
+    const si=fn?fn.s:0;
+    const col=STG[si][3]; // accent
+    const op=e.m ? .5 : .2;
+    const sw=e.m ? '2.5' : '1.5';
+    const dash=e.m ? '' : `stroke-dasharray="7,4"`;
+
+    const sx=f.rx, sy=f.cy, ex=t.lx-7, ey=t.cy;
+
+    let d2;
+    if(ex > sx+30) {
+      const dx=Math.abs(ex-sx)*.42;
+      d2=`M${sx},${sy} C${sx+dx},${sy} ${ex-dx},${ey} ${ex},${ey}`;
+    } else {
+      const ox=Math.max(sx,ex)+45;
+      d2=`M${sx},${sy} C${ox},${sy} ${ox},${ey} ${ex},${ey}`;
+    }
+
+    // Edge label
+    const lhtml=e.lbl?`<text x="${(sx+ex)/2}" y="${Math.min(sy,ey)-6}"
+      font-size="9" fill="${col}" opacity=".5"
+      text-anchor="middle" font-family="Segoe UI">${e.lbl}</text>`:'';
+
+    html+=`<path d="${d2}" fill="none" stroke="${col}" stroke-width="${sw}"
+      opacity="${op}" ${dash} marker-end="url(#arr${si})"/>${lhtml}`;
+  });
+
+  eg.innerHTML=html;
+}
+
+// ── Drag ──────────────────────────────────────────────────────────────────────
+function onND(e) {
+  e.stopPropagation();
+  const el=e.currentTarget, id=el.dataset.id, p=pos[id];
+  drag={el,id,cx:e.clientX,cy:e.clientY,nx:p.x,ny:p.y};
+  el.classList.add('drag');
+}
+
+vp.addEventListener('mousedown',e=>{
+  if(!e.target.closest('.node')){
+    isPan=true; ps={x:e.clientX-pan.x,y:e.clientY-pan.y};
+    vp.classList.add('panning');
+  }
+});
+
+window.addEventListener('mousemove',e=>{
+  if(drag){
+    const dx=(e.clientX-drag.cx)/sc, dy=(e.clientY-drag.cy)/sc;
+    pos[drag.id]={...pos[drag.id],x:drag.nx+dx,y:drag.ny+dy};
+    drag.el.style.left=(drag.nx+dx)+'px';
+    drag.el.style.top=(drag.ny+dy)+'px';
+    drawEdges(); return;
+  }
+  if(isPan){ pan={x:e.clientX-ps.x,y:e.clientY-ps.y}; apT(); }
+});
+
+window.addEventListener('mouseup',()=>{
+  if(drag){drag.el.classList.remove('drag');drag=null;}
+  if(isPan){isPan=false;vp.classList.remove('panning');}
+});
+
+vp.addEventListener('wheel',e=>{
+  e.preventDefault();
+  const ns=Math.max(.25,Math.min(2.5,sc+(e.deltaY>0?-.1:.1)));
+  const r=vp.getBoundingClientRect();
+  const mx=e.clientX-r.left, my=e.clientY-r.top;
+  pan={x:mx-(mx-pan.x)*(ns/sc), y:my-(my-pan.y)*(ns/sc)};
+  sc=ns; apT();
+},{passive:false});
+
+function dz(d){
+  const ns=Math.max(.25,Math.min(2.5,sc+d));
+  const cx=vp.clientWidth/2,cy=vp.clientHeight/2;
+  pan={x:cx-(cx-pan.x)*(ns/sc),y:cy-(cy-pan.y)*(ns/sc)};
+  sc=ns; apT();
+}
+
+function apT(){
+  cvs.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${sc})`;
+  document.getElementById('zlbl').textContent=Math.round(sc*100)+'%';
+}
+
+function fit(){
+  const vw=vp.clientWidth, vh=vp.clientHeight;
+  const cw=CX[4]+CW+40, ch=CYY+CH+50;
+  const ns=Math.min(vw/cw, vh/ch, 1.5)*.88;
+  pan={x:(vw-cw*ns)/2, y:(vh-ch*ns)/2};
+  sc=ns; apT();
+}
+
+function sw(v){
+  cur=v;
+  document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+v).classList.add('on');
+  defPos(v); build(v); fit();
+}
+
+defPos('crm'); build('crm'); fit();
+</script>
+</body>
+</html>
