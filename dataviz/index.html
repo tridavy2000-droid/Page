@@ -328,6 +328,33 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   margin-top:24px;position:relative;z-index:1}
 .canvas-embed iframe{width:100%;height:640px;border:none;display:block;background:#0A0C12}
 
+/* ── PRICE COMPARE ── */
+.pc-section{max-width:900px;margin:0 auto;padding:48px 24px 64px}
+.pc-card{background:rgba(56,189,248,.025);border:1px solid rgba(56,189,248,.09);border-radius:18px;padding:44px 52px;position:relative;overflow:hidden}
+.pc-card::after{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(52,211,153,.055) 0%,transparent 65%);pointer-events:none}
+.pc-kicker{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--dim);text-transform:uppercase;margin-bottom:10px}
+.pc-title{font-family:var(--sans);font-size:clamp(22px,3vw,30px);font-weight:600;color:var(--text);line-height:1.15;margin-bottom:36px}
+.pc-rows{display:flex;flex-direction:column;gap:22px;margin-bottom:32px}
+.pc-row{display:flex;flex-direction:column;gap:8px}
+.pc-meta{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.pc-label-name{font-family:var(--sans);font-size:13px;color:var(--mid)}
+.pc-row-hero .pc-label-name{color:var(--text);font-weight:600;font-size:14px}
+.pc-label-price{font-family:var(--mono);font-size:12px;white-space:nowrap}
+.pc-price-you{color:var(--green);font-size:15px;font-weight:500}
+.pc-bar-track{height:8px;background:rgba(255,255,255,.04);border-radius:4px;position:relative;overflow:visible}
+.pc-bar{height:100%;border-radius:4px;width:0;transition:width 1.3s cubic-bezier(.22,1,.36,1)}
+.pc-bar.anim{width:var(--pct)}
+.pc-bar-r{background:linear-gradient(90deg,rgba(248,113,113,.5),rgba(248,113,113,.85))}
+.pc-bar-o{background:linear-gradient(90deg,rgba(251,191,36,.4),rgba(251,191,36,.75))}
+.pc-bar-g{background:linear-gradient(90deg,rgba(52,211,153,.7),#34d399);box-shadow:0 0 14px rgba(52,211,153,.35)}
+.pc-pill{position:absolute;left:calc(var(--pct) + 10px);top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:8px;letter-spacing:.09em;color:var(--green);white-space:nowrap;background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);padding:3px 8px;border-radius:20px;opacity:0;transition:opacity .4s .8s}
+.pc-bar.anim~.pc-pill{opacity:1}
+.pc-reasons{display:flex;flex-wrap:wrap;gap:12px 32px;padding-top:28px;border-top:1px solid rgba(255,255,255,.04);margin-bottom:16px}
+.pc-reason{display:flex;align-items:center;gap:8px;font-family:var(--sans);font-size:12px;color:var(--mid)}
+.pc-check{color:var(--green);font-weight:700;font-size:13px;flex-shrink:0}
+.pc-src{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.07em}
+@media(max-width:680px){.pc-card{padding:28px 24px}.pc-pill{display:none}}
+
 /* ── ROI CALCULATOR ── */
 .roi-calc{margin-top:32px;background:rgba(56,189,248,.03);border:1px solid rgba(56,189,248,.1);border-radius:14px;padding:32px 36px;display:flex;flex-direction:column;gap:28px}
 .roi-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
@@ -622,6 +649,52 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <span class="sb-val" style="color:#fbbf24">0 пропуск.</span>
     <span class="sb-sep">·</span>
     <span class="sb-text">бот не пропускает ни одного обращения — никогда</span>
+  </div>
+</div>
+
+<!-- PRICE COMPARE -->
+<div class="pc-section">
+  <div class="pc-card">
+    <div class="pc-head">
+      <div class="pc-kicker">Рынок · FL.ru · Upwork · Habr Freelance · 2025</div>
+      <h3 class="pc-title">Цены на рынке —<br>и почему <span style="color:var(--green)">TriDaVii дешевле</span></h3>
+    </div>
+    <div class="pc-rows">
+      <div class="pc-row">
+        <div class="pc-meta">
+          <span class="pc-label-name">Крупное digital-агентство</span>
+          <span class="pc-label-price" style="color:var(--red)">60 000 – 150 000 ₽</span>
+        </div>
+        <div class="pc-bar-track">
+          <div class="pc-bar pc-bar-r" style="--pct:100%"></div>
+        </div>
+      </div>
+      <div class="pc-row">
+        <div class="pc-meta">
+          <span class="pc-label-name">Фриланс / биржа</span>
+          <span class="pc-label-price" style="color:var(--gold)">25 000 – 60 000 ₽</span>
+        </div>
+        <div class="pc-bar-track">
+          <div class="pc-bar pc-bar-o" style="--pct:52%"></div>
+        </div>
+      </div>
+      <div class="pc-row pc-row-hero">
+        <div class="pc-meta">
+          <span class="pc-label-name">TriDaVii · под ключ · 7 дней</span>
+          <span class="pc-label-price pc-price-you">от 15 000 ₽</span>
+        </div>
+        <div class="pc-bar-track">
+          <div class="pc-bar pc-bar-g" style="--pct:22%"></div>
+          <span class="pc-pill">ваш вариант →</span>
+        </div>
+      </div>
+    </div>
+    <div class="pc-reasons">
+      <div class="pc-reason"><span class="pc-check">✓</span>Нет офиса и штата — цена не раздута</div>
+      <div class="pc-reason"><span class="pc-check">✓</span>Прямой контакт с разработчиком, без менеджеров</div>
+      <div class="pc-reason"><span class="pc-check">✓</span>34 проекта — готовые шаблоны, запуск быстрее</div>
+    </div>
+    <div class="pc-src">Источник: открытые прайсы FL.ru, Upwork, Habr Freelance · анализ июнь 2025</div>
   </div>
 </div>
 
@@ -1306,6 +1379,20 @@ function _spawnFP(sId,rev){
     _mv();
   }
   setTimeout(_addCursor,1400);
+})();
+
+// ── PRICE COMPARE — animate bars on entry ─────────────────────
+(function(){
+  const card=document.querySelector('.pc-card');if(!card)return;
+  const pio=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting)return;
+      const bars=card.querySelectorAll('.pc-bar');
+      bars.forEach((b,i)=>setTimeout(()=>b.classList.add('anim'),i*180+100));
+      pio.unobserve(card);
+    });
+  },{threshold:.3});
+  pio.observe(card);
 })();
 
 // ── 5. S3 SPEND — spotlight sweep when section enters ─────────
