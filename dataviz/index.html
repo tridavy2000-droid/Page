@@ -327,6 +327,50 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   border:1px solid rgba(56,189,248,.12);box-shadow:0 0 60px rgba(56,189,248,.07);
   margin-top:24px;position:relative;z-index:1}
 .canvas-embed iframe{width:100%;height:640px;border:none;display:block;background:#0A0C12}
+
+/* ── ROI CALCULATOR ── */
+.roi-calc{margin-top:32px;background:rgba(56,189,248,.03);border:1px solid rgba(56,189,248,.1);border-radius:14px;padding:32px 36px;display:flex;flex-direction:column;gap:28px}
+.roi-inputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+@media(max-width:760px){.roi-inputs{grid-template-columns:1fr}}
+.roi-field{display:flex;flex-direction:column;gap:8px}
+.roi-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--dim);text-transform:uppercase}
+.roi-unit{color:var(--blue);margin-left:4px}
+.roi-input{background:rgba(56,189,248,.04);border:1px solid rgba(56,189,248,.12);border-radius:8px;padding:10px 14px;font-family:var(--mono);font-size:20px;color:var(--text);outline:none;transition:border-color .2s;width:100%;-moz-appearance:textfield}
+.roi-input::-webkit-outer-spin-button,.roi-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.roi-input:focus{border-color:rgba(56,189,248,.45)}
+.roi-slider{width:100%;-webkit-appearance:none;height:3px;background:rgba(56,189,248,.15);border-radius:2px;outline:none;cursor:pointer;margin-top:6px}
+.roi-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--blue);cursor:pointer;box-shadow:0 0 8px rgba(56,189,248,.5)}
+.roi-slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--blue);cursor:pointer;border:none}
+.roi-slider-track{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8px;color:var(--dim);margin-top:4px;letter-spacing:.06em}
+.roi-outputs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+@media(max-width:760px){.roi-outputs{grid-template-columns:1fr}}
+.roi-out{padding:20px 20px;border-radius:10px;text-align:center;border:1px solid}
+.roi-out-loss{background:rgba(248,113,113,.04);border-color:rgba(248,113,113,.18)}
+.roi-out-year{background:rgba(248,113,113,.07);border-color:rgba(248,113,113,.28)}
+.roi-out-bot{background:rgba(52,211,153,.04);border-color:rgba(52,211,153,.2)}
+.roi-out-val{font-family:var(--mono);font-size:clamp(20px,2.2vw,30px);font-weight:400;margin-bottom:6px;transition:color .2s}
+.roi-out-loss .roi-out-val,.roi-out-year .roi-out-val{color:var(--red)}
+.roi-out-bot .roi-out-val{color:var(--green)}
+.roi-out-lbl{font-family:var(--sans);font-size:11px;color:var(--mid);margin-bottom:4px;font-weight:500}
+.roi-out-sub{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.07em}
+.roi-cta-row{text-align:center}
+.roi-cta-btn{display:inline-block;padding:12px 32px;border-radius:8px;background:linear-gradient(135deg,rgba(56,189,248,.15),rgba(52,211,153,.1));border:1.5px solid rgba(56,189,248,.5);color:var(--blue);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-decoration:none;transition:all .25s}
+.roi-cta-btn:hover{background:linear-gradient(135deg,rgba(56,189,248,.3),rgba(52,211,153,.18));border-color:var(--blue);box-shadow:0 0 20px rgba(56,189,248,.3);transform:translateY(-1px)}
+
+/* ── GUARANTEE + PRICE ── */
+.guarantee-row{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 28px}
+.guarantee-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 20px;border-radius:40px;font-family:var(--mono);font-size:10px;letter-spacing:.1em}
+.gp-price{background:rgba(251,191,36,.07);border:1.5px solid rgba(251,191,36,.35);color:var(--gold)}
+.gp-guarantee{background:rgba(52,211,153,.06);border:1.5px solid rgba(52,211,153,.28);color:var(--green)}
+.gp-guarantee::before{content:'✓';font-size:12px;font-weight:700}
+
+/* ── PROFILE CARD ── */
+.profile-wrap{display:flex;align-items:center;gap:24px;margin-bottom:32px;padding:20px 24px;background:rgba(56,189,248,.03);border:1px solid rgba(56,189,248,.08);border-radius:14px}
+.profile-pic{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid rgba(56,189,248,.3);flex-shrink:0;box-shadow:0 0 20px rgba(56,189,248,.14)}
+.profile-info{display:flex;flex-direction:column;gap:3px}
+.profile-name{font-family:var(--sans);font-size:17px;font-weight:600;color:var(--text)}
+.profile-role{font-family:var(--mono);font-size:9px;letter-spacing:.13em;color:var(--blue);text-transform:uppercase;margin-top:1px}
+.profile-meta{font-family:var(--mono);font-size:8px;color:var(--dim);letter-spacing:.07em;margin-top:3px}
 </style>
 </head>
 <body>
@@ -336,7 +380,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div id="st-line-wrap"><div id="st-fill"></div></div>
   <div class="st-dot" data-s="s1" data-label="01 Проблема"></div>
   <div class="st-dot" data-s="s2" data-label="02 Ниши"></div>
-  <div class="st-dot" data-s="s3" data-label="03 Рынок"></div>
+  <div class="st-dot" data-s="s3" data-label="03 Потери"></div>
   <div class="st-dot" data-s="s4" data-label="04 Решение"></div>
   <div class="st-dot" data-s="s5" data-label="05 Функции"></div>
   <div class="st-dot" data-s="s6" data-label="06 Контакт"></div>
@@ -365,7 +409,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <div class="ni active" data-s="hero">Главная</div>
     <div class="ni" data-s="s1">01 Проблема</div>
     <div class="ni" data-s="s2">02 Ниши</div>
-    <div class="ni" data-s="s3">03 Рынок</div>
+    <div class="ni" data-s="s3">03 Потери</div>
     <div class="ni" data-s="s4">04 Решение</div>
     <div class="ni" data-s="s5">05 Функции</div>
     <div class="ni" data-s="s6">06 Контакт</div>
@@ -379,11 +423,11 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <div class="live-badge"><span class="live-dot"></span>Работает 24/7 · 2026</div>
     <div class="hero-badge">Данил Трифонов · AI-помощники для бизнеса</div>
     <h1>Бот, который<br><span class="h1g">не спит</span></h1>
-    <div class="hero-sub">Автоматизирую запись и возврат клиентов для малого бизнеса</div>
+    <div class="hero-sub">Автоматизирую запись и возврат клиентов для сервисного бизнеса</div>
     <div class="hero-stats">
       <div class="hstat" id="hs1">
         <div class="hnum cb"><span id="cnt1">0</span></div>
-        <div><div class="hstat-label">ботов запущено · под ключ</div><div class="hstat-sub">стоматологии · салоны · авто · клининг</div></div>
+        <div><div class="hstat-label">ботов запущено · под ключ</div><div class="hstat-sub">стоматологии · барбершопы · авто · клининг · фитнес · vet · event</div></div>
       </div>
       <div class="hstat" id="hs2">
         <div class="hnum cg"><span id="cnt2">0</span></div>
@@ -403,7 +447,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 </section>
 
 <div class="kpi-bar">
-  <div class="kpc" id="kc1"><div class="kc-v cb" id="kv1">34</div><div class="kc-l">Ботов запущено</div><div class="kc-s">стоматологии · салоны · авто · клининг · фитнес</div></div>
+  <div class="kpc" id="kc1"><div class="kc-v cb" id="kv1">34</div><div class="kc-l">Ботов запущено</div><div class="kc-s">стоматологии · барбершопы · авто · клининг · фитнес · ветеринария · event</div></div>
   <div class="kpc" id="kc2"><div class="kc-v cg" id="kv2">67M</div><div class="kc-l">Telegram: ежедневная аудитория РФ</div><div class="kc-s">Mediascope 2024 · прогноз 2026 +10%</div></div>
   <div class="kpc" id="kc3"><div class="kc-v cw" id="kv3">7 дн.</div><div class="kc-l">Срок запуска под ключ</div><div class="kc-s">от первой встречи до первой заявки через бота</div></div>
 </div>
@@ -417,11 +461,11 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">01</div>
   <div class="stag">01 · Проблема</div>
   <h2 class="shed">Клиент пишет ночью.<br><em>Вы не отвечаете.</em></h2>
-  <p class="spull"><strong>14 из 24 часов</strong> малый бизнес не отвечает на обращения — ночь, раннее утро, выходные, праздники. Клиент не ждёт: он уходит к тому, кто ответил первым. 60% компаний уже тестируют ботов — конкуренты не стоят на месте.</p>
+  <p class="spull"><strong>14 из 24 часов</strong> сервисный бизнес не отвечает на обращения — ночь, раннее утро, выходные, праздники. Клиент не ждёт: он уходит к тому, кто ответил первым. 60% компаний уже тестируют ботов — конкуренты не стоят на месте.</p>
   <div class="clabel">% бизнесов, теряющих заявки / % с ботом · 2019–2033 · перетащите мышкой</div>
   <div class="s1-grid">
     <div>
-      <div class="callout"><div class="callout-n">14 ч</div><div class="callout-l">часов в день малый бизнес молчит — пока конкурент уже ответил.</div></div>
+      <div class="callout"><div class="callout-n">14 ч</div><div class="callout-l">часов в день сервисный бизнес молчит — пока конкурент уже ответил.</div></div>
       <div class="sleg" id="sleg"></div>
     </div>
     <div id="surge-3d" class="surge-3d-wrap"></div>
@@ -449,7 +493,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="sec-num">02</div>
   <div class="stag">02 · Ниши</div>
   <h2 class="shed">Ваша ниша —<br>уже <em>в списке.</em></h2>
-  <p class="spull">Стоматология, барбершоп, автосервис, клининг, фитнес — везде один сценарий: запись по телефону, потерянные заявки ночью, неявки без напоминаний. Бот закрывает всё это за неделю. Нажмите на карточку — покажу, что именно автоматизируется в вашей нише.</p>
+  <p class="spull">Стоматология, барбершоп, автосервис, клининг, фитнес, медицина, ветеринария, фотостудии, репетиторы, event — везде один сценарий: запись по телефону, потерянные заявки ночью, неявки без напоминаний. Бот закрывает всё это за неделю. Нажмите на карточку — покажу, что именно автоматизируется в вашей нише.</p>
   <div class="clabel">Эффективность помощника по нишам · % задач закрывает бот</div>
   <div class="tier-legend">
     <span class="tl-pill" style="background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.4);color:#fbbf24">Горячо 80%+</span>
@@ -474,18 +518,48 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
 
 <!-- S3 -->
 <section class="section" id="s3">
-  <div class="ghost" style="color:rgba(52,211,153,.012)">632</div>
+  <div class="ghost" style="color:rgba(52,211,153,.012)">₽</div>
   <div class="sec-num">03</div>
-  <div class="stag">03 · Рынок</div>
-  <h2 class="shed">Рынок ботов —<br><span class="gr">$41.2B к 2033.</span></h2>
-  <p class="spull">Рынок чат-ботов вырос с $4.2B в 2021 до <strong>$9.6B в 2025</strong> — и к 2033 достигнет <strong>$41.2B</strong> (Grand View Research). Это не хайп: бизнесы устали терять клиентов ночью. Те, кто автоматизируется сейчас, занимают позицию до того, как это сделают конкуренты.</p>
-  <div class="cap-center">
-    <div class="cap-glow"></div>
-    <div class="cap-num">$<span id="capc">0</span>B</div>
-    <div class="cap-meta">Мировой рынок чат-ботов 2033 · CAGR <span>19.6%</span></div>
+  <div class="stag">03 · Потери</div>
+  <h2 class="shed">Сколько стоит<br><span class="gr">пропущенный звонок?</span></h2>
+  <p class="spull">Введите данные своего бизнеса — посчитаем, сколько денег уходит каждый месяц, пока вы не в онлайне. И сколько из этого вернёт бот.</p>
+  <div class="roi-calc">
+    <div class="roi-inputs">
+      <div class="roi-field">
+        <label class="roi-label">Средний чек <span class="roi-unit">₽</span></label>
+        <input class="roi-input" id="roi-chek" type="number" value="3000" min="100" max="100000" step="100">
+      </div>
+      <div class="roi-field">
+        <label class="roi-label">Клиентов в месяц</label>
+        <input class="roi-input" id="roi-kli" type="number" value="60" min="1" max="5000" step="1">
+      </div>
+      <div class="roi-field">
+        <label class="roi-label">Ночных обращений <span class="roi-unit" id="roi-pct-val">30%</span></label>
+        <input class="roi-slider" id="roi-pct" type="range" value="30" min="5" max="70" step="5">
+        <div class="roi-slider-track"><span>5%</span><span>70%</span></div>
+      </div>
+    </div>
+    <div class="roi-outputs">
+      <div class="roi-out roi-out-loss">
+        <div class="roi-out-val" id="roi-month">0 ₽</div>
+        <div class="roi-out-lbl">теряете в месяц</div>
+        <div class="roi-out-sub" id="roi-missed">0 заявок пропущено</div>
+      </div>
+      <div class="roi-out roi-out-year">
+        <div class="roi-out-val" id="roi-year">0 ₽</div>
+        <div class="roi-out-lbl">теряете в год</div>
+        <div class="roi-out-sub">пока конкурент уже ответил</div>
+      </div>
+      <div class="roi-out roi-out-bot">
+        <div class="roi-out-val" id="roi-bot">0 ₽</div>
+        <div class="roi-out-lbl">вернёт бот за год</div>
+        <div class="roi-out-sub">при 70% конверсии ночных заявок</div>
+      </div>
+    </div>
+    <div class="roi-cta-row">
+      <a class="roi-cta-btn" href="https://t.me/TriDaVii" target="_blank">Обсудить мой расчёт → @TriDaVii</a>
+    </div>
   </div>
-  <div class="clabel" style="margin-top:24px">Мировой рынок чат-ботов · млрд USD · 2019–2033 · Grand View Research</div>
-  <svg id="spend-svg"></svg>
 </section>
 
 <div class="sect-bridge" id="br3" data-color="#f87171">
@@ -558,6 +632,18 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="stag">06 · Контакт</div>
   <h2 class="shed">Первая заявка<br>через бота — <em>за 7 дней.</em></h2>
   <p class="spull">За 7 дней вы получите бота, который записывает клиентов круглосуточно, напоминает о визите и возвращает ушедших автоматически. <strong>Напишите прямо сейчас</strong> — за 15 минут составлю конкретный план под вашу нишу.</p>
+  <div class="guarantee-row">
+    <div class="guarantee-pill gp-price">от 15 000 ₽</div>
+    <div class="guarantee-pill gp-guarantee">Нет результата за 30 дней — возврат</div>
+  </div>
+  <div class="profile-wrap">
+    <img class="profile-pic" src="me2.jpg" alt="Данил Трифонов">
+    <div class="profile-info">
+      <div class="profile-name">Данил Трифонов</div>
+      <div class="profile-role">AI-автоматизация · сервисный бизнес</div>
+      <div class="profile-meta">34 бота · стоматологии · барбершопы · автосервисы · клининг · фитнес и другие · TriDaVii · 2026</div>
+    </div>
+  </div>
   <div class="outro-grid" id="outro-grid"></div>
 
   <!-- Lead Magnet -->
@@ -583,7 +669,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   <div class="outro-quote">
     <div class="oq-line"></div>
     <div class="oq-text">"Пока ваш конкурент отвечает вручную в рабочие часы — ваш бот работает круглосуточно. Каждый пропущенный звонок ночью — это деньги конкурента."</div>
-    <div class="oq-attr">— Данил Трифонов · 34 бота для МСБ · TriDaVii · 2026</div>
+    <div class="oq-attr">— Данил Трифонов · 34 бота для сервисного бизнеса · TriDaVii · 2026</div>
   </div>
 </section>
 
@@ -592,7 +678,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
     <div class="ft-stats">
       <div class="ft-stat"><span class="fts-n">34</span><span class="fts-l">Ботов запущено</span></div>
       <div class="ft-stat"><span class="fts-n">3</span><span class="fts-l">Платформы</span></div>
-      <div class="ft-stat"><span class="fts-n">5+</span><span class="fts-l">Ниш</span></div>
+      <div class="ft-stat"><span class="fts-n">10+</span><span class="fts-l">Ниш</span></div>
       <div class="ft-stat"><span class="fts-n">24/7</span><span class="fts-l">Режим работы</span></div>
     </div>
     <div class="ft-title">Связаться</div>
@@ -600,7 +686,7 @@ footer{max-width:1200px;margin:0 auto;padding:44px 64px 72px;border-top:1px soli
   </div>
   <div class="ft-right">
     <div class="ft-big">@TriDaVii</div>
-    <div class="ft-comp">Данил Трифонов · AI-помощники для малого бизнеса<br>Telegram @TriDaVii · 2026</div>
+    <div class="ft-comp">Данил Трифонов · AI-помощники для сервисного бизнеса<br>Telegram @TriDaVii · 2026</div>
   </div>
 </footer>
 </div>
@@ -621,8 +707,8 @@ const sectors=[
   {n:'Клининг',               v:85,d:'Расчёт · Бригада',      c:'#a78bfa'},
   {n:'Фитнес-студия',         v:82,d:'Расписание · Абонем.',  c:'#2dd4bf'},
   {n:'Медицина / Клиники',    v:79,d:'Запись · Анализы',      c:'#facc15'},
-  {n:'Кондиционеры / Сезон',  v:75,d:'Сезон · Реактивация',  c:'#fb923c'},
-  {n:'Другие МСБ',            v:70,d:'Заявки · Сопровождение',c:'#f87171'},
+  {n:'Ветеринария',            v:76,d:'Запись · Напоминания',  c:'#fb923c'},
+  {n:'Event · Фотостудии',    v:72,d:'Бронь · Реактивация',   c:'#f87171'},
 ];
 const barriers=[
   {n:'Нет ответа ночью / в выходные',     short:'Нет ответа',  v24:5, v22:78,r22:1,r24:7},
@@ -792,13 +878,14 @@ const io=new IntersectionObserver(en=>{en.forEach(e=>{
   const id=e.target.id;
   if(id==='s1')buildSurge();
   if(id==='s2')buildSectors();
-  if(id==='s3'){buildSpend();scramble($('capc'),632,0,'','',2200,300)}
+  if(id==='s3')initROI()
   if(id==='s4')buildBumpChart();
   if(id==='s5')buildUseCases();
   if(id==='s6')buildOutro();
   io.unobserve(e.target);
 })},{threshold:.1});
 ['s1','s2','s3','s4','s5','s6'].forEach(id=>{const el=$(id);if(el)io.observe(el)});
+initROI();
 
 /* S1 — SURGE CHART */
 function buildSurge(){
@@ -897,8 +984,32 @@ function buildSectors(){
 }
 
 /* S3 — SPEND CHART */
+function initROI(){
+  const ch=$('roi-chek'),kl=$('roi-kli'),pc=$('roi-pct'),pv=$('roi-pct-val');
+  if(!ch||!kl||!pc||ch._roiReady)return;
+  ch._roiReady=true;
+  function fmt(n){
+    if(n>=1000000)return(n/1000000).toFixed(1).replace('.',',')+' млн ₽';
+    if(n>=10000)return Math.round(n/1000)*1+'00 ₽';
+    return Math.round(n).toLocaleString('ru-RU')+' ₽';
+  }
+  function calc(){
+    const chek=Math.max(0,+ch.value||0),kli=Math.max(0,+kl.value||0),pct=(+pc.value||0)/100;
+    const missed=Math.round(kli*pct);
+    const month=missed*chek,year=month*12,bot=Math.round(year*.70);
+    const mEl=$('roi-missed'),moEl=$('roi-month'),yEl=$('roi-year'),bEl=$('roi-bot');
+    if(mEl)mEl.textContent=missed+' заявок пропущено';
+    if(moEl)moEl.textContent=fmt(month);
+    if(yEl)yEl.textContent=fmt(year);
+    if(bEl)bEl.textContent=fmt(bot);
+    if(pv)pv.textContent=pc.value+'%';
+  }
+  [ch,kl,pc].forEach(el=>el.addEventListener('input',calc));
+  calc();
+}
+
 function buildSpend(){
-  const el=$('spend-svg');if(el.children.length)return;
+  const el=$('spend-svg');if(!el||el.children.length)return;
   const W=el.parentElement.clientWidth||900;const H=220;
   const M={t:16,r:14,b:36,l:50};const iW=W-M.l-M.r,iH=H-M.t-M.b;
   const svg=d3.select(el).attr('viewBox',`0 0 ${W} ${H}`).attr('height',H);
